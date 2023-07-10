@@ -9,29 +9,27 @@ import {IJBSingleTokenPaymentTerminalStore} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminalStore.sol";
 import {IJBSingleTokenPaymentTerminalStore3_1_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminalStore3_1_1.sol";
+import {IJBSingleTokenPaymentTerminal} from
+    "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminal.sol";
+import {JBETHPaymentTerminal3_1} from "@jbx-protocol/juice-contracts-v3/contracts/JBETHPaymentTerminal3_1.sol";
+import {JBETHPaymentTerminal3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/JBETHPaymentTerminal3_1_1.sol";
 
 contract DeployDominantJuice is Script {
     function run()
         external
-        returns (
-            DominantJuice,
-            IJBController3_1,
-            IJBSingleTokenPaymentTerminalStore,
-            IJBSingleTokenPaymentTerminalStore3_1_1
-        )
+        returns (DominantJuice, IJBController3_1, IJBSingleTokenPaymentTerminalStore3_1_1, JBETHPaymentTerminal3_1_1)
     {
         HelperConfig helperConfig = new HelperConfig();
-        (address _controller, address _paymentTerminalStore, address _paymentTerminalStore3_1_1) =
+        (address _controller, address _paymentTerminalStore3_1_1, address _ethPaymentTerminal3_1_1) =
             helperConfig.activeNetworkConfig();
         IJBController3_1 controller = IJBController3_1(_controller);
-        IJBSingleTokenPaymentTerminalStore paymentTerminalStore =
-            IJBSingleTokenPaymentTerminalStore(_paymentTerminalStore);
         IJBSingleTokenPaymentTerminalStore3_1_1 paymentTerminalStore3_1_1 =
             IJBSingleTokenPaymentTerminalStore3_1_1(_paymentTerminalStore3_1_1);
+        JBETHPaymentTerminal3_1_1 ethPaymentTerminal3_1_1 = JBETHPaymentTerminal3_1_1(_ethPaymentTerminal3_1_1);
 
         vm.startBroadcast();
         DominantJuice dominantJuice = new DominantJuice(controller, paymentTerminalStore3_1_1);
         vm.stopBroadcast();
-        return (dominantJuice, controller, paymentTerminalStore, paymentTerminalStore3_1_1);
+        return (dominantJuice, controller, paymentTerminalStore3_1_1, ethPaymentTerminal3_1_1);
     }
 }

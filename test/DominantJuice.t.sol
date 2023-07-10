@@ -17,6 +17,8 @@ import {IJBPaymentTerminal} from "@jbx-protocol/juice-contracts-v3/contracts/int
 import {IJBSingleTokenPaymentTerminal} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminal.sol";
 import {JBDidPayData3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBDidPayData3_1_1.sol";
+import {JBPayParamsData} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBPayParamsData.sol";
+import {JBETHPaymentTerminal3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/JBETHPaymentTerminal3_1_1.sol";
 
 // Imports for launchProjectFor():
 import {JBProjectMetadata} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol";
@@ -25,15 +27,15 @@ import {JBFundingCycleMetadata} from "@jbx-protocol/juice-contracts-v3/contracts
 import {JBGroupedSplits} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGroupedSplits.sol";
 import {JBTokenAmount} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBTokenAmount.sol";
 import {JBFundAccessConstraints} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol";
-import {IJBPaymentTerminal} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol";
-import {JBETHPaymentTerminal3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/JBETHPaymentTerminal3_1_1.sol";
 import {IJBFundingCycleBallot} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleBallot.sol";
 import {JBGlobalFundingCycleMetadata} from
     "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol";
-import {JBPayParamsData} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBPayParamsData.sol";
+
+// All 41 tests passing on forked url. No mocks, so "forge test" on local Anvil network does not work.
+// Run "forge test --fork-url $GOERLI_RPC_URL --fork-block-number $FORK_BLOCK_NUMBER -vvv"
 
 contract DominantJuiceTest_Unit is Test {
-    // Variables for JB functions: launchProjectFor(), pay(), redeemTokensOf()
+    // Contracts and Structs for JB functions: launchProjectFor(), pay(), redeemTokensOf()
     JBProjectMetadata _projectMetadata;
     JBFundingCycleData _data;
     JBFundingCycleMetadata _metadata;
@@ -41,40 +43,37 @@ contract DominantJuiceTest_Unit is Test {
     JBGroupedSplits[] _groupedSplits; // Default empty
     JBFundAccessConstraints[] _fundAccessConstraints; // Default empty
     IJBPaymentTerminal[] _terminals; // Default empty
-
-    // Dominant Assurance variables and instances
     DominantJuice dominantJuice;
     IJBController3_1 public controller;
     IJBDirectory public directory;
-    IJBSingleTokenPaymentTerminalStore public paymentTerminalStore;
     IJBSingleTokenPaymentTerminalStore3_1_1 public paymentTerminalStore3_1_1;
+    JBETHPaymentTerminal3_1_1 public goerliETHTerminal3_1_1;
+
+    // Dominant Assurance variables and constants
     address payable owner;
     address payable public earlyPledger1 = payable(makeAddr("earlyPledger1"));
     address payable public earlyPledger2 = payable(makeAddr("earlyPledger2"));
     address payable public pledger = payable(makeAddr("pledger"));
-    uint256 public cycleExpiryDate;
+    uint256 public successfulProjectID;
+    uint256 public failedProjectID;
     uint256 public constant STARTING_USER_BALANCE = 1 ether; // 1e18 wei
+    uint256 public constant TOTAL_REFUND_BONUS = 10000 gwei; // 0.00001 ether, 1e13 wei
     uint256 public constant CYCLE_TARGET = 100000 gwei; // 0.0001 ether, 1e14 wei
     uint256 public constant CYCLE_DURATION = 20 days;
     uint256 public constant MIN_PLEDGE_AMOUNT = 1000 gwei; // 0.000001 ether, 1e12 wei
+    uint256 public cycleExpiryDate;
     uint32 public constant MAX_EARLY_PLEDGERS = 2;
-    uint256 public constant TOTAL_REFUND_BONUS = 10000 gwei; // 0.00001 ether, 1e13 wei
-    address ethToken = 0x000000000000000000000000000000000000EEEe;
+    address public ethToken = 0x000000000000000000000000000000000000EEEe;
 
+    // Variables before Juicebox Goerli architecture was updated to 3_1_1.
     // Test project that was created beforehand, using the Juicebox UI at http://goerli.juicebox.money
     // Run test at --fork-block-number 9289741 or after to ensure test chain picks up this project launch.
     uint256 PROJECT_1_ID = 1064; // duration: 86400, weight: 1, start: 1, overflowOf: 1e14
     // "JBETHPaymentTerminal3_1" goerli address, which is "JBPayoutRedemptionPaymentTerminal3_1" (abstract)
-    IJBSingleTokenPaymentTerminal goerliETHTerminal =
-        IJBSingleTokenPaymentTerminal(0x55d4dfb578daA4d60380995ffF7a706471d7c719);
+    IJBSingleTokenPaymentTerminalStore public paymentTerminalStore =
+        IJBSingleTokenPaymentTerminalStore(0x101cA528F6c2E35664529eB8aa0419Ae1f724b49);
     IJBSingleTokenPaymentTerminal goerliETHTerminal3_1 =
         IJBSingleTokenPaymentTerminal(0x0baCb87Cf7DbDdde2299D92673A938E067a9eb29);
-    JBETHPaymentTerminal3_1_1 goerliETHTerminal3_1_1 =
-        JBETHPaymentTerminal3_1_1(0x82129d4109625F94582bDdF6101a8Cd1a27919f5);
-
-    // More test projects:
-    uint256 successfulProjectID;
-    uint256 failedProjectID;
 
     // Events
     event RefundBonusDeposited(address owner, uint256 indexed totalRefundBonus);
@@ -84,7 +83,8 @@ contract DominantJuiceTest_Unit is Test {
 
     function setUp() external {
         DeployDominantJuice deployDominantJuice = new DeployDominantJuice();
-        (dominantJuice, controller, paymentTerminalStore, paymentTerminalStore3_1_1) = deployDominantJuice.run();
+        // If testing on Mainnet contracts, change "goerliETHTerminal3_1_1" variable name to "mainnetETHTerminal3_1_1".
+        (dominantJuice, controller, paymentTerminalStore3_1_1, goerliETHTerminal3_1_1) = deployDominantJuice.run();
         directory = controller.directory();
         owner = payable(dominantJuice.owner());
         vm.deal(owner, STARTING_USER_BALANCE);
@@ -92,7 +92,7 @@ contract DominantJuiceTest_Unit is Test {
         vm.deal(earlyPledger2, STARTING_USER_BALANCE);
         vm.deal(pledger, STARTING_USER_BALANCE);
 
-        // Project Launch variables:
+        // JB Project Launch variables:
         _projectMetadata = JBProjectMetadata({content: "myIPFSHash", domain: 1});
 
         _data = JBFundingCycleData({
@@ -176,18 +176,18 @@ contract DominantJuiceTest_Unit is Test {
         assertEq(dominantJuice.owner(), msg.sender);
     }
 
-    function testProjectLaunch() public {
-        (JBFundingCycle memory fundingCycle,) = controller.currentFundingCycleOf(successfulProjectID);
-        uint256 rate = fundingCycle.discountRate;
-        assertEq(rate, 0);
-    }
-
-    function testConstructorInitiatedContracts() public {
+    function testJBFunctionsWithExistingProject() public {
         (JBFundingCycle memory data,) = controller.currentFundingCycleOf(PROJECT_1_ID);
         assertEq(data.duration, 86400);
 
         uint256 overflow = paymentTerminalStore.currentOverflowOf(goerliETHTerminal3_1, PROJECT_1_ID);
         assertEq(overflow, 1e14);
+    }
+
+    function testProjectLaunch() public {
+        (JBFundingCycle memory fundingCycle,) = controller.currentFundingCycleOf(successfulProjectID);
+        uint256 rate = fundingCycle.discountRate;
+        assertEq(rate, 0);
     }
 
     ///////////////////////////////////
@@ -220,7 +220,7 @@ contract DominantJuiceTest_Unit is Test {
         assertEq(dominantJuice.maxEarlyPledgers(), MAX_EARLY_PLEDGERS);
     }
 
-    // does not let owner call function twice.goerliETHTerminal3_1
+    // does not let owner call function twice
     function testInitializingTwice() public {
         vm.startPrank(owner);
         dominantJuice.initialize(successfulProjectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, MAX_EARLY_PLEDGERS);
@@ -233,7 +233,7 @@ contract DominantJuiceTest_Unit is Test {
     // depositRefundBonus() Tests //
     //////////////////////////////////
 
-    // reverts if initialize() has not been called yet.
+    // reverts if initialize() has not been called yet
     function testDepositRevertsBeforeInitialization() public {
         vm.prank(owner);
         vm.expectRevert(DominantJuice.DataSourceNotInitialized.selector);

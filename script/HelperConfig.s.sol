@@ -18,8 +18,8 @@ import {JBSplit} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBSpli
 contract HelperConfig is Script {
     struct NetworkConfig {
         address controller;
-        address paymentTerminalStore;
         address paymentTerminalStore3_1_1;
+        address ethPaymentTerminal3_1_1;
     }
 
     NetworkConfig public activeNetworkConfig;
@@ -46,8 +46,8 @@ contract HelperConfig is Script {
         NetworkConfig memory goerliConfig = NetworkConfig({
             // JBController 3_1:
             controller: 0x1d260DE91233e650F136Bf35f8A4ea1F2b68aDB6,
-            paymentTerminalStore: 0x101cA528F6c2E35664529eB8aa0419Ae1f724b49,
-            paymentTerminalStore3_1_1: 0x5d8eC74256DB2326843714B852df3acE45144492
+            paymentTerminalStore3_1_1: 0x5d8eC74256DB2326843714B852df3acE45144492,
+            ethPaymentTerminal3_1_1: 0x82129d4109625F94582bDdF6101a8Cd1a27919f5
         });
         return goerliConfig;
     }
@@ -56,8 +56,8 @@ contract HelperConfig is Script {
         NetworkConfig memory mainnetConfig = NetworkConfig({
             // JBController 3_1:
             controller: 0x97a5b9D9F0F7cD676B69f584F29048D0Ef4BB59b,
-            paymentTerminalStore: 0x77b0A81AeB61d08C0b23c739969d22c5C9950336,
-            paymentTerminalStore3_1_1: 0x82129d4109625F94582bDdF6101a8Cd1a27919f5
+            paymentTerminalStore3_1_1: 0x82129d4109625F94582bDdF6101a8Cd1a27919f5,
+            ethPaymentTerminal3_1_1: 0x457cD63bee88ac01f3cD4a67D5DCc921D8C0D573
         });
         return mainnetConfig;
     }

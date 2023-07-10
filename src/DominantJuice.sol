@@ -52,7 +52,6 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     IJBController3_1 public controller;
     IJBDirectory public directory; // directory of terminals and controllers for projects.
     IJBFundAccessConstraintsStore public fundAccessConstraintsStore;
-    IJBFundingCycleStore public fundingCycleStore;
     IJBSingleTokenPaymentTerminal public paymentTerminal;
     IJBSingleTokenPaymentTerminalStore3_1_1 public paymentTerminalStore;
 
@@ -101,8 +100,8 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     error DataSourceNotInitialized();
     error InvalidPaymentEvent(address caller, uint256 projectId, uint256 value);
     error CycleHasExpired();
-    error InvalidRedemptionEvent(address caller, uint256 projectId, uint256 value);
-    error PAYER_NOT_ON_ALLOWLIST(address payer);
+    error NoRefundsForSuccessfulCycle();
+    // error PAYER_NOT_ON_ALLOWLIST(address payer);
     error ContractAlreadyInitialized();
     error AmountIsBelowMinimumPledge(uint256 minAmount);
     error FundsMustMatchInputAmount(uint256 input);
@@ -143,9 +142,6 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         // Stop re-initialization.
         if (projectId != 0) revert ContractAlreadyInitialized();
 
-        // JBController stores directory (which has terminalsOf to get payment terminal), fundaccessconstraints, '
-        //tokenstore, fundingcyclestore, and can get currentFundingCycleOf. Paymentterminal has token()
-
         // Store project parameters and ready JB architecture contracts for calling
         projectId = _projectId;
         directory = controller.directory();
@@ -158,10 +154,6 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(projectId);
         cycleExpiryDate = cycleData.start + cycleData.duration;
         cycleTarget = _cycleTarget;
-        // projectConfiguration = cycleData.configuration;
-        // (cycleTarget,) = fundAccessConstraintsStore.distributionLimitOf(
-        //     projectId, projectConfiguration, paymentTerminal, paymentToken
-        // );
         minimumPledgeAmount = _minimumPledgeAmount;
         maxEarlyPledgers = _maxEarlyPledgers;
 
@@ -180,8 +172,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     }
 
     /**
-     * @notice Refund bonus is deposited before funding cycle start
-     * to increase potential pledger confidence.
+     * @notice Refund bonus is deposited before funding cycle start to increase potential pledger confidence.
      * @dev Can only be called by the contract owner / project creator.
      */
     function depositRefundBonus(uint256 refundBonusAmount) external payable onlyOwner {
@@ -303,6 +294,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
 
         // The if statements are the only changes from the redeemParams() template.
         if (isCycleExpired != true) revert CycleHasNotEndedYet(cycleExpiryDate);
+        if (isTargetMet == true) revert NoRefundsForSuccessfulCycle();
         if (hasBeenRefunded[redeemer] == true) revert AlreadyWithdrawnRefund();
 
         // Forward the default reclaimAmount received from the protocol.
@@ -321,6 +313,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     function didRedeem(JBDidRedeemData3_1_1 calldata _data) external payable {
         address payable redeemer = payable(_data.holder);
         if (isCycleExpired != true) revert CycleHasNotEndedYet(cycleExpiryDate);
+        if (isTargetMet == true) revert NoRefundsForSuccessfulCycle();
         if (hasBeenRefunded[redeemer] == true) revert AlreadyWithdrawnRefund();
 
         // If caller is not an early pledger, function stops here and call chain continues
