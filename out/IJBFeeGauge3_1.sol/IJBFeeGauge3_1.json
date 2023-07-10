@@ -1,0 +1,326 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum JBFeeType",
+          "name": "feeType",
+          "type": "uint8"
+        }
+      ],
+      "name": "currentDiscountFor",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "currentDiscountFor(uint256,uint8)": "192dd609"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"enum JBFeeType\",\"name\":\"feeType\",\"type\":\"uint8\"}],\"name\":\"currentDiscountFor\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFeeGauge3_1.sol\":\"IJBFeeGauge3_1\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@chainlink/=node_modules/@chainlink/\",\":@ensdomains/=node_modules/@ensdomains/\",\":@jbx-protocol/=node_modules/@jbx-protocol/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":@paulrberg/=node_modules/@paulrberg/\",\":@prb/=node_modules/@prb/\",\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":prb-math/=node_modules/prb-math/\"]},\"sources\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/enums/JBFeeType.sol\":{\"keccak256\":\"0x02418e9bd3cce5ccf5a76822909558c61672719767bffe16490256268b05cb22\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://24d241d25943a10291accfce0fa9d8a4ad1176237bef8e328a1e3b865ebfd89c\",\"dweb:/ipfs/QmcefASvSBZ9LWQwfZBxb2H2f4cK6PvMjkxKLtbZEkSAUK\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFeeGauge3_1.sol\":{\"keccak256\":\"0xcf64e4b203422b50c968e890e3cf8621b63014e59dc8be25f13884c316f95266\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://923921c604ecb57d8b13cf7e9949aacbdd2d2c08850b69cb4ead73ab325f807b\",\"dweb:/ipfs/QmYTb18tsG5ZdLxBaGas8hnzUVE5AAcqaWDPwfTRFQJaPB\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.18+commit.87f61d96"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "projectId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum JBFeeType",
+              "name": "feeType",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "currentDiscountFor",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@chainlink/=node_modules/@chainlink/",
+        ":@ensdomains/=node_modules/@ensdomains/",
+        ":@jbx-protocol/=node_modules/@jbx-protocol/",
+        ":@openzeppelin/=node_modules/@openzeppelin/",
+        ":@paulrberg/=node_modules/@paulrberg/",
+        ":@prb/=node_modules/@prb/",
+        ":ds-test/=lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":prb-math/=node_modules/prb-math/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFeeGauge3_1.sol": "IJBFeeGauge3_1"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "node_modules/@jbx-protocol/juice-contracts-v3/contracts/enums/JBFeeType.sol": {
+        "keccak256": "0x02418e9bd3cce5ccf5a76822909558c61672719767bffe16490256268b05cb22",
+        "urls": [
+          "bzz-raw://24d241d25943a10291accfce0fa9d8a4ad1176237bef8e328a1e3b865ebfd89c",
+          "dweb:/ipfs/QmcefASvSBZ9LWQwfZBxb2H2f4cK6PvMjkxKLtbZEkSAUK"
+        ],
+        "license": "MIT"
+      },
+      "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFeeGauge3_1.sol": {
+        "keccak256": "0xcf64e4b203422b50c968e890e3cf8621b63014e59dc8be25f13884c316f95266",
+        "urls": [
+          "bzz-raw://923921c604ecb57d8b13cf7e9949aacbdd2d2c08850b69cb4ead73ab325f807b",
+          "dweb:/ipfs/QmYTb18tsG5ZdLxBaGas8hnzUVE5AAcqaWDPwfTRFQJaPB"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFeeGauge3_1.sol",
+    "id": 32451,
+    "exportedSymbols": {
+      "IJBFeeGauge3_1": [
+        32450
+      ],
+      "JBFeeType": [
+        31448
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:208:28",
+    "nodes": [
+      {
+        "id": 32437,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:28",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 32439,
+        "nodeType": "ImportDirective",
+        "src": "57:51:28",
+        "nodes": [],
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/enums/JBFeeType.sol",
+        "file": "./../enums/JBFeeType.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 32451,
+        "sourceUnit": 31449,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 32438,
+              "name": "JBFeeType",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": 31448,
+              "src": "65:9:28",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 32450,
+        "nodeType": "ContractDefinition",
+        "src": "110:129:28",
+        "nodes": [
+          {
+            "id": 32449,
+            "nodeType": "FunctionDefinition",
+            "src": "139:98:28",
+            "nodes": [],
+            "functionSelector": "192dd609",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "currentDiscountFor",
+            "nameLocation": "148:18:28",
+            "parameters": {
+              "id": 32445,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 32441,
+                  "mutability": "mutable",
+                  "name": "projectId",
+                  "nameLocation": "175:9:28",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 32449,
+                  "src": "167:17:28",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 32440,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "167:7:28",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 32444,
+                  "mutability": "mutable",
+                  "name": "feeType",
+                  "nameLocation": "196:7:28",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 32449,
+                  "src": "186:17:28",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_enum$_JBFeeType_$31448",
+                    "typeString": "enum JBFeeType"
+                  },
+                  "typeName": {
+                    "id": 32443,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 32442,
+                      "name": "JBFeeType",
+                      "nameLocations": [
+                        "186:9:28"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 31448,
+                      "src": "186:9:28"
+                    },
+                    "referencedDeclaration": 31448,
+                    "src": "186:9:28",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_enum$_JBFeeType_$31448",
+                      "typeString": "enum JBFeeType"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "166:38:28"
+            },
+            "returnParameters": {
+              "id": 32448,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 32447,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 32449,
+                  "src": "228:7:28",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 32446,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "228:7:28",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "227:9:28"
+            },
+            "scope": 32450,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IJBFeeGauge3_1",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          32450
+        ],
+        "name": "IJBFeeGauge3_1",
+        "nameLocation": "120:14:28",
+        "scope": 32451,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 28
+}

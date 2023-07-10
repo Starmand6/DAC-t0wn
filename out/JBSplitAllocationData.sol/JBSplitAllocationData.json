@@ -10,22 +10,22 @@
   },
   "ast": {
     "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplitAllocationData.sol",
-    "id": 28465,
+    "id": 35640,
     "exportedSymbols": {
       "JBSplit": [
-        28445
+        35621
       ],
       "JBSplitAllocationData": [
-        28464
+        35639
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "32:636:53",
+    "src": "32:636:85",
     "nodes": [
       {
-        "id": 28447,
+        "id": 35623,
         "nodeType": "PragmaDirective",
-        "src": "32:23:53",
+        "src": "32:23:85",
         "nodes": [],
         "literals": [
           "solidity",
@@ -35,24 +35,24 @@
         ]
       },
       {
-        "id": 28449,
+        "id": 35625,
         "nodeType": "ImportDirective",
-        "src": "57:38:53",
+        "src": "57:38:85",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplit.sol",
         "file": "./JBSplit.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 28465,
-        "sourceUnit": 28446,
+        "scope": 35640,
+        "sourceUnit": 35622,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 28448,
+              "id": 35624,
               "name": "JBSplit",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 28445,
-              "src": "65:7:53",
+              "referencedDeclaration": 35621,
+              "src": "65:7:85",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -61,27 +61,21 @@
         "unitAlias": ""
       },
       {
-        "id": 28464,
+        "id": 35639,
         "nodeType": "StructDefinition",
-        "src": "525:142:53",
+        "src": "525:142:85",
         "nodes": [],
         "canonicalName": "JBSplitAllocationData",
-        "documentation": {
-          "id": 28450,
-          "nodeType": "StructuredDocumentation",
-          "src": "97:428:53",
-          "text": "@custom:member token The token being sent to the split allocator.\n @custom:member amount The amount being sent to the split allocator, as a fixed point number.\n @custom:member decimals The number of decimals in the amount.\n @custom:member projectId The project to which the split belongs.\n @custom:member group The group to which the split belongs.\n @custom:member split The split that caused the allocation."
-        },
         "members": [
           {
             "constant": false,
-            "id": 28452,
+            "id": 35627,
             "mutability": "mutable",
             "name": "token",
-            "nameLocation": "566:5:53",
+            "nameLocation": "566:5:85",
             "nodeType": "VariableDeclaration",
-            "scope": 28464,
-            "src": "558:13:53",
+            "scope": 35639,
+            "src": "558:13:85",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -89,10 +83,10 @@
               "typeString": "address"
             },
             "typeName": {
-              "id": 28451,
+              "id": 35626,
               "name": "address",
               "nodeType": "ElementaryTypeName",
-              "src": "558:7:53",
+              "src": "558:7:85",
               "stateMutability": "nonpayable",
               "typeDescriptions": {
                 "typeIdentifier": "t_address",
@@ -103,13 +97,13 @@
           },
           {
             "constant": false,
-            "id": 28454,
+            "id": 35629,
             "mutability": "mutable",
             "name": "amount",
-            "nameLocation": "583:6:53",
+            "nameLocation": "583:6:85",
             "nodeType": "VariableDeclaration",
-            "scope": 28464,
-            "src": "575:14:53",
+            "scope": 35639,
+            "src": "575:14:85",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -117,10 +111,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 28453,
+              "id": 35628,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "575:7:53",
+              "src": "575:7:85",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -130,13 +124,13 @@
           },
           {
             "constant": false,
-            "id": 28456,
+            "id": 35631,
             "mutability": "mutable",
             "name": "decimals",
-            "nameLocation": "601:8:53",
+            "nameLocation": "601:8:85",
             "nodeType": "VariableDeclaration",
-            "scope": 28464,
-            "src": "593:16:53",
+            "scope": 35639,
+            "src": "593:16:85",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -144,10 +138,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 28455,
+              "id": 35630,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "593:7:53",
+              "src": "593:7:85",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -157,13 +151,13 @@
           },
           {
             "constant": false,
-            "id": 28458,
+            "id": 35633,
             "mutability": "mutable",
             "name": "projectId",
-            "nameLocation": "621:9:53",
+            "nameLocation": "621:9:85",
             "nodeType": "VariableDeclaration",
-            "scope": 28464,
-            "src": "613:17:53",
+            "scope": 35639,
+            "src": "613:17:85",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -171,10 +165,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 28457,
+              "id": 35632,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "613:7:53",
+              "src": "613:7:85",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -184,13 +178,13 @@
           },
           {
             "constant": false,
-            "id": 28460,
+            "id": 35635,
             "mutability": "mutable",
             "name": "group",
-            "nameLocation": "642:5:53",
+            "nameLocation": "642:5:85",
             "nodeType": "VariableDeclaration",
-            "scope": 28464,
-            "src": "634:13:53",
+            "scope": 35639,
+            "src": "634:13:85",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -198,10 +192,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 28459,
+              "id": 35634,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "634:7:53",
+              "src": "634:7:85",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -211,36 +205,36 @@
           },
           {
             "constant": false,
-            "id": 28463,
+            "id": 35638,
             "mutability": "mutable",
             "name": "split",
-            "nameLocation": "659:5:53",
+            "nameLocation": "659:5:85",
             "nodeType": "VariableDeclaration",
-            "scope": 28464,
-            "src": "651:13:53",
+            "scope": 35639,
+            "src": "651:13:85",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_struct$_JBSplit_$28445_storage_ptr",
+              "typeIdentifier": "t_struct$_JBSplit_$35621_storage_ptr",
               "typeString": "struct JBSplit"
             },
             "typeName": {
-              "id": 28462,
+              "id": 35637,
               "nodeType": "UserDefinedTypeName",
               "pathNode": {
-                "id": 28461,
+                "id": 35636,
                 "name": "JBSplit",
                 "nameLocations": [
-                  "651:7:53"
+                  "651:7:85"
                 ],
                 "nodeType": "IdentifierPath",
-                "referencedDeclaration": 28445,
-                "src": "651:7:53"
+                "referencedDeclaration": 35621,
+                "src": "651:7:85"
               },
-              "referencedDeclaration": 28445,
-              "src": "651:7:53",
+              "referencedDeclaration": 35621,
+              "src": "651:7:85",
               "typeDescriptions": {
-                "typeIdentifier": "t_struct$_JBSplit_$28445_storage_ptr",
+                "typeIdentifier": "t_struct$_JBSplit_$35621_storage_ptr",
                 "typeString": "struct JBSplit"
               }
             },
@@ -248,12 +242,12 @@
           }
         ],
         "name": "JBSplitAllocationData",
-        "nameLocation": "532:21:53",
-        "scope": 28465,
+        "nameLocation": "532:21:85",
+        "scope": 35640,
         "visibility": "public"
       }
     ],
     "license": "MIT"
   },
-  "id": 53
+  "id": 85
 }

@@ -32,10 +32,10 @@
   "methodIdentifiers": {
     "prepForMigrationOf(uint256,address)": "3e8c615b"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"}],\"name\":\"prepForMigrationOf\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol\":\"IJBMigratable\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@chainlink/=node_modules/@chainlink/\",\":@ensdomains/=node_modules/@ensdomains/\",\":@jbx-protocol/=node_modules/@jbx-protocol/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":@paulrberg/=node_modules/@paulrberg/\",\":@prb/=node_modules/@prb/\",\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":prb-math/=node_modules/prb-math/\"]},\"sources\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol\":{\"keccak256\":\"0xdee578477bbb7a66e9a1735e45a7795e95cfd374d85f55b61b3302476844c418\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2c2319ed0e7d1c7bfcbd5ae59423fc478d8391d2310625448e7509a4935c0acf\",\"dweb:/ipfs/QmQiiJboCX56m9VvfGwuRK3qvVdt3Zfc4NgzY5tY4vSfGq\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"}],\"name\":\"prepForMigrationOf\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol\":\"IJBMigratable\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@chainlink/=node_modules/@chainlink/\",\":@ensdomains/=node_modules/@ensdomains/\",\":@jbx-protocol/=node_modules/@jbx-protocol/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":@paulrberg/=node_modules/@paulrberg/\",\":@prb/=node_modules/@prb/\",\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":prb-math/=node_modules/prb-math/\"]},\"sources\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol\":{\"keccak256\":\"0xdee578477bbb7a66e9a1735e45a7795e95cfd374d85f55b61b3302476844c418\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2c2319ed0e7d1c7bfcbd5ae59423fc478d8391d2310625448e7509a4935c0acf\",\"dweb:/ipfs/QmQiiJboCX56m9VvfGwuRK3qvVdt3Zfc4NgzY5tY4vSfGq\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
-      "version": "0.8.20+commit.a1b79de6"
+      "version": "0.8.18+commit.87f61d96"
     },
     "language": "Solidity",
     "output": {
@@ -107,19 +107,19 @@
   },
   "ast": {
     "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol",
-    "id": 27448,
+    "id": 32715,
     "exportedSymbols": {
       "IJBMigratable": [
-        27447
+        32714
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "32:126:25",
+    "src": "32:126:34",
     "nodes": [
       {
-        "id": 27439,
+        "id": 32706,
         "nodeType": "PragmaDirective",
-        "src": "32:23:25",
+        "src": "32:23:34",
         "nodes": [],
         "literals": [
           "solidity",
@@ -129,34 +129,34 @@
         ]
       },
       {
-        "id": 27447,
+        "id": 32714,
         "nodeType": "ContractDefinition",
-        "src": "57:100:25",
+        "src": "57:100:34",
         "nodes": [
           {
-            "id": 27446,
+            "id": 32713,
             "nodeType": "FunctionDefinition",
-            "src": "85:70:25",
+            "src": "85:70:34",
             "nodes": [],
             "functionSelector": "3e8c615b",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "prepForMigrationOf",
-            "nameLocation": "94:18:25",
+            "nameLocation": "94:18:34",
             "parameters": {
-              "id": 27444,
+              "id": 32711,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 27441,
+                  "id": 32708,
                   "mutability": "mutable",
                   "name": "projectId",
-                  "nameLocation": "121:9:25",
+                  "nameLocation": "121:9:34",
                   "nodeType": "VariableDeclaration",
-                  "scope": 27446,
-                  "src": "113:17:25",
+                  "scope": 32713,
+                  "src": "113:17:34",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -164,10 +164,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 27440,
+                    "id": 32707,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "113:7:25",
+                    "src": "113:7:34",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -177,13 +177,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 27443,
+                  "id": 32710,
                   "mutability": "mutable",
                   "name": "from",
-                  "nameLocation": "140:4:25",
+                  "nameLocation": "140:4:34",
                   "nodeType": "VariableDeclaration",
-                  "scope": 27446,
-                  "src": "132:12:25",
+                  "scope": 32713,
+                  "src": "132:12:34",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -191,10 +191,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 27442,
+                    "id": 32709,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "132:7:25",
+                    "src": "132:7:34",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -204,15 +204,15 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "112:33:25"
+              "src": "112:33:34"
             },
             "returnParameters": {
-              "id": 27445,
+              "id": 32712,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "154:0:25"
+              "src": "154:0:34"
             },
-            "scope": 27447,
+            "scope": 32714,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -225,16 +225,15 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          27447
+          32714
         ],
         "name": "IJBMigratable",
-        "nameLocation": "67:13:25",
-        "scope": 27448,
-        "usedErrors": [],
-        "usedEvents": []
+        "nameLocation": "67:13:34",
+        "scope": 32715,
+        "usedErrors": []
       }
     ],
     "license": "MIT"
   },
-  "id": 25
+  "id": 34
 }

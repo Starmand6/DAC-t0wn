@@ -10,19 +10,19 @@
   },
   "ast": {
     "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol",
-    "id": 28378,
+    "id": 35547,
     "exportedSymbols": {
       "JBProjectMetadata": [
-        28377
+        35546
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "32:211:49",
+    "src": "32:211:80",
     "nodes": [
       {
-        "id": 28371,
+        "id": 35541,
         "nodeType": "PragmaDirective",
-        "src": "32:23:49",
+        "src": "32:23:80",
         "nodes": [],
         "literals": [
           "solidity",
@@ -32,27 +32,21 @@
         ]
       },
       {
-        "id": 28377,
+        "id": 35546,
         "nodeType": "StructDefinition",
-        "src": "178:64:49",
+        "src": "178:64:80",
         "nodes": [],
         "canonicalName": "JBProjectMetadata",
-        "documentation": {
-          "id": 28372,
-          "nodeType": "StructuredDocumentation",
-          "src": "57:121:49",
-          "text": "@custom:member content The metadata content.\n @custom:member domain The domain within which the metadata applies."
-        },
         "members": [
           {
             "constant": false,
-            "id": 28374,
+            "id": 35543,
             "mutability": "mutable",
             "name": "content",
-            "nameLocation": "214:7:49",
+            "nameLocation": "214:7:80",
             "nodeType": "VariableDeclaration",
-            "scope": 28377,
-            "src": "207:14:49",
+            "scope": 35546,
+            "src": "207:14:80",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -60,10 +54,10 @@
               "typeString": "string"
             },
             "typeName": {
-              "id": 28373,
+              "id": 35542,
               "name": "string",
               "nodeType": "ElementaryTypeName",
-              "src": "207:6:49",
+              "src": "207:6:80",
               "typeDescriptions": {
                 "typeIdentifier": "t_string_storage_ptr",
                 "typeString": "string"
@@ -73,13 +67,13 @@
           },
           {
             "constant": false,
-            "id": 28376,
+            "id": 35545,
             "mutability": "mutable",
             "name": "domain",
-            "nameLocation": "233:6:49",
+            "nameLocation": "233:6:80",
             "nodeType": "VariableDeclaration",
-            "scope": 28377,
-            "src": "225:14:49",
+            "scope": 35546,
+            "src": "225:14:80",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -87,10 +81,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 28375,
+              "id": 35544,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "225:7:49",
+              "src": "225:7:80",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -100,12 +94,12 @@
           }
         ],
         "name": "JBProjectMetadata",
-        "nameLocation": "185:17:49",
-        "scope": 28378,
+        "nameLocation": "185:17:80",
+        "scope": 35547,
         "visibility": "public"
       }
     ],
     "license": "MIT"
   },
-  "id": 49
+  "id": 80
 }

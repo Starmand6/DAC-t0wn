@@ -1,0 +1,70 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/enums/JBFeeType.sol",
+    "id": 31449,
+    "exportedSymbols": {
+      "JBFeeType": [
+        31448
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:80:22",
+    "nodes": [
+      {
+        "id": 31444,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:22",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 31448,
+        "nodeType": "EnumDefinition",
+        "src": "57:54:22",
+        "nodes": [],
+        "canonicalName": "JBFeeType",
+        "members": [
+          {
+            "id": 31445,
+            "name": "PAYOUT",
+            "nameLocation": "76:6:22",
+            "nodeType": "EnumValue",
+            "src": "76:6:22"
+          },
+          {
+            "id": 31446,
+            "name": "ALLOWANCE",
+            "nameLocation": "86:9:22",
+            "nodeType": "EnumValue",
+            "src": "86:9:22"
+          },
+          {
+            "id": 31447,
+            "name": "REDEMPTION",
+            "nameLocation": "99:10:22",
+            "nodeType": "EnumValue",
+            "src": "99:10:22"
+          }
+        ],
+        "name": "JBFeeType",
+        "nameLocation": "62:9:22"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 22
+}
