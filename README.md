@@ -41,7 +41,7 @@ Ideally, the early pledger refund bonus formula is a type of exponential decay, 
 
 Overall, the transparency and deterministic characteristics of the smart contracts help to minimize pledger risk and encourage wider participation, increasing chances of success. Using the dominant assurance mechanism also sends a message to your potential pledgers that you believe in your project so much that you are willing to put your own money at stake for the success of the project.
 
-### DomCrowdfund.sol Crowdfunding Contract Functionality
+### DominantJuice.sol Contract Functionality
 
 - `initialize()`: populates Juicebox `projectID`, `cycleTarget`, `minimumPledgeAmount` and `maxEarlyPledgers` variables, effectively readying the project 
 - `depositRefundBonus()`: allows the contract owner to deposit refund bonus and emits a RefundBonusDeposited event.
@@ -86,7 +86,7 @@ Test Coverage Report coming next commit.
   - Pledgers can pledge funds through the regular Juicebox UI
   - No redemptions, no distributions, and no token transfers for cycle 1.
 - As the Funding Cycle nears close and the results become clear, the next cycle's configuration will need to be considered. At present, if the result is coming down to the wire and there isn't time to reconfigure, then the workaround could be running a script that creates a very short "dummy" cycle 2 which doesn't allow any movement of funds for anyone, and so you'd then have a chance to reconfigure for a cycle 3, now that the results are known. Either way, adjust the following parameters in the front end (or more than likely a via a reconfigure script):
-  - Failed campaign: change `redemptionRate to 100%, change `pausePay` to true, change `pauseRedeem` and `pauseBurn` to false
+  - Failed campaign: change `redemptionRate` to 100%, change `pausePay` to true, change `pauseRedeem` and `pauseBurn` to false
   - Successful campaign: change `pauseDistributions` to false and `pauseRedeem` stays as true.
 - After cycle completion, the creator or pledgers or literally anyone can call `relayCycleResults()`, which opens one of the withdraw functions:
   - For failed cycles/campaigns, pledgers can redeem all their tokens via the Juicebox UI, which calls `redeemTokensOf()` on the `JBPayoutRedemptionTerminal`, which calls `didRedeem()` in DominantJuice (the JB Redemption Delegate here), which sends the early pledger a refund bonus if applicable. 
