@@ -79,18 +79,10 @@ contract MyDelegateProjectDeployer is JBOperatable {
         _projectID = controller.projects().count() + 1;
 
         // Deploy the DominantJuice delegate contract.
-        _delegate = delegateDeployer.deployDelegateFor(
-            _owner,
-            _projectID,
-            _cycleTarget,
-            _minimumPledgeAmount,
-            _maxEarlyPledgers,
-            controller,
-            controller.directory(),
-            paymentTerminalStore
-        );
+        _delegate = delegateDeployer.deployDelegateFor(_owner, _projectID, controller.directory());
 
         _ipfsCID; // Placed inside function to silence unused parameter warning.
+
         // Project's metadata (name, logo, description, social media links) file hash and codec from IPFS
         JBProjectMetadata memory _projectMetadata =
             JBProjectMetadata({content: "QmZpzHK5tuNwVkm2EyJp2tVraD6xSJqdF2TE39hzinr9Bs", domain: 0});
@@ -125,17 +117,13 @@ contract MyDelegateProjectDeployer is JBOperatable {
             metadata: 0
         });
 
-        // Operator struct to give project cycle reconfigure permissions to this contract.
-        uint256[] memory _permissionIndexes = new uint[](1);
-        _permissionIndexes[0] = 1;
-        JBOperatorData memory operatorData =
-            JBOperatorData({operator: address(this), domain: 0, permissionIndexes: _permissionIndexes});
-
-        // Project creator needs to give permission to this contract to be able to reconfigure cycle.
-        operatorStore.setOperator(operatorData);
-
         // Launch the project.
         _launchProjectFor(_owner, _startTime, _projectMetadata, _cycleData, _launchProjectData);
+
+        // Initialize the DominantJuice delegate.
+        _delegate.initialize(
+            _projectID, _cycleTarget, _minimumPledgeAmount, _maxEarlyPledgers, controller, paymentTerminalStore
+        );
     }
 
     /// @notice Reconfigures funding cycles for a project with an attached delegate.

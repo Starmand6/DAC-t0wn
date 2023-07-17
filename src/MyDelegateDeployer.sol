@@ -33,32 +33,19 @@ contract MyDelegateDeployer {
 
     /// @notice Deploys a DominantJuice delegate for the provided project ID.
     /// @param _projectID The ID of the project for which the delegate will be deployed.
-    /// @param _cycleTarget Funding target for the dominant assurance cycle/campaign.
-    /// @param _minimumPledgeAmount Minimum amount that payers can pledge.
-    /// @param _maxEarlyPledgers Maximum allowed early plegers for funding cycle.
     /// @return delegate The address of the newly deployed DominantJuice delegate.
-    function deployDelegateFor(
-        address _owner,
-        uint256 _projectID,
-        uint256 _cycleTarget,
-        uint256 _minimumPledgeAmount,
-        uint32 _maxEarlyPledgers,
-        IJBController3_1 _controller,
-        IJBDirectory _directory,
-        IJBSingleTokenPaymentTerminalStore3_1_1 _paymentTerminalStore
-    ) external returns (DominantJuice) {
+    function deployDelegateFor(address _owner, uint256 _projectID, IJBDirectory _directory)
+        external
+        returns (DominantJuice)
+    {
         //address delegateAddress = address(delegate);
         //address payable payableDelegateAddress = payable(delegateAddress);
 
-        // Deploy the delegate clone from the implementation and map to projectID.
+        // If you wanted to deploy a delegate clone from the implementation and map to projectID.
         // delegate = DominantJuice(Clones.clone(delegateAddress));
+
         delegate = new DominantJuice();
         delegateOfProject[_projectID] = address(delegate);
-
-        // Initialize the DominantJuice delegate.
-        delegate.initialize(
-            _projectID, _cycleTarget, _minimumPledgeAmount, _maxEarlyPledgers, _controller, _paymentTerminalStore
-        );
 
         // Transfer delegate ownership to owner address input. launchProjectFor() owner address
         // is now the owner of the dominant assurance delegate contract clone.

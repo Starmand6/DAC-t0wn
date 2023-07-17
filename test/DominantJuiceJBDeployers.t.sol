@@ -104,9 +104,9 @@ contract DominantJuiceTest_Unit is Test {
             msg.sender, "", CYCLE_TARGET, block.timestamp, CYCLE_DURATION, MIN_PLEDGE_AMOUNT, MAX_EARLY_PLEDGERS
         );
 
-        failProjectID = delegateProjectDeployer.launchProjectFor(
-            msg.sender, "", CYCLE_TARGET, block.timestamp, CYCLE_DURATION, MIN_PLEDGE_AMOUNT, MAX_EARLY_PLEDGERS
-        );
+        // failProjectID = delegateProjectDeployer.launchProjectFor(
+        //     msg.sender, "", CYCLE_TARGET, block.timestamp, CYCLE_DURATION, MIN_PLEDGE_AMOUNT, MAX_EARLY_PLEDGERS
+        // );
 
         //dominantJuice = DominantJuice(delegateDeployer.getDelegateOfProject(successProjectID));
         (, JBFundingCycleMetadata memory metadata) = controller.currentFundingCycleOf(successProjectID);
@@ -125,42 +125,42 @@ contract DominantJuiceTest_Unit is Test {
         // assertEq(rate, 0);
     }
 
-    // function testAllFunctions() public {
-    //     vm.prank(owner);
-    //     dominantJuice.depositRefundBonus{value: TOTAL_REFUND_BONUS}(TOTAL_REFUND_BONUS);
-    //     vm.prank(earlyPledger1);
-    //     goerliETHTerminal3_1_1.pay{value: MIN_PLEDGE_AMOUNT}(
-    //         successProjectID, MIN_PLEDGE_AMOUNT, ethToken, earlyPledger1, 0, false, "", new bytes(0)
-    //     );
-    //     vm.prank(earlyPledger2);
-    //     goerliETHTerminal3_1_1.pay{value: CYCLE_TARGET}(
-    //         successProjectID, CYCLE_TARGET, ethToken, earlyPledger2, 0, false, "", new bytes(0)
-    //     );
-    //     vm.prank(pledger);
-    //     goerliETHTerminal3_1_1.pay{value: MIN_PLEDGE_AMOUNT}(
-    //         successProjectID, MIN_PLEDGE_AMOUNT, ethToken, pledger, 0, false, "", new bytes(0)
-    //     );
-    //     vm.prank(pledger);
-    //     vm.expectRevert();
-    //     goerliETHTerminal3_1_1.redeemTokensOf(
-    //         pledger, successProjectID, MIN_PLEDGE_AMOUNT, ethToken, 0, pledger, "", new bytes(0)
-    //     );
+    function testAllFunctions() public {
+        vm.prank(owner);
+        dominantJuice.depositRefundBonus{value: TOTAL_REFUND_BONUS}(TOTAL_REFUND_BONUS);
+        vm.prank(earlyPledger1);
+        goerliETHTerminal3_1_1.pay{value: MIN_PLEDGE_AMOUNT}(
+            successProjectID, MIN_PLEDGE_AMOUNT, ethToken, earlyPledger1, 0, false, "", new bytes(0)
+        );
+        vm.prank(earlyPledger2);
+        goerliETHTerminal3_1_1.pay{value: CYCLE_TARGET}(
+            successProjectID, CYCLE_TARGET, ethToken, earlyPledger2, 0, false, "", new bytes(0)
+        );
+        vm.prank(pledger);
+        goerliETHTerminal3_1_1.pay{value: MIN_PLEDGE_AMOUNT}(
+            successProjectID, MIN_PLEDGE_AMOUNT, ethToken, pledger, 0, false, "", new bytes(0)
+        );
+        vm.prank(pledger);
+        vm.expectRevert();
+        goerliETHTerminal3_1_1.redeemTokensOf(
+            pledger, successProjectID, MIN_PLEDGE_AMOUNT, ethToken, 0, pledger, "", new bytes(0)
+        );
 
-    //     vm.warp(block.timestamp + CYCLE_DURATION + 100);
-    //     dominantJuice.relayCycleResults();
-    //     uint256 balanceBefore = owner.balance;
-    //     vm.expectRevert();
-    //     goerliETHTerminal3_1_1.redeemTokensOf(
-    //         pledger, successProjectID, MIN_PLEDGE_AMOUNT, ethToken, 0, pledger, "", new bytes(0)
-    //     );
-    //     vm.prank(owner);
-    //     console.log(dominantJuice.getBalance());
-    //     vm.prank(owner);
-    //     dominantJuice.creatorWithdraw(owner, TOTAL_REFUND_BONUS);
-    //     uint256 balanceAfter = owner.balance;
-    //     uint256 diff = balanceAfter - balanceBefore;
-    //     assertEq(diff, TOTAL_REFUND_BONUS);
-    // }
+        vm.warp(block.timestamp + CYCLE_DURATION + 100);
+        dominantJuice.relayCycleResults();
+        uint256 balanceBefore = owner.balance;
+        vm.expectRevert();
+        goerliETHTerminal3_1_1.redeemTokensOf(
+            pledger, successProjectID, MIN_PLEDGE_AMOUNT, ethToken, 0, pledger, "", new bytes(0)
+        );
+        vm.prank(owner);
+        console.log(dominantJuice.getBalance());
+        vm.prank(owner);
+        dominantJuice.creatorWithdraw(owner, TOTAL_REFUND_BONUS);
+        uint256 balanceAfter = owner.balance;
+        uint256 diff = balanceAfter - balanceBefore;
+        assertEq(diff, TOTAL_REFUND_BONUS);
+    }
 
     function testReconfigure() public {
         vm.startPrank(owner);

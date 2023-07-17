@@ -130,10 +130,11 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         paymentTerminalStore = _paymentTerminalStore;
         directory = controller.directory();
         fundAccessConstraintsStore = controller.fundAccessConstraintsStore();
-
-        // launchProjetFor() call is still active at this line of code, so the rest of the
-        // project parameters can't be populated until the call finishes. They will be populated
-        // when depositRefundBonus() is called.
+        address tempTerminal = address(directory.terminalsOf(projectId)[0]);
+        paymentTerminal = IJBSingleTokenPaymentTerminal(tempTerminal);
+        paymentToken = paymentTerminal.token();
+        (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(projectId);
+        cycleExpiryDate = cycleData.start + cycleData.duration;
     }
 
     /**
@@ -147,13 +148,6 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
 
         // Reverts if ETH sent does not match input amount.
         if (msg.value != refundBonusAmount) revert FundsMustMatchInputAmount(refundBonusAmount);
-
-        // Store remaining parameters not stored during initialize() call.
-        address tempTerminal = address(directory.terminalsOf(projectId)[0]);
-        paymentTerminal = IJBSingleTokenPaymentTerminal(tempTerminal);
-        paymentToken = paymentTerminal.token();
-        (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(projectId);
-        cycleExpiryDate = cycleData.start + cycleData.duration;
 
         // Updates contract refund bonus variable.
         totalRefundBonus = refundBonusAmount;
