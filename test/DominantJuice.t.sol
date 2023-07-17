@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.20;
 
 import {Test, console} from "forge-std/Test.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {DeployDominantJuice} from "../script/DeployDominantJuice.s.sol";
+import {DeployContracts} from "../script/DeployContracts.s.sol";
 import {DominantJuice} from "../src/DominantJuice.sol";
+import {MyDelegateDeployer} from "../src/MyDelegateDeployer.sol";
+import {MyDelegateProjectDeployer} from "../src/MyDelegateProjectDeployer.sol";
 import {IJBController3_1} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_1.sol";
 import {IJBDirectory} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBDirectory.sol";
 import {IJBSingleTokenPaymentTerminalStore} from
@@ -44,6 +47,8 @@ contract DominantJuiceTest_Unit is Test {
     JBFundAccessConstraints[] _fundAccessConstraints; // Default empty
     IJBPaymentTerminal[] _terminals; // Default empty
     DominantJuice dominantJuice;
+    MyDelegateDeployer delegateDeployer;
+    MyDelegateProjectDeployer projectDelegateDeployer;
     IJBController3_1 public controller;
     IJBDirectory public directory;
     IJBSingleTokenPaymentTerminalStore3_1_1 public paymentTerminalStore3_1_1;
@@ -82,9 +87,17 @@ contract DominantJuiceTest_Unit is Test {
     event OwnerWithdrawal(address, uint256);
 
     function setUp() external {
-        DeployDominantJuice deployDominantJuice = new DeployDominantJuice();
+        //DeployDominantJuice deployDominantJuice = new DeployDominantJuice();
+        DeployContracts deployContracts = new DeployContracts();
         // If testing on Mainnet contracts, change "goerliETHTerminal3_1_1" variable name to "mainnetETHTerminal3_1_1".
-        (dominantJuice, controller, paymentTerminalStore3_1_1, goerliETHTerminal3_1_1) = deployDominantJuice.run();
+        (
+            controller,
+            paymentTerminalStore3_1_1,
+            goerliETHTerminal3_1_1,
+            dominantJuice,
+            delegateDeployer,
+            projectDelegateDeployer
+        ) = deployContracts.run();
         directory = controller.directory();
         owner = payable(dominantJuice.owner());
         vm.deal(owner, STARTING_USER_BALANCE);

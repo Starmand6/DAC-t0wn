@@ -103,13 +103,13 @@
     }
   ],
   "bytecode": {
-    "object": "0x6080604052600c805460ff1916600117905534801561001d57600080fd5b50466005036100c4576040805160608082018352600080835260208084018290529284015282519081018352731d260de91233e650f136bf35f8a4ea1f2b68adb6808252735d8ec74256db2326843714b852df3ace451444929282018390527382129d4109625f94582bddf6101a8cd1a27919f591909301819052600d80546001600160a01b03199081169094179055600e80548416909217909155600f80549092161790555b4660010361016a5760408051606080820183526000808352602080840182905292840152825190810183527397a5b9d9f0f7cd676b69f584f29048d0ef4bb59b8082527382129d4109625f94582bddf6101a8cd1a27919f592820183905273457cd63bee88ac01f3cd4a67d5dcc921d8c0d57391909301819052600d80546001600160a01b03199081169094179055600e80548416909217909155600f80549092161790555b61020f806101796000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c8063283d486b146100515780635357136d146100fb578063d7b6574514610172578063f8ccbf47146101bc575b600080fd5b60408051606080820183526000808352602080840182905292840152825190810183527397a5b9d9f0f7cd676b69f584f29048d0ef4bb59b81527382129d4109625f94582bddf6101a8cd1a27919f59181019190915273457cd63bee88ac01f3cd4a67d5dcc921d8c0d573918101919091525b6040805182516001600160a01b03908116825260208085015182169083015292820151909216908201526060015b60405180910390f35b6040805160608082018352600080835260208084018290529284015282519081018352731d260de91233e650f136bf35f8a4ea1f2b68adb68152735d8ec74256db2326843714b852df3ace45144492918101919091527382129d4109625f94582bddf6101a8cd1a27919f5918101919091526100c4565b600d54600e54600f54610192926001600160a01b03908116928116911683565b604080516001600160a01b03948516815292841660208401529216918101919091526060016100f2565b600c546101c99060ff1681565b60405190151581526020016100f256fea26469706673582212208e2058e33ef9750999369f94ee4386211cec6aef81b71f2b7fc0093d3127220264736f6c63430008120033",
-    "sourceMap": "1338:1620:104:-:0;;;758:28:2;;;-1:-1:-1;;758:28:2;782:4;758:28;;;1569:302:104;;;;;;;;;;1597:13;1614:1;1597:18;1593:88;;1338:1620;;;;;;;;;-1:-1:-1;1338:1620:104;;;;;;;;;;;;;;2179:290;;;;;;;2252:42;2179:290;;;2335:42;2179:290;;;;;;2416:42;2179:290;;;;;;;1631:19;:39;;-1:-1:-1;;;;;;1631:39:104;;;;;;;;;;;;;;;;;;;;;;;;;;;;1593:88;1694:13;1711:1;1694:18;1690:89;;1338:1620;;;;;;;;;-1:-1:-1;1338:1620:104;;;;;;;;;;;;;;2629:290;;;;;;;2702:42;2629:290;;;2785:42;2629:290;;;;;;2866:42;2629:290;;;;;;;1728:19;:40;;-1:-1:-1;;;;;;1728:40:104;;;;;;;;;;;;;;;;;;;;;;;;;;;;1690:89;1338:1620;;;;;;",
+    "object": "0x6080604052600c805460ff1916600117905534801561001d57600080fd5b50466005036100c4576040805160608082018352600080835260208084018290529284015282519081018352731d260de91233e650f136bf35f8a4ea1f2b68adb6808252735d8ec74256db2326843714b852df3ace451444929282018390527382129d4109625f94582bddf6101a8cd1a27919f591909301819052600d80546001600160a01b03199081169094179055600e80548416909217909155600f80549092161790555b4660010361016a5760408051606080820183526000808352602080840182905292840152825190810183527397a5b9d9f0f7cd676b69f584f29048d0ef4bb59b8082527382129d4109625f94582bddf6101a8cd1a27919f592820183905273457cd63bee88ac01f3cd4a67d5dcc921d8c0d57391909301819052600d80546001600160a01b03199081169094179055600e80548416909217909155600f80549092161790555b61020f806101796000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c8063283d486b146100515780635357136d146100fb578063d7b6574514610172578063f8ccbf47146101bc575b600080fd5b60408051606080820183526000808352602080840182905292840152825190810183527397a5b9d9f0f7cd676b69f584f29048d0ef4bb59b81527382129d4109625f94582bddf6101a8cd1a27919f59181019190915273457cd63bee88ac01f3cd4a67d5dcc921d8c0d573918101919091525b6040805182516001600160a01b03908116825260208085015182169083015292820151909216908201526060015b60405180910390f35b6040805160608082018352600080835260208084018290529284015282519081018352731d260de91233e650f136bf35f8a4ea1f2b68adb68152735d8ec74256db2326843714b852df3ace45144492918101919091527382129d4109625f94582bddf6101a8cd1a27919f5918101919091526100c4565b600d54600e54600f54610192926001600160a01b03908116928116911683565b604080516001600160a01b03948516815292841660208401529216918101919091526060016100f2565b600c546101c99060ff1681565b60405190151581526020016100f256fea264697066735822122092e4ee6f1be445f71ffdb0ad316c776c2593aea9de416c68c7a56384f8f2f29b64736f6c63430008140033",
+    "sourceMap": "1338:1620:106:-:0;;;758:28:2;;;-1:-1:-1;;758:28:2;782:4;758:28;;;1569:302:106;;;;;;;;;;1597:13;1614:1;1597:18;1593:88;;1338:1620;;;;;;;;;-1:-1:-1;1338:1620:106;;;;;;;;;;;;;;2179:290;;;;;;;2252:42;2179:290;;;2335:42;2179:290;;;;;;2416:42;2179:290;;;;;;;1631:19;:39;;-1:-1:-1;;;;;;1631:39:106;;;;;;;;;;;;;;;;;;;;;;;;;;;;1593:88;1694:13;1711:1;1694:18;1690:89;;1338:1620;;;;;;;;;-1:-1:-1;1338:1620:106;;;;;;;;;;;;;;2629:290;;;;;;;2702:42;2629:290;;;2785:42;2629:290;;;;;;2866:42;2629:290;;;;;;;1728:19;:40;;-1:-1:-1;;;;;;1728:40:106;;;;;;;;;;;;;;;;;;;;;;;;;;;;1690:89;1338:1620;;;;;;",
     "linkReferences": {}
   },
   "deployedBytecode": {
-    "object": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c8063283d486b146100515780635357136d146100fb578063d7b6574514610172578063f8ccbf47146101bc575b600080fd5b60408051606080820183526000808352602080840182905292840152825190810183527397a5b9d9f0f7cd676b69f584f29048d0ef4bb59b81527382129d4109625f94582bddf6101a8cd1a27919f59181019190915273457cd63bee88ac01f3cd4a67d5dcc921d8c0d573918101919091525b6040805182516001600160a01b03908116825260208085015182169083015292820151909216908201526060015b60405180910390f35b6040805160608082018352600080835260208084018290529284015282519081018352731d260de91233e650f136bf35f8a4ea1f2b68adb68152735d8ec74256db2326843714b852df3ace45144492918101919091527382129d4109625f94582bddf6101a8cd1a27919f5918101919091526100c4565b600d54600e54600f54610192926001600160a01b03908116928116911683565b604080516001600160a01b03948516815292841660208401529216918101919091526060016100f2565b600c546101c99060ff1681565b60405190151581526020016100f256fea26469706673582212208e2058e33ef9750999369f94ee4386211cec6aef81b71f2b7fc0093d3127220264736f6c63430008120033",
-    "sourceMap": "1338:1620:104:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2511:445;-1:-1:-1;;;;;;;;;;;;;;;;;;;;;;;;2629:290:104;;;;;;;2702:42;2629:290;;2785:42;2629:290;;;;;;;2866:42;2629:290;;;;;;;2511:445;;;;284:13:109;;-1:-1:-1;;;;;280:22:109;;;262:41;;363:4;351:17;;;345:24;341:33;;319:20;;;312:63;423:17;;;417:24;413:33;;;391:20;;;384:63;212:2;197:18;2511:445:104;;;;;;;;2063:442;-1:-1:-1;;;;;;;;;;;;;;;;;;;;;;;;2179:290:104;;;;;;;2252:42;2179:290;;2335:42;2179:290;;;;;;;2416:42;2179:290;;;;;;;2063:442;;1522:40;;;;;;;;;-1:-1:-1;;;;;1522:40:104;;;;;;;;;;;;;;-1:-1:-1;;;;;716:15:109;;;698:34;;768:15;;;763:2;748:18;;741:43;820:15;;800:18;;;793:43;;;;648:2;633:18;1522:40:104;458:384:109;758:28:2;;;;;;;;;;;;1012:14:109;;1005:22;987:41;;975:2;960:18;758:28:2;847:187:109",
+    "object": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c8063283d486b146100515780635357136d146100fb578063d7b6574514610172578063f8ccbf47146101bc575b600080fd5b60408051606080820183526000808352602080840182905292840152825190810183527397a5b9d9f0f7cd676b69f584f29048d0ef4bb59b81527382129d4109625f94582bddf6101a8cd1a27919f59181019190915273457cd63bee88ac01f3cd4a67d5dcc921d8c0d573918101919091525b6040805182516001600160a01b03908116825260208085015182169083015292820151909216908201526060015b60405180910390f35b6040805160608082018352600080835260208084018290529284015282519081018352731d260de91233e650f136bf35f8a4ea1f2b68adb68152735d8ec74256db2326843714b852df3ace45144492918101919091527382129d4109625f94582bddf6101a8cd1a27919f5918101919091526100c4565b600d54600e54600f54610192926001600160a01b03908116928116911683565b604080516001600160a01b03948516815292841660208401529216918101919091526060016100f2565b600c546101c99060ff1681565b60405190151581526020016100f256fea264697066735822122092e4ee6f1be445f71ffdb0ad316c776c2593aea9de416c68c7a56384f8f2f29b64736f6c63430008140033",
+    "sourceMap": "1338:1620:106:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2511:445;-1:-1:-1;;;;;;;;;;;;;;;;;;;;;;;;2629:290:106;;;;;;;2702:42;2629:290;;2785:42;2629:290;;;;;;;2866:42;2629:290;;;;;;;2511:445;;;;284:13:117;;-1:-1:-1;;;;;280:22:117;;;262:41;;363:4;351:17;;;345:24;341:33;;319:20;;;312:63;423:17;;;417:24;413:33;;;391:20;;;384:63;212:2;197:18;2511:445:106;;;;;;;;2063:442;-1:-1:-1;;;;;;;;;;;;;;;;;;;;;;;;2179:290:106;;;;;;;2252:42;2179:290;;2335:42;2179:290;;;;;;;2416:42;2179:290;;;;;;;2063:442;;1522:40;;;;;;;;;-1:-1:-1;;;;;1522:40:106;;;;;;;;;;;;;;-1:-1:-1;;;;;716:15:117;;;698:34;;768:15;;;763:2;748:18;;741:43;820:15;;800:18;;;793:43;;;;648:2;633:18;1522:40:106;458:384:117;758:28:2;;;;;;;;;;;;1012:14:117;;1005:22;987:41;;975:2;960:18;758:28:2;847:187:117",
     "linkReferences": {}
   },
   "methodIdentifiers": {
@@ -118,10 +118,10 @@
     "getGoerliConfig()": "5357136d",
     "getMainnetConfig()": "283d486b"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"IS_SCRIPT\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"activeNetworkConfig\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"paymentTerminalStore3_1_1\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"ethPaymentTerminal3_1_1\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getGoerliConfig\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"paymentTerminalStore3_1_1\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"ethPaymentTerminal3_1_1\",\"type\":\"address\"}],\"internalType\":\"struct HelperConfig.NetworkConfig\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMainnetConfig\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"paymentTerminalStore3_1_1\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"ethPaymentTerminal3_1_1\",\"type\":\"address\"}],\"internalType\":\"struct HelperConfig.NetworkConfig\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"script/HelperConfig.s.sol\":\"HelperConfig\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@chainlink/=node_modules/@chainlink/\",\":@ensdomains/=node_modules/@ensdomains/\",\":@jbx-protocol/=node_modules/@jbx-protocol/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":@paulrberg/=node_modules/@paulrberg/\",\":@prb/=node_modules/@prb/\",\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":prb-math/=node_modules/prb-math/\"]},\"sources\":{\"lib/forge-std/src/Base.sol\":{\"keccak256\":\"0x609e3a00319169988cc8272e837f350a9ba77cf8f8f62e4897a8e4a8a5f0fb27\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b24435e35ba5b080ebd6e8976c23fb735c7212d042be8462ffd2ea50c5250363\",\"dweb:/ipfs/QmPeVvN7FS4oMmCuYAeRdZihTfrG4tA7Vvunuvv59a6wre\"]},\"lib/forge-std/src/Script.sol\":{\"keccak256\":\"0xd566affaba92598bcd059dcb3714a968aeedb365ec0d666815e8b38519e0f433\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2fb5f7a97d2a7a06e10c198b60f05e64176eb4ef306b72800c168e7a7ec51693\",\"dweb:/ipfs/Qmcep4r7YEU3BwFJNTTxZsdCVzBYdtcVp8oDtmwLoZGRzP\"]},\"lib/forge-std/src/StdChains.sol\":{\"keccak256\":\"0xdbf2c734ffcc665d175a4b239d90a6ceb873d613c26ce7dc5c4d3131b76a0e92\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://53e1caed2b51fc82c3050f37cb6ee1fb9a2627baaae4cb08919b795a7216db2d\",\"dweb:/ipfs/Qmepc4Zd44EpqBjLHVAGzu6B5QqY1zqecHgfBTpZcQ7HZ7\"]},\"lib/forge-std/src/StdCheats.sol\":{\"keccak256\":\"0xf1076813373cbd519d03411288590a8d9729592934718b0f6b54ca281c855dd7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9cc7c5c97c15c4adb648fbc35d4909f81b09e52410ffb4e8010a0f1e272a7fb5\",\"dweb:/ipfs/QmV3oNjq9tZmQBZMtaEEwaXdfcNSzu8KhupXEzcZ3BHMsc\"]},\"lib/forge-std/src/StdJson.sol\":{\"keccak256\":\"0x113bce4d6d0fe7c4e1e3bf2760ba21c075448660a8dae6003f27b9ff86890612\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8c8a169ea47398b475696e66d07e354d9997680b5f954418caeeaec5427a131f\",\"dweb:/ipfs/QmSTK6XmjgYZ2CCGZ87AVTowNL3UWfRvqhT6DTbZoKyJzz\"]},\"lib/forge-std/src/StdMath.sol\":{\"keccak256\":\"0xd90ad4fd8aeaeb8929964e686e769fdedd5eded3fc3815df194a0ab9f91a3fb2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7919b70f636c7b805223992f28ad1ad0145d6c1385b5931a3589aface5fe6c92\",\"dweb:/ipfs/QmY7FRaULwoGgFteF8GawjQJRfasNgpWnU2aiMsFrYpuTC\"]},\"lib/forge-std/src/StdStorage.sol\":{\"keccak256\":\"0xd1517df281f973dba8b7ba52c02d3df552b60d91b8f47e4669049da648778673\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://52e43264f58a5dcfd985f3c99aa81064805aa8f1c2b4c6521fd63d45cdbba8d5\",\"dweb:/ipfs/QmUMTF6cRjt5tCQrrgQDXVRmHQLjevNsTvLFdaA1m9TBj9\"]},\"lib/forge-std/src/StdUtils.sol\":{\"keccak256\":\"0xe3955cfd5a73fbf56acf7a7709cc9db1dfdd70e6a969bb6b19106de6f1049b4c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f30db8c85f6a04f5433d876859c89e51ecbea5ef6cdcadd5f2a342f216e6f6a9\",\"dweb:/ipfs/QmUm6cbRKtYcSSH2uib2f2aJ5qd6wBzkQUbPTP7jKW2Ayz\"]},\"lib/forge-std/src/Vm.sol\":{\"keccak256\":\"0xe0cfe5ca62fb9d9366be870999bd82802d6b913c1f960f67b8f17060008f2d1a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ddadc1e899953cb26e7d87c0f27284d02f09b611cfd3300e321c33dc2c65d0b3\",\"dweb:/ipfs/Qmbmrdph3D5YweihJSPM6sopZcSKWMox2ZM89dyonfhrq8\"]},\"lib/forge-std/src/console.sol\":{\"keccak256\":\"0x91d5413c2434ca58fd278b6e1e79fd98d10c83931cc2596a6038eee4daeb34ba\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://91ccea707361e48b9b7a161fe81f496b9932bc471e9c4e4e1e9c283f2453cc70\",\"dweb:/ipfs/QmcB66sZhQ6Kz7MUHcLE78YXRUZxoZnnxZjN6yATsbB2ec\"]},\"lib/forge-std/src/console2.sol\":{\"keccak256\":\"0xcd5706f5a7025825d9fd389c89b49bf571f9abaea8a062dc4048320b5b43bf46\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c066485a7d4bd18d44efb4c89274b0959e8066b9a480383a2ce07d7f31555f88\",\"dweb:/ipfs/QmckeYfA5FtAjcxaytq69Dpj6uY57tbQ61kNPPxXi9kgbW\"]},\"lib/forge-std/src/interfaces/IMulticall3.sol\":{\"keccak256\":\"0x7aac1389150499a922d1f9ef5749c908cef127cb2075b92fa17e9cb611263d0a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d95ebb7c7c463e08ebc12dab639945752fb2480acfc6e86da32f72732a7fd0c0\",\"dweb:/ipfs/QmNXK8P8oPWwajsQHvAHw3JPyQidPLCGQN3hWu1Lk6PBL2\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/enums/JBBallotState.sol\":{\"keccak256\":\"0x891fcac63470398b3a11239da7feba6b07d640809fcefd2404303b823d7378f8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6e6adfceaf284b669a8c1cbcf2da7f18ab31a2d1066f9db8bc914349e7401de7\",\"dweb:/ipfs/QmXLHVRPPZdXUkgAHQbHUtEzAvCJk1P6rJ7wrwfTcfW6fw\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_0_1.sol\":{\"keccak256\":\"0xf64926bf7ab5850ea9b7ec27d92a021f02344a3fadb0396af80966ad08b3dd2b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://803da92446a210c66b1226ae88f13b185040ecbd53b292d363e60ac5abaf82de\",\"dweb:/ipfs/Qmb9MWB9bnCakpjokXN9ncEAmVYLctabq3oVt8r8jF7YFW\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_1.sol\":{\"keccak256\":\"0xe09f3d0d670a40e5d66d3fddc8a63f51b8ccb24175ffbb703ba95496deb85bdb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d03b8f7f8f5ba15f428b326fedce6cbcb507668c06dabc5bf2fe363ce0fccb00\",\"dweb:/ipfs/QmfFZuGd8i25KcF9qSJpgBPPRRi8meBbrVT3sFMDN5p7CL\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBDirectory.sol\":{\"keccak256\":\"0x490d5fe691ee7d9c9179fa19964de279882176513d92f3efc0aa98dc34799d1c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0f75001d5c852ac60176b03461b6c07b43b451c3ab1c29fd3a48374e0b2fdcdd\",\"dweb:/ipfs/QmQDbgYJjpNDNe2YJJGMF1jNcDxnLQJ2ZVxmmrbRv8KyS6\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundAccessConstraintsStore.sol\":{\"keccak256\":\"0x82e3daec501e6f4d27ad7b9ab67f449e3cd4ef83a75062cd8b6fbffc17ae634d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4d6a24b2e2f5d497f003d556fca29662c2a84babd7f7c7a4abad66f8abb91f97\",\"dweb:/ipfs/QmNVoDzqjJhGykP9ae6PDkZEKZ1xJikmDkYyzrgkkfhCuw\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleBallot.sol\":{\"keccak256\":\"0x729b4a700618f890e434d31ef9252e1cce9d0473fe7f8f070872df5b348bed23\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4ceabd16778c64ac0a61bf6f7e266cdbb31ebbc74291f147eb2bc1ea9c52fb42\",\"dweb:/ipfs/QmbgQJWLzeHGhywhiFqmHAHM6ujohm38c43Pn9s6qQWRNx\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleStore.sol\":{\"keccak256\":\"0x524350f6c6fcb45eaf927f4e6d13cd2f5029c2b858233bb9a338fe411ce34dab\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f04900543c6d11c225e1b14fc9a56d797f1d039764cdfeed6d7f65d696542ef8\",\"dweb:/ipfs/QmQGTu7B4BRzq5uPDjQrPezmDdumPmiF5vp26SskkDzkvG\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol\":{\"keccak256\":\"0xdee578477bbb7a66e9a1735e45a7795e95cfd374d85f55b61b3302476844c418\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2c2319ed0e7d1c7bfcbd5ae59423fc478d8391d2310625448e7509a4935c0acf\",\"dweb:/ipfs/QmQiiJboCX56m9VvfGwuRK3qvVdt3Zfc4NgzY5tY4vSfGq\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol\":{\"keccak256\":\"0x273bc1fa373fac08e5635fce7d38fd92e9fabba353568b3f7a5be54c01fe4d27\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://cc095a25121e0f665d8e4ef331a1e9c7e99017411bec3ac9a8bb76046340f77c\",\"dweb:/ipfs/QmbfcURUEoP7mihobZ69VpHwDCZeuhiqPERM1z1mTJRZUT\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBProjects.sol\":{\"keccak256\":\"0x00235f20975e6a9465ac921076c85125a3834e29893f93f93e287a89f9e6b915\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f5e2f3a47fe0d95439504b4c6e80b76e19301acfe1e2d080b2ea949fafd9c176\",\"dweb:/ipfs/QmNSAJa8XHuDMrg88HJybBhoYUKRC9hQ6ku3C1Dak8Fntg\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSplitAllocator.sol\":{\"keccak256\":\"0x1643b444409d91858eb86f67abf3d757d2deb3ccd7265eb8e68d6ffdac083de6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4c9004fb8a2a80964dd7fd9c62457623948c34b10d9c30c32745232e78377f32\",\"dweb:/ipfs/QmcMePdnc8xypV2y8PBgfVzLWdTLMY89vqPDcfVVGiUqfK\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSplitsStore.sol\":{\"keccak256\":\"0x3ce0eb12f10282481a3bf86e62b368bcff254081088cfabb20353d60cfadbc7a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://31076aa49dc20a2f4c8cb4363e410ddb06ba93d03c4349599b84075e2822f1f0\",\"dweb:/ipfs/QmP9YQxvpC2zpQKv4BDLwaT6VcZ5Zng8o4iUXbUHWAJ9u1\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBToken.sol\":{\"keccak256\":\"0xeefe58d140e4e13f255d5c7c5cdf5ba66dd00835f04015c446ff224f8ad14c34\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2e6d8e5f18acbf65c8ef3dfae5cd0f5c157f0bfd0ac36d022ebaa94cb463a583\",\"dweb:/ipfs/QmWDRa5e2t8ggGsi428Mkv8rtWHjTkgE5GJRhMKq4YjCbg\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBTokenStore.sol\":{\"keccak256\":\"0x4db7bb4fe824dc9bfbc997ea3e07f42be8900bcad4e0b991e726c23c2de84ba4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://adaa769b2c76c00e3026334ba15942357b0571d93b5f26dff0b121d418f803c1\",\"dweb:/ipfs/QmXCpF6kuyvXxvn9fNYR6ts2cMnc1Mn2MByMYy8d7ga6cU\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBTokenUriResolver.sol\":{\"keccak256\":\"0xc7c9537184a1a36bc30874e5ac29b0fbccf45a99d40806837cfe30d6d9a1c84a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://073271efd14bd4aa04735252b095f11406d61f598b5e59c4127596c99079543d\",\"dweb:/ipfs/QmdgeFg6emo3UGXdn8qXDs2dAeVoLpPjd84KoxyjgsFphr\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol\":{\"keccak256\":\"0xbef975eb73e58c00eaaa7abbd449db545056b049907bb2034aefcdde10bcf11f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://acc1fc97d791704967811be4df56e8c35ce95f68196045521dcf7524eab2021f\",\"dweb:/ipfs/QmSM1GTWNUeJ1HrhwQ7X9npXZuC59gfvQMXfsXVJESzaMs\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycle.sol\":{\"keccak256\":\"0x01d2ee9ae017694097985a08a36421b6801d96badd16e38c6085f3a5ac796ed1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5b18199154a7975bb44f2c64541839451220acd33c3a25c025556695bdfcd4d6\",\"dweb:/ipfs/QmW7rTHexjEwmvbgMAS5x2eNfikbVBtZqxPzB78777xFHL\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleData.sol\":{\"keccak256\":\"0x3cd9257969fdd54bee497b01be2c623e33c941306662002b3b88fa0ab8a27db5\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e2d2583b469a22ab24a575b24c6dc5d074fc0959908cb6fcb1fee0037e53e520\",\"dweb:/ipfs/QmS3xWvnZTW5JwEP9qS2jUUZQGx97kVkM8brfy3NsDJEy2\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleMetadata.sol\":{\"keccak256\":\"0x477bbd36c94da3f56fac6c8c60b2e2e3c5b8fc557a880b5359980bc556ccd300\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b0b5858872b0fb3ac81edcaaa69df55cd2cf6d4ec175142fd1aaa8d7fbed71d1\",\"dweb:/ipfs/QmfRQatH7uCFQZWtQij7kPvoz5XfSbZt7QJuUX7Ms9ivZW\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol\":{\"keccak256\":\"0x5f95bce22550c69bb7b1ee17279d51415ae8bae10c5b759c8b88f0b0aba854ed\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b825a8be39f69c06d43be87bef14d1b9ab94902bccb536a970dccf0105d82e99\",\"dweb:/ipfs/QmXEXqvH6bSx7x92rVSMshxqRVS5Rynrx59V1GsZsWQsxJ\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGroupedSplits.sol\":{\"keccak256\":\"0x71fcdbff5cd055cee8d06b73568c44cedda8f5a2351e7d8ce9dd71d8a1f914a8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5df45f11b5d3313ab25c068f4b0ed8a7c927f9a82eb1960036235e91d790cd3e\",\"dweb:/ipfs/Qmdc97Eeer74yZXJNYXkPtynzgMUeXqtbZFDLA6qgFHdyq\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol\":{\"keccak256\":\"0x9545ea42927f3451c9d901a2f7ab7c1aeef3242e5ed2b75521a90225a5a0f891\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://345e020cbe67914c3d804526db23c4f878eb2f106454644a8899fba0815941e5\",\"dweb:/ipfs/Qmd8dJmVebmssCkEsHyytRNTy7KcbmggQ9vqD7i8NwWdHL\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplit.sol\":{\"keccak256\":\"0x7bf3f79f95cf6211dcdcf5af68ddc963f2304379ea50a5feaf27c645879fe3fe\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d6a9a86ded01128f50e75bffde831b3e33b4b1497a8392fc0d94f96ef49d6217\",\"dweb:/ipfs/QmShPBn7juPHkyKfV1yQ95nqtW1YSWzecmo37SimFQVxso\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplitAllocationData.sol\":{\"keccak256\":\"0x85dcbcad02f315a1a3cc44140ffc77fdfbcafed7089eab55ffb66f1bebc2b40b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6590d04009ea84209119f72dd0ae9ef1387198ee7fedd935cbbf4d193cb25572\",\"dweb:/ipfs/QmTM9xCRvpASixJr2VqBmZaNHPbAw9KFhHnBgePoCsa1Y2\"]},\"node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5bce51e11f7d194b79ea59fe00c9e8de9fa2c5530124960f29a24d4c740a3266\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7e66dfde185df46104c11bc89d08fa0760737aa59a2b8546a656473d810a8ea4\",\"dweb:/ipfs/QmXvyqtXPaPss2PD7eqPoSao5Szm2n6UMoiG8TZZDjmChR\"]},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f\",\"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy\"]},\"script/HelperConfig.s.sol\":{\"keccak256\":\"0x395d9aca9266cd16b0541ebfdb79629af9303c28f0855167ffa48f044181423d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4d45b9ad36a19912ecc9dc70d313608a94ee1feb06414c3e9e444c8a36b68c42\",\"dweb:/ipfs/QmSFor7PNsCTNrK899oVXC7E6252SE8j8vLcZoHpmTYTKe\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"IS_SCRIPT\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"activeNetworkConfig\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"paymentTerminalStore3_1_1\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"ethPaymentTerminal3_1_1\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getGoerliConfig\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"paymentTerminalStore3_1_1\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"ethPaymentTerminal3_1_1\",\"type\":\"address\"}],\"internalType\":\"struct HelperConfig.NetworkConfig\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMainnetConfig\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"controller\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"paymentTerminalStore3_1_1\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"ethPaymentTerminal3_1_1\",\"type\":\"address\"}],\"internalType\":\"struct HelperConfig.NetworkConfig\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"script/HelperConfig.s.sol\":\"HelperConfig\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@chainlink/=node_modules/@chainlink/\",\":@ensdomains/=node_modules/@ensdomains/\",\":@jbx-protocol/=node_modules/@jbx-protocol/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":@paulrberg/=node_modules/@paulrberg/\",\":@prb/=node_modules/@prb/\",\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":prb-math/=node_modules/prb-math/\"]},\"sources\":{\"lib/forge-std/src/Base.sol\":{\"keccak256\":\"0x609e3a00319169988cc8272e837f350a9ba77cf8f8f62e4897a8e4a8a5f0fb27\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b24435e35ba5b080ebd6e8976c23fb735c7212d042be8462ffd2ea50c5250363\",\"dweb:/ipfs/QmPeVvN7FS4oMmCuYAeRdZihTfrG4tA7Vvunuvv59a6wre\"]},\"lib/forge-std/src/Script.sol\":{\"keccak256\":\"0xd566affaba92598bcd059dcb3714a968aeedb365ec0d666815e8b38519e0f433\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2fb5f7a97d2a7a06e10c198b60f05e64176eb4ef306b72800c168e7a7ec51693\",\"dweb:/ipfs/Qmcep4r7YEU3BwFJNTTxZsdCVzBYdtcVp8oDtmwLoZGRzP\"]},\"lib/forge-std/src/StdChains.sol\":{\"keccak256\":\"0xdbf2c734ffcc665d175a4b239d90a6ceb873d613c26ce7dc5c4d3131b76a0e92\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://53e1caed2b51fc82c3050f37cb6ee1fb9a2627baaae4cb08919b795a7216db2d\",\"dweb:/ipfs/Qmepc4Zd44EpqBjLHVAGzu6B5QqY1zqecHgfBTpZcQ7HZ7\"]},\"lib/forge-std/src/StdCheats.sol\":{\"keccak256\":\"0xf1076813373cbd519d03411288590a8d9729592934718b0f6b54ca281c855dd7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9cc7c5c97c15c4adb648fbc35d4909f81b09e52410ffb4e8010a0f1e272a7fb5\",\"dweb:/ipfs/QmV3oNjq9tZmQBZMtaEEwaXdfcNSzu8KhupXEzcZ3BHMsc\"]},\"lib/forge-std/src/StdJson.sol\":{\"keccak256\":\"0x113bce4d6d0fe7c4e1e3bf2760ba21c075448660a8dae6003f27b9ff86890612\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8c8a169ea47398b475696e66d07e354d9997680b5f954418caeeaec5427a131f\",\"dweb:/ipfs/QmSTK6XmjgYZ2CCGZ87AVTowNL3UWfRvqhT6DTbZoKyJzz\"]},\"lib/forge-std/src/StdMath.sol\":{\"keccak256\":\"0xd90ad4fd8aeaeb8929964e686e769fdedd5eded3fc3815df194a0ab9f91a3fb2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7919b70f636c7b805223992f28ad1ad0145d6c1385b5931a3589aface5fe6c92\",\"dweb:/ipfs/QmY7FRaULwoGgFteF8GawjQJRfasNgpWnU2aiMsFrYpuTC\"]},\"lib/forge-std/src/StdStorage.sol\":{\"keccak256\":\"0xd1517df281f973dba8b7ba52c02d3df552b60d91b8f47e4669049da648778673\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://52e43264f58a5dcfd985f3c99aa81064805aa8f1c2b4c6521fd63d45cdbba8d5\",\"dweb:/ipfs/QmUMTF6cRjt5tCQrrgQDXVRmHQLjevNsTvLFdaA1m9TBj9\"]},\"lib/forge-std/src/StdUtils.sol\":{\"keccak256\":\"0xe3955cfd5a73fbf56acf7a7709cc9db1dfdd70e6a969bb6b19106de6f1049b4c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f30db8c85f6a04f5433d876859c89e51ecbea5ef6cdcadd5f2a342f216e6f6a9\",\"dweb:/ipfs/QmUm6cbRKtYcSSH2uib2f2aJ5qd6wBzkQUbPTP7jKW2Ayz\"]},\"lib/forge-std/src/Vm.sol\":{\"keccak256\":\"0xe0cfe5ca62fb9d9366be870999bd82802d6b913c1f960f67b8f17060008f2d1a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ddadc1e899953cb26e7d87c0f27284d02f09b611cfd3300e321c33dc2c65d0b3\",\"dweb:/ipfs/Qmbmrdph3D5YweihJSPM6sopZcSKWMox2ZM89dyonfhrq8\"]},\"lib/forge-std/src/console.sol\":{\"keccak256\":\"0x91d5413c2434ca58fd278b6e1e79fd98d10c83931cc2596a6038eee4daeb34ba\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://91ccea707361e48b9b7a161fe81f496b9932bc471e9c4e4e1e9c283f2453cc70\",\"dweb:/ipfs/QmcB66sZhQ6Kz7MUHcLE78YXRUZxoZnnxZjN6yATsbB2ec\"]},\"lib/forge-std/src/console2.sol\":{\"keccak256\":\"0xcd5706f5a7025825d9fd389c89b49bf571f9abaea8a062dc4048320b5b43bf46\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c066485a7d4bd18d44efb4c89274b0959e8066b9a480383a2ce07d7f31555f88\",\"dweb:/ipfs/QmckeYfA5FtAjcxaytq69Dpj6uY57tbQ61kNPPxXi9kgbW\"]},\"lib/forge-std/src/interfaces/IMulticall3.sol\":{\"keccak256\":\"0x7aac1389150499a922d1f9ef5749c908cef127cb2075b92fa17e9cb611263d0a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d95ebb7c7c463e08ebc12dab639945752fb2480acfc6e86da32f72732a7fd0c0\",\"dweb:/ipfs/QmNXK8P8oPWwajsQHvAHw3JPyQidPLCGQN3hWu1Lk6PBL2\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/enums/JBBallotState.sol\":{\"keccak256\":\"0x891fcac63470398b3a11239da7feba6b07d640809fcefd2404303b823d7378f8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6e6adfceaf284b669a8c1cbcf2da7f18ab31a2d1066f9db8bc914349e7401de7\",\"dweb:/ipfs/QmXLHVRPPZdXUkgAHQbHUtEzAvCJk1P6rJ7wrwfTcfW6fw\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_0_1.sol\":{\"keccak256\":\"0xf64926bf7ab5850ea9b7ec27d92a021f02344a3fadb0396af80966ad08b3dd2b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://803da92446a210c66b1226ae88f13b185040ecbd53b292d363e60ac5abaf82de\",\"dweb:/ipfs/Qmb9MWB9bnCakpjokXN9ncEAmVYLctabq3oVt8r8jF7YFW\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_1.sol\":{\"keccak256\":\"0xe09f3d0d670a40e5d66d3fddc8a63f51b8ccb24175ffbb703ba95496deb85bdb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d03b8f7f8f5ba15f428b326fedce6cbcb507668c06dabc5bf2fe363ce0fccb00\",\"dweb:/ipfs/QmfFZuGd8i25KcF9qSJpgBPPRRi8meBbrVT3sFMDN5p7CL\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBDirectory.sol\":{\"keccak256\":\"0x490d5fe691ee7d9c9179fa19964de279882176513d92f3efc0aa98dc34799d1c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0f75001d5c852ac60176b03461b6c07b43b451c3ab1c29fd3a48374e0b2fdcdd\",\"dweb:/ipfs/QmQDbgYJjpNDNe2YJJGMF1jNcDxnLQJ2ZVxmmrbRv8KyS6\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundAccessConstraintsStore.sol\":{\"keccak256\":\"0x82e3daec501e6f4d27ad7b9ab67f449e3cd4ef83a75062cd8b6fbffc17ae634d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4d6a24b2e2f5d497f003d556fca29662c2a84babd7f7c7a4abad66f8abb91f97\",\"dweb:/ipfs/QmNVoDzqjJhGykP9ae6PDkZEKZ1xJikmDkYyzrgkkfhCuw\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleBallot.sol\":{\"keccak256\":\"0x729b4a700618f890e434d31ef9252e1cce9d0473fe7f8f070872df5b348bed23\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4ceabd16778c64ac0a61bf6f7e266cdbb31ebbc74291f147eb2bc1ea9c52fb42\",\"dweb:/ipfs/QmbgQJWLzeHGhywhiFqmHAHM6ujohm38c43Pn9s6qQWRNx\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleStore.sol\":{\"keccak256\":\"0x524350f6c6fcb45eaf927f4e6d13cd2f5029c2b858233bb9a338fe411ce34dab\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f04900543c6d11c225e1b14fc9a56d797f1d039764cdfeed6d7f65d696542ef8\",\"dweb:/ipfs/QmQGTu7B4BRzq5uPDjQrPezmDdumPmiF5vp26SskkDzkvG\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol\":{\"keccak256\":\"0xdee578477bbb7a66e9a1735e45a7795e95cfd374d85f55b61b3302476844c418\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2c2319ed0e7d1c7bfcbd5ae59423fc478d8391d2310625448e7509a4935c0acf\",\"dweb:/ipfs/QmQiiJboCX56m9VvfGwuRK3qvVdt3Zfc4NgzY5tY4vSfGq\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol\":{\"keccak256\":\"0x273bc1fa373fac08e5635fce7d38fd92e9fabba353568b3f7a5be54c01fe4d27\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://cc095a25121e0f665d8e4ef331a1e9c7e99017411bec3ac9a8bb76046340f77c\",\"dweb:/ipfs/QmbfcURUEoP7mihobZ69VpHwDCZeuhiqPERM1z1mTJRZUT\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBProjects.sol\":{\"keccak256\":\"0x00235f20975e6a9465ac921076c85125a3834e29893f93f93e287a89f9e6b915\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f5e2f3a47fe0d95439504b4c6e80b76e19301acfe1e2d080b2ea949fafd9c176\",\"dweb:/ipfs/QmNSAJa8XHuDMrg88HJybBhoYUKRC9hQ6ku3C1Dak8Fntg\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSplitAllocator.sol\":{\"keccak256\":\"0x1643b444409d91858eb86f67abf3d757d2deb3ccd7265eb8e68d6ffdac083de6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4c9004fb8a2a80964dd7fd9c62457623948c34b10d9c30c32745232e78377f32\",\"dweb:/ipfs/QmcMePdnc8xypV2y8PBgfVzLWdTLMY89vqPDcfVVGiUqfK\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSplitsStore.sol\":{\"keccak256\":\"0x3ce0eb12f10282481a3bf86e62b368bcff254081088cfabb20353d60cfadbc7a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://31076aa49dc20a2f4c8cb4363e410ddb06ba93d03c4349599b84075e2822f1f0\",\"dweb:/ipfs/QmP9YQxvpC2zpQKv4BDLwaT6VcZ5Zng8o4iUXbUHWAJ9u1\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBToken.sol\":{\"keccak256\":\"0xeefe58d140e4e13f255d5c7c5cdf5ba66dd00835f04015c446ff224f8ad14c34\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2e6d8e5f18acbf65c8ef3dfae5cd0f5c157f0bfd0ac36d022ebaa94cb463a583\",\"dweb:/ipfs/QmWDRa5e2t8ggGsi428Mkv8rtWHjTkgE5GJRhMKq4YjCbg\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBTokenStore.sol\":{\"keccak256\":\"0x4db7bb4fe824dc9bfbc997ea3e07f42be8900bcad4e0b991e726c23c2de84ba4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://adaa769b2c76c00e3026334ba15942357b0571d93b5f26dff0b121d418f803c1\",\"dweb:/ipfs/QmXCpF6kuyvXxvn9fNYR6ts2cMnc1Mn2MByMYy8d7ga6cU\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBTokenUriResolver.sol\":{\"keccak256\":\"0xc7c9537184a1a36bc30874e5ac29b0fbccf45a99d40806837cfe30d6d9a1c84a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://073271efd14bd4aa04735252b095f11406d61f598b5e59c4127596c99079543d\",\"dweb:/ipfs/QmdgeFg6emo3UGXdn8qXDs2dAeVoLpPjd84KoxyjgsFphr\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol\":{\"keccak256\":\"0xbef975eb73e58c00eaaa7abbd449db545056b049907bb2034aefcdde10bcf11f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://acc1fc97d791704967811be4df56e8c35ce95f68196045521dcf7524eab2021f\",\"dweb:/ipfs/QmSM1GTWNUeJ1HrhwQ7X9npXZuC59gfvQMXfsXVJESzaMs\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycle.sol\":{\"keccak256\":\"0x01d2ee9ae017694097985a08a36421b6801d96badd16e38c6085f3a5ac796ed1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5b18199154a7975bb44f2c64541839451220acd33c3a25c025556695bdfcd4d6\",\"dweb:/ipfs/QmW7rTHexjEwmvbgMAS5x2eNfikbVBtZqxPzB78777xFHL\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleData.sol\":{\"keccak256\":\"0x3cd9257969fdd54bee497b01be2c623e33c941306662002b3b88fa0ab8a27db5\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e2d2583b469a22ab24a575b24c6dc5d074fc0959908cb6fcb1fee0037e53e520\",\"dweb:/ipfs/QmS3xWvnZTW5JwEP9qS2jUUZQGx97kVkM8brfy3NsDJEy2\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleMetadata.sol\":{\"keccak256\":\"0x477bbd36c94da3f56fac6c8c60b2e2e3c5b8fc557a880b5359980bc556ccd300\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b0b5858872b0fb3ac81edcaaa69df55cd2cf6d4ec175142fd1aaa8d7fbed71d1\",\"dweb:/ipfs/QmfRQatH7uCFQZWtQij7kPvoz5XfSbZt7QJuUX7Ms9ivZW\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol\":{\"keccak256\":\"0x5f95bce22550c69bb7b1ee17279d51415ae8bae10c5b759c8b88f0b0aba854ed\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b825a8be39f69c06d43be87bef14d1b9ab94902bccb536a970dccf0105d82e99\",\"dweb:/ipfs/QmXEXqvH6bSx7x92rVSMshxqRVS5Rynrx59V1GsZsWQsxJ\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGroupedSplits.sol\":{\"keccak256\":\"0x71fcdbff5cd055cee8d06b73568c44cedda8f5a2351e7d8ce9dd71d8a1f914a8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5df45f11b5d3313ab25c068f4b0ed8a7c927f9a82eb1960036235e91d790cd3e\",\"dweb:/ipfs/Qmdc97Eeer74yZXJNYXkPtynzgMUeXqtbZFDLA6qgFHdyq\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol\":{\"keccak256\":\"0x9545ea42927f3451c9d901a2f7ab7c1aeef3242e5ed2b75521a90225a5a0f891\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://345e020cbe67914c3d804526db23c4f878eb2f106454644a8899fba0815941e5\",\"dweb:/ipfs/Qmd8dJmVebmssCkEsHyytRNTy7KcbmggQ9vqD7i8NwWdHL\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplit.sol\":{\"keccak256\":\"0x7bf3f79f95cf6211dcdcf5af68ddc963f2304379ea50a5feaf27c645879fe3fe\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d6a9a86ded01128f50e75bffde831b3e33b4b1497a8392fc0d94f96ef49d6217\",\"dweb:/ipfs/QmShPBn7juPHkyKfV1yQ95nqtW1YSWzecmo37SimFQVxso\"]},\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplitAllocationData.sol\":{\"keccak256\":\"0x85dcbcad02f315a1a3cc44140ffc77fdfbcafed7089eab55ffb66f1bebc2b40b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6590d04009ea84209119f72dd0ae9ef1387198ee7fedd935cbbf4d193cb25572\",\"dweb:/ipfs/QmTM9xCRvpASixJr2VqBmZaNHPbAw9KFhHnBgePoCsa1Y2\"]},\"node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5bce51e11f7d194b79ea59fe00c9e8de9fa2c5530124960f29a24d4c740a3266\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7e66dfde185df46104c11bc89d08fa0760737aa59a2b8546a656473d810a8ea4\",\"dweb:/ipfs/QmXvyqtXPaPss2PD7eqPoSao5Szm2n6UMoiG8TZZDjmChR\"]},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f\",\"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy\"]},\"script/HelperConfig.s.sol\":{\"keccak256\":\"0x98dd9589307f95b3fe7889fd203d2e1c19c2c49eb5eca0fe46c075c2b7101824\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://386332d68baf454ccdd0bcdaf24cab8339ceed2d3d0dfb665cf81d21ca3e4afc\",\"dweb:/ipfs/QmX2fbP4JsjFQRTpnccTxLHH3QXEQZYYP5yYWy7YSPSExg\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
-      "version": "0.8.18+commit.87f61d96"
+      "version": "0.8.20+commit.a1b79de6"
     },
     "language": "Solidity",
     "output": {
@@ -569,10 +569,10 @@
         "license": "MIT"
       },
       "script/HelperConfig.s.sol": {
-        "keccak256": "0x395d9aca9266cd16b0541ebfdb79629af9303c28f0855167ffa48f044181423d",
+        "keccak256": "0x98dd9589307f95b3fe7889fd203d2e1c19c2c49eb5eca0fe46c075c2b7101824",
         "urls": [
-          "bzz-raw://4d45b9ad36a19912ecc9dc70d313608a94ee1feb06414c3e9e444c8a36b68c42",
-          "dweb:/ipfs/QmSFor7PNsCTNrK899oVXC7E6252SE8j8vLcZoHpmTYTKe"
+          "bzz-raw://386332d68baf454ccdd0bcdaf24cab8339ceed2d3d0dfb665cf81d21ca3e4afc",
+          "dweb:/ipfs/QmX2fbP4JsjFQRTpnccTxLHH3QXEQZYYP5yYWy7YSPSExg"
         ],
         "license": "MIT"
       }
@@ -581,10 +581,10 @@
   },
   "ast": {
     "absolutePath": "script/HelperConfig.s.sol",
-    "id": 41577,
+    "id": 41706,
     "exportedSymbols": {
       "HelperConfig": [
-        41576
+        41705
       ],
       "IJBController3_1": [
         35158
@@ -599,64 +599,64 @@
         36923
       ],
       "JBFundAccessConstraints": [
-        38300
+        38306
       ],
       "JBFundingCycleData": [
-        38338
+        38346
       ],
       "JBFundingCycleMetadata": [
-        38380
-      ],
-      "JBGlobalFundingCycleMetadata": [
         38389
       ],
+      "JBGlobalFundingCycleMetadata": [
+        38399
+      ],
       "JBGroupedSplits": [
-        38400
+        38411
       ],
       "JBProjectMetadata": [
-        38468
+        38484
       ],
       "JBSplit": [
-        38543
+        38563
       ],
       "Script": [
         1895
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "32:2927:104",
+    "src": "32:2927:106",
     "nodes": [
       {
-        "id": 41477,
+        "id": 41606,
         "nodeType": "PragmaDirective",
-        "src": "32:24:104",
+        "src": "32:24:106",
         "nodes": [],
         "literals": [
           "solidity",
           "^",
           "0.8",
-          ".18"
+          ".20"
         ]
       },
       {
-        "id": 41479,
+        "id": 41608,
         "nodeType": "ImportDirective",
-        "src": "58:44:104",
+        "src": "58:44:106",
         "nodes": [],
         "absolutePath": "lib/forge-std/src/Script.sol",
         "file": "forge-std/Script.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
+        "scope": 41706,
         "sourceUnit": 1896,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41478,
+              "id": 41607,
               "name": "Script",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
               "referencedDeclaration": 1895,
-              "src": "66:6:104",
+              "src": "66:6:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -665,24 +665,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41481,
+        "id": 41610,
         "nodeType": "ImportDirective",
-        "src": "103:108:104",
+        "src": "103:108:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_1.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_1.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
+        "scope": 41706,
         "sourceUnit": 35159,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41480,
+              "id": 41609,
               "name": "IJBController3_1",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
               "referencedDeclaration": 35158,
-              "src": "111:16:104",
+              "src": "111:16:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -691,24 +691,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41483,
+        "id": 41612,
         "nodeType": "ImportDirective",
-        "src": "212:118:104",
+        "src": "212:118:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleBallot.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleBallot.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
+        "scope": 41706,
         "sourceUnit": 35436,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41482,
+              "id": 41611,
               "name": "IJBFundingCycleBallot",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
               "referencedDeclaration": 35435,
-              "src": "220:21:104",
+              "src": "220:21:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -717,24 +717,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41485,
+        "id": 41614,
         "nodeType": "ImportDirective",
-        "src": "331:112:104",
+        "src": "331:112:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
+        "scope": 41706,
         "sourceUnit": 35822,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41484,
+              "id": 41613,
               "name": "IJBPaymentTerminal",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
               "referencedDeclaration": 35821,
-              "src": "339:18:104",
+              "src": "339:18:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -743,24 +743,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41487,
+        "id": 41616,
         "nodeType": "ImportDirective",
-        "src": "444:110:104",
+        "src": "444:110:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSplitAllocator.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSplitAllocator.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
+        "scope": 41706,
         "sourceUnit": 36924,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41486,
+              "id": 41615,
               "name": "IJBSplitAllocator",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
               "referencedDeclaration": 36923,
-              "src": "452:17:104",
+              "src": "452:17:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -769,24 +769,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41489,
+        "id": 41618,
         "nodeType": "ImportDirective",
-        "src": "555:119:104",
+        "src": "555:119:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
-        "sourceUnit": 38301,
+        "scope": 41706,
+        "sourceUnit": 38307,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41488,
+              "id": 41617,
               "name": "JBFundAccessConstraints",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 38300,
-              "src": "563:23:104",
+              "referencedDeclaration": 38306,
+              "src": "563:23:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -795,24 +795,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41491,
+        "id": 41620,
         "nodeType": "ImportDirective",
-        "src": "675:109:104",
+        "src": "675:109:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleData.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleData.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
-        "sourceUnit": 38339,
+        "scope": 41706,
+        "sourceUnit": 38347,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41490,
+              "id": 41619,
               "name": "JBFundingCycleData",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 38338,
-              "src": "683:18:104",
+              "referencedDeclaration": 38346,
+              "src": "683:18:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -821,50 +821,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41493,
+        "id": 41622,
         "nodeType": "ImportDirective",
-        "src": "785:117:104",
+        "src": "785:117:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleMetadata.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycleMetadata.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
-        "sourceUnit": 38381,
-        "symbolAliases": [
-          {
-            "foreign": {
-              "id": 41492,
-              "name": "JBFundingCycleMetadata",
-              "nodeType": "Identifier",
-              "overloadedDeclarations": [],
-              "referencedDeclaration": 38380,
-              "src": "793:22:104",
-              "typeDescriptions": {}
-            },
-            "nameLocation": "-1:-1:-1"
-          }
-        ],
-        "unitAlias": ""
-      },
-      {
-        "id": 41495,
-        "nodeType": "ImportDirective",
-        "src": "903:133:104",
-        "nodes": [],
-        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol",
-        "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol",
-        "nameLocation": "-1:-1:-1",
-        "scope": 41577,
+        "scope": 41706,
         "sourceUnit": 38390,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41494,
-              "name": "JBGlobalFundingCycleMetadata",
+              "id": 41621,
+              "name": "JBFundingCycleMetadata",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
               "referencedDeclaration": 38389,
-              "src": "911:28:104",
+              "src": "793:22:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -873,24 +847,50 @@
         "unitAlias": ""
       },
       {
-        "id": 41497,
+        "id": 41624,
         "nodeType": "ImportDirective",
-        "src": "1037:103:104",
+        "src": "903:133:106",
+        "nodes": [],
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41706,
+        "sourceUnit": 38400,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 41623,
+              "name": "JBGlobalFundingCycleMetadata",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": 38399,
+              "src": "911:28:106",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 41626,
+        "nodeType": "ImportDirective",
+        "src": "1037:103:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGroupedSplits.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGroupedSplits.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
-        "sourceUnit": 38401,
+        "scope": 41706,
+        "sourceUnit": 38412,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41496,
+              "id": 41625,
               "name": "JBGroupedSplits",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 38400,
-              "src": "1045:15:104",
+              "referencedDeclaration": 38411,
+              "src": "1045:15:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -899,24 +899,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41499,
+        "id": 41628,
         "nodeType": "ImportDirective",
-        "src": "1141:107:104",
+        "src": "1141:107:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
-        "sourceUnit": 38469,
+        "scope": 41706,
+        "sourceUnit": 38485,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41498,
+              "id": 41627,
               "name": "JBProjectMetadata",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 38468,
-              "src": "1149:17:104",
+              "referencedDeclaration": 38484,
+              "src": "1149:17:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -925,24 +925,24 @@
         "unitAlias": ""
       },
       {
-        "id": 41501,
+        "id": 41630,
         "nodeType": "ImportDirective",
-        "src": "1249:87:104",
+        "src": "1249:87:106",
         "nodes": [],
         "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplit.sol",
         "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplit.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 41577,
-        "sourceUnit": 38544,
+        "scope": 41706,
+        "sourceUnit": 38564,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 41500,
+              "id": 41629,
               "name": "JBSplit",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "referencedDeclaration": 38543,
-              "src": "1257:7:104",
+              "referencedDeclaration": 38563,
+              "src": "1257:7:106",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -951,26 +951,26 @@
         "unitAlias": ""
       },
       {
-        "id": 41576,
+        "id": 41705,
         "nodeType": "ContractDefinition",
-        "src": "1338:1620:104",
+        "src": "1338:1620:106",
         "nodes": [
           {
-            "id": 41510,
+            "id": 41639,
             "nodeType": "StructDefinition",
-            "src": "1376:140:104",
+            "src": "1376:140:106",
             "nodes": [],
             "canonicalName": "HelperConfig.NetworkConfig",
             "members": [
               {
                 "constant": false,
-                "id": 41505,
+                "id": 41634,
                 "mutability": "mutable",
                 "name": "controller",
-                "nameLocation": "1415:10:104",
+                "nameLocation": "1415:10:106",
                 "nodeType": "VariableDeclaration",
-                "scope": 41510,
-                "src": "1407:18:104",
+                "scope": 41639,
+                "src": "1407:18:106",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -978,10 +978,10 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 41504,
+                  "id": 41633,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
-                  "src": "1407:7:104",
+                  "src": "1407:7:106",
                   "stateMutability": "nonpayable",
                   "typeDescriptions": {
                     "typeIdentifier": "t_address",
@@ -992,13 +992,13 @@
               },
               {
                 "constant": false,
-                "id": 41507,
+                "id": 41636,
                 "mutability": "mutable",
                 "name": "paymentTerminalStore3_1_1",
-                "nameLocation": "1443:25:104",
+                "nameLocation": "1443:25:106",
                 "nodeType": "VariableDeclaration",
-                "scope": 41510,
-                "src": "1435:33:104",
+                "scope": 41639,
+                "src": "1435:33:106",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -1006,10 +1006,10 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 41506,
+                  "id": 41635,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
-                  "src": "1435:7:104",
+                  "src": "1435:7:106",
                   "stateMutability": "nonpayable",
                   "typeDescriptions": {
                     "typeIdentifier": "t_address",
@@ -1020,13 +1020,13 @@
               },
               {
                 "constant": false,
-                "id": 41509,
+                "id": 41638,
                 "mutability": "mutable",
                 "name": "ethPaymentTerminal3_1_1",
-                "nameLocation": "1486:23:104",
+                "nameLocation": "1486:23:106",
                 "nodeType": "VariableDeclaration",
-                "scope": 41510,
-                "src": "1478:31:104",
+                "scope": 41639,
+                "src": "1478:31:106",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -1034,10 +1034,10 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 41508,
+                  "id": 41637,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
-                  "src": "1478:7:104",
+                  "src": "1478:7:106",
                   "stateMutability": "nonpayable",
                   "typeDescriptions": {
                     "typeIdentifier": "t_address",
@@ -1048,58 +1048,58 @@
               }
             ],
             "name": "NetworkConfig",
-            "nameLocation": "1383:13:104",
-            "scope": 41576,
+            "nameLocation": "1383:13:106",
+            "scope": 41705,
             "visibility": "public"
           },
           {
-            "id": 41513,
+            "id": 41642,
             "nodeType": "VariableDeclaration",
-            "src": "1522:40:104",
+            "src": "1522:40:106",
             "nodes": [],
             "constant": false,
             "functionSelector": "d7b65745",
             "mutability": "mutable",
             "name": "activeNetworkConfig",
-            "nameLocation": "1543:19:104",
-            "scope": 41576,
+            "nameLocation": "1543:19:106",
+            "scope": 41705,
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage",
+              "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage",
               "typeString": "struct HelperConfig.NetworkConfig"
             },
             "typeName": {
-              "id": 41512,
+              "id": 41641,
               "nodeType": "UserDefinedTypeName",
               "pathNode": {
-                "id": 41511,
+                "id": 41640,
                 "name": "NetworkConfig",
                 "nameLocations": [
-                  "1522:13:104"
+                  "1522:13:106"
                 ],
                 "nodeType": "IdentifierPath",
-                "referencedDeclaration": 41510,
-                "src": "1522:13:104"
+                "referencedDeclaration": 41639,
+                "src": "1522:13:106"
               },
-              "referencedDeclaration": 41510,
-              "src": "1522:13:104",
+              "referencedDeclaration": 41639,
+              "src": "1522:13:106",
               "typeDescriptions": {
-                "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage_ptr",
+                "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage_ptr",
                 "typeString": "struct HelperConfig.NetworkConfig"
               }
             },
             "visibility": "public"
           },
           {
-            "id": 41539,
+            "id": 41668,
             "nodeType": "FunctionDefinition",
-            "src": "1569:302:104",
+            "src": "1569:302:106",
             "nodes": [],
             "body": {
-              "id": 41538,
+              "id": 41667,
               "nodeType": "Block",
-              "src": "1583:288:104",
+              "src": "1583:288:106",
               "nodes": [],
               "statements": [
                 {
@@ -1108,33 +1108,33 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 41519,
+                    "id": 41648,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "expression": {
-                        "id": 41516,
+                        "id": 41645,
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": -4,
-                        "src": "1597:5:104",
+                        "src": "1597:5:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
                           "typeString": "block"
                         }
                       },
-                      "id": 41517,
+                      "id": 41646,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
-                      "memberLocation": "1603:7:104",
+                      "memberLocation": "1603:7:106",
                       "memberName": "chainid",
                       "nodeType": "MemberAccess",
-                      "src": "1597:13:104",
+                      "src": "1597:13:106",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1144,50 +1144,50 @@
                     "operator": "==",
                     "rightExpression": {
                       "hexValue": "35",
-                      "id": 41518,
+                      "id": 41647,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "1614:1:104",
+                      "src": "1614:1:106",
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_5_by_1",
                         "typeString": "int_const 5"
                       },
                       "value": "5"
                     },
-                    "src": "1597:18:104",
+                    "src": "1597:18:106",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
-                  "id": 41526,
+                  "id": 41655,
                   "nodeType": "IfStatement",
-                  "src": "1593:88:104",
+                  "src": "1593:88:106",
                   "trueBody": {
-                    "id": 41525,
+                    "id": 41654,
                     "nodeType": "Block",
-                    "src": "1617:64:104",
+                    "src": "1617:64:106",
                     "statements": [
                       {
                         "expression": {
-                          "id": 41523,
+                          "id": 41652,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
                           "leftHandSide": {
-                            "id": 41520,
+                            "id": 41649,
                             "name": "activeNetworkConfig",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 41513,
-                            "src": "1631:19:104",
+                            "referencedDeclaration": 41642,
+                            "src": "1631:19:106",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage",
+                              "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage",
                               "typeString": "struct HelperConfig.NetworkConfig storage ref"
                             }
                           },
@@ -1197,18 +1197,18 @@
                             "arguments": [],
                             "expression": {
                               "argumentTypes": [],
-                              "id": 41521,
+                              "id": 41650,
                               "name": "getGoerliConfig",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 41557,
-                              "src": "1653:15:104",
+                              "referencedDeclaration": 41686,
+                              "src": "1653:15:106",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_NetworkConfig_$41510_memory_ptr_$",
+                                "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_NetworkConfig_$41639_memory_ptr_$",
                                 "typeString": "function () pure returns (struct HelperConfig.NetworkConfig memory)"
                               }
                             },
-                            "id": 41522,
+                            "id": 41651,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
@@ -1217,22 +1217,22 @@
                             "nameLocations": [],
                             "names": [],
                             "nodeType": "FunctionCall",
-                            "src": "1653:17:104",
+                            "src": "1653:17:106",
                             "tryCall": false,
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                              "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                               "typeString": "struct HelperConfig.NetworkConfig memory"
                             }
                           },
-                          "src": "1631:39:104",
+                          "src": "1631:39:106",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage",
+                            "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage",
                             "typeString": "struct HelperConfig.NetworkConfig storage ref"
                           }
                         },
-                        "id": 41524,
+                        "id": 41653,
                         "nodeType": "ExpressionStatement",
-                        "src": "1631:39:104"
+                        "src": "1631:39:106"
                       }
                     ]
                   }
@@ -1243,33 +1243,33 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 41530,
+                    "id": 41659,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "expression": {
-                        "id": 41527,
+                        "id": 41656,
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": -4,
-                        "src": "1694:5:104",
+                        "src": "1694:5:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
                           "typeString": "block"
                         }
                       },
-                      "id": 41528,
+                      "id": 41657,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
-                      "memberLocation": "1700:7:104",
+                      "memberLocation": "1700:7:106",
                       "memberName": "chainid",
                       "nodeType": "MemberAccess",
-                      "src": "1694:13:104",
+                      "src": "1694:13:106",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1279,50 +1279,50 @@
                     "operator": "==",
                     "rightExpression": {
                       "hexValue": "31",
-                      "id": 41529,
+                      "id": 41658,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "1711:1:104",
+                      "src": "1711:1:106",
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_1_by_1",
                         "typeString": "int_const 1"
                       },
                       "value": "1"
                     },
-                    "src": "1694:18:104",
+                    "src": "1694:18:106",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
-                  "id": 41537,
+                  "id": 41666,
                   "nodeType": "IfStatement",
-                  "src": "1690:89:104",
+                  "src": "1690:89:106",
                   "trueBody": {
-                    "id": 41536,
+                    "id": 41665,
                     "nodeType": "Block",
-                    "src": "1714:65:104",
+                    "src": "1714:65:106",
                     "statements": [
                       {
                         "expression": {
-                          "id": 41534,
+                          "id": 41663,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
                           "leftHandSide": {
-                            "id": 41531,
+                            "id": 41660,
                             "name": "activeNetworkConfig",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 41513,
-                            "src": "1728:19:104",
+                            "referencedDeclaration": 41642,
+                            "src": "1728:19:106",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage",
+                              "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage",
                               "typeString": "struct HelperConfig.NetworkConfig storage ref"
                             }
                           },
@@ -1332,18 +1332,18 @@
                             "arguments": [],
                             "expression": {
                               "argumentTypes": [],
-                              "id": 41532,
+                              "id": 41661,
                               "name": "getMainnetConfig",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 41575,
-                              "src": "1750:16:104",
+                              "referencedDeclaration": 41704,
+                              "src": "1750:16:106",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_NetworkConfig_$41510_memory_ptr_$",
+                                "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_NetworkConfig_$41639_memory_ptr_$",
                                 "typeString": "function () pure returns (struct HelperConfig.NetworkConfig memory)"
                               }
                             },
-                            "id": 41533,
+                            "id": 41662,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
@@ -1352,22 +1352,22 @@
                             "nameLocations": [],
                             "names": [],
                             "nodeType": "FunctionCall",
-                            "src": "1750:18:104",
+                            "src": "1750:18:106",
                             "tryCall": false,
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                              "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                               "typeString": "struct HelperConfig.NetworkConfig memory"
                             }
                           },
-                          "src": "1728:40:104",
+                          "src": "1728:40:106",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage",
+                            "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage",
                             "typeString": "struct HelperConfig.NetworkConfig storage ref"
                           }
                         },
-                        "id": 41535,
+                        "id": 41664,
                         "nodeType": "ExpressionStatement",
-                        "src": "1728:40:104"
+                        "src": "1728:40:106"
                       }
                     ]
                   }
@@ -1380,89 +1380,89 @@
             "name": "",
             "nameLocation": "-1:-1:-1",
             "parameters": {
-              "id": 41514,
+              "id": 41643,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1580:2:104"
+              "src": "1580:2:106"
             },
             "returnParameters": {
-              "id": 41515,
+              "id": 41644,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1583:0:104"
+              "src": "1583:0:106"
             },
-            "scope": 41576,
+            "scope": 41705,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           },
           {
-            "id": 41557,
+            "id": 41686,
             "nodeType": "FunctionDefinition",
-            "src": "2063:442:104",
+            "src": "2063:442:106",
             "nodes": [],
             "body": {
-              "id": 41556,
+              "id": 41685,
               "nodeType": "Block",
-              "src": "2133:372:104",
+              "src": "2133:372:106",
               "nodes": [],
               "statements": [
                 {
                   "assignments": [
-                    41547
+                    41676
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 41547,
+                      "id": 41676,
                       "mutability": "mutable",
                       "name": "goerliConfig",
-                      "nameLocation": "2164:12:104",
+                      "nameLocation": "2164:12:106",
                       "nodeType": "VariableDeclaration",
-                      "scope": 41556,
-                      "src": "2143:33:104",
+                      "scope": 41685,
+                      "src": "2143:33:106",
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                        "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                         "typeString": "struct HelperConfig.NetworkConfig"
                       },
                       "typeName": {
-                        "id": 41546,
+                        "id": 41675,
                         "nodeType": "UserDefinedTypeName",
                         "pathNode": {
-                          "id": 41545,
+                          "id": 41674,
                           "name": "NetworkConfig",
                           "nameLocations": [
-                            "2143:13:104"
+                            "2143:13:106"
                           ],
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 41510,
-                          "src": "2143:13:104"
+                          "referencedDeclaration": 41639,
+                          "src": "2143:13:106"
                         },
-                        "referencedDeclaration": 41510,
-                        "src": "2143:13:104",
+                        "referencedDeclaration": 41639,
+                        "src": "2143:13:106",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage_ptr",
+                          "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage_ptr",
                           "typeString": "struct HelperConfig.NetworkConfig"
                         }
                       },
                       "visibility": "internal"
                     }
                   ],
-                  "id": 41553,
+                  "id": 41682,
                   "initialValue": {
                     "arguments": [
                       {
                         "hexValue": "307831643236304445393132333365363530463133364266333566384134656131463262363861444236",
-                        "id": 41549,
+                        "id": 41678,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2252:42:104",
+                        "src": "2252:42:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1471,14 +1471,14 @@
                       },
                       {
                         "hexValue": "307835643865433734323536444232333236383433373134423835326466336163453435313434343932",
-                        "id": 41550,
+                        "id": 41679,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2335:42:104",
+                        "src": "2335:42:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1487,14 +1487,14 @@
                       },
                       {
                         "hexValue": "307838323132396434313039363235463934353832624464463631303161384364316132373931396635",
-                        "id": 41551,
+                        "id": 41680,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2416:42:104",
+                        "src": "2416:42:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1517,27 +1517,27 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 41548,
+                      "id": 41677,
                       "name": "NetworkConfig",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 41510,
-                      "src": "2179:13:104",
+                      "referencedDeclaration": 41639,
+                      "src": "2179:13:106",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_NetworkConfig_$41510_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_NetworkConfig_$41639_storage_ptr_$",
                         "typeString": "type(struct HelperConfig.NetworkConfig storage pointer)"
                       }
                     },
-                    "id": 41552,
+                    "id": 41681,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
                     "kind": "structConstructorCall",
                     "lValueRequested": false,
                     "nameLocations": [
-                      "2240:10:104",
-                      "2308:25:104",
-                      "2391:23:104"
+                      "2240:10:106",
+                      "2308:25:106",
+                      "2391:23:106"
                     ],
                     "names": [
                       "controller",
@@ -1545,33 +1545,33 @@
                       "ethPaymentTerminal3_1_1"
                     ],
                     "nodeType": "FunctionCall",
-                    "src": "2179:290:104",
+                    "src": "2179:290:106",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                      "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                       "typeString": "struct HelperConfig.NetworkConfig memory"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "2143:326:104"
+                  "src": "2143:326:106"
                 },
                 {
                   "expression": {
-                    "id": 41554,
+                    "id": 41683,
                     "name": "goerliConfig",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 41547,
-                    "src": "2486:12:104",
+                    "referencedDeclaration": 41676,
+                    "src": "2486:12:106",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                      "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                       "typeString": "struct HelperConfig.NetworkConfig memory"
                     }
                   },
-                  "functionReturnParameters": 41544,
-                  "id": 41555,
+                  "functionReturnParameters": 41673,
+                  "id": 41684,
                   "nodeType": "Return",
-                  "src": "2479:19:104"
+                  "src": "2479:19:106"
                 }
               ]
             },
@@ -1580,129 +1580,129 @@
             "kind": "function",
             "modifiers": [],
             "name": "getGoerliConfig",
-            "nameLocation": "2072:15:104",
+            "nameLocation": "2072:15:106",
             "parameters": {
-              "id": 41540,
+              "id": 41669,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2087:2:104"
+              "src": "2087:2:106"
             },
             "returnParameters": {
-              "id": 41544,
+              "id": 41673,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 41543,
+                  "id": 41672,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 41557,
-                  "src": "2111:20:104",
+                  "scope": 41686,
+                  "src": "2111:20:106",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                    "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                     "typeString": "struct HelperConfig.NetworkConfig"
                   },
                   "typeName": {
-                    "id": 41542,
+                    "id": 41671,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 41541,
+                      "id": 41670,
                       "name": "NetworkConfig",
                       "nameLocations": [
-                        "2111:13:104"
+                        "2111:13:106"
                       ],
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 41510,
-                      "src": "2111:13:104"
+                      "referencedDeclaration": 41639,
+                      "src": "2111:13:106"
                     },
-                    "referencedDeclaration": 41510,
-                    "src": "2111:13:104",
+                    "referencedDeclaration": 41639,
+                    "src": "2111:13:106",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage_ptr",
+                      "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage_ptr",
                       "typeString": "struct HelperConfig.NetworkConfig"
                     }
                   },
                   "visibility": "internal"
                 }
               ],
-              "src": "2110:22:104"
+              "src": "2110:22:106"
             },
-            "scope": 41576,
+            "scope": 41705,
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "public"
           },
           {
-            "id": 41575,
+            "id": 41704,
             "nodeType": "FunctionDefinition",
-            "src": "2511:445:104",
+            "src": "2511:445:106",
             "nodes": [],
             "body": {
-              "id": 41574,
+              "id": 41703,
               "nodeType": "Block",
-              "src": "2582:374:104",
+              "src": "2582:374:106",
               "nodes": [],
               "statements": [
                 {
                   "assignments": [
-                    41565
+                    41694
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 41565,
+                      "id": 41694,
                       "mutability": "mutable",
                       "name": "mainnetConfig",
-                      "nameLocation": "2613:13:104",
+                      "nameLocation": "2613:13:106",
                       "nodeType": "VariableDeclaration",
-                      "scope": 41574,
-                      "src": "2592:34:104",
+                      "scope": 41703,
+                      "src": "2592:34:106",
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                        "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                         "typeString": "struct HelperConfig.NetworkConfig"
                       },
                       "typeName": {
-                        "id": 41564,
+                        "id": 41693,
                         "nodeType": "UserDefinedTypeName",
                         "pathNode": {
-                          "id": 41563,
+                          "id": 41692,
                           "name": "NetworkConfig",
                           "nameLocations": [
-                            "2592:13:104"
+                            "2592:13:106"
                           ],
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 41510,
-                          "src": "2592:13:104"
+                          "referencedDeclaration": 41639,
+                          "src": "2592:13:106"
                         },
-                        "referencedDeclaration": 41510,
-                        "src": "2592:13:104",
+                        "referencedDeclaration": 41639,
+                        "src": "2592:13:106",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage_ptr",
+                          "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage_ptr",
                           "typeString": "struct HelperConfig.NetworkConfig"
                         }
                       },
                       "visibility": "internal"
                     }
                   ],
-                  "id": 41571,
+                  "id": 41700,
                   "initialValue": {
                     "arguments": [
                       {
                         "hexValue": "307839376135623944394630463763443637364236396635383446323930343844304566344242353962",
-                        "id": 41567,
+                        "id": 41696,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2702:42:104",
+                        "src": "2702:42:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1711,14 +1711,14 @@
                       },
                       {
                         "hexValue": "307838323132396434313039363235463934353832624464463631303161384364316132373931396635",
-                        "id": 41568,
+                        "id": 41697,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2785:42:104",
+                        "src": "2785:42:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1727,14 +1727,14 @@
                       },
                       {
                         "hexValue": "307834353763443633626565383861633031663363443461363744354443633932314438433044353733",
-                        "id": 41569,
+                        "id": 41698,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2866:42:104",
+                        "src": "2866:42:106",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1757,27 +1757,27 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 41566,
+                      "id": 41695,
                       "name": "NetworkConfig",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 41510,
-                      "src": "2629:13:104",
+                      "referencedDeclaration": 41639,
+                      "src": "2629:13:106",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_struct$_NetworkConfig_$41510_storage_ptr_$",
+                        "typeIdentifier": "t_type$_t_struct$_NetworkConfig_$41639_storage_ptr_$",
                         "typeString": "type(struct HelperConfig.NetworkConfig storage pointer)"
                       }
                     },
-                    "id": 41570,
+                    "id": 41699,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
                     "kind": "structConstructorCall",
                     "lValueRequested": false,
                     "nameLocations": [
-                      "2690:10:104",
-                      "2758:25:104",
-                      "2841:23:104"
+                      "2690:10:106",
+                      "2758:25:106",
+                      "2841:23:106"
                     ],
                     "names": [
                       "controller",
@@ -1785,33 +1785,33 @@
                       "ethPaymentTerminal3_1_1"
                     ],
                     "nodeType": "FunctionCall",
-                    "src": "2629:290:104",
+                    "src": "2629:290:106",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                      "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                       "typeString": "struct HelperConfig.NetworkConfig memory"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "2592:327:104"
+                  "src": "2592:327:106"
                 },
                 {
                   "expression": {
-                    "id": 41572,
+                    "id": 41701,
                     "name": "mainnetConfig",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 41565,
-                    "src": "2936:13:104",
+                    "referencedDeclaration": 41694,
+                    "src": "2936:13:106",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                      "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                       "typeString": "struct HelperConfig.NetworkConfig memory"
                     }
                   },
-                  "functionReturnParameters": 41562,
-                  "id": 41573,
+                  "functionReturnParameters": 41691,
+                  "id": 41702,
                   "nodeType": "Return",
-                  "src": "2929:20:104"
+                  "src": "2929:20:106"
                 }
               ]
             },
@@ -1820,58 +1820,58 @@
             "kind": "function",
             "modifiers": [],
             "name": "getMainnetConfig",
-            "nameLocation": "2520:16:104",
+            "nameLocation": "2520:16:106",
             "parameters": {
-              "id": 41558,
+              "id": 41687,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2536:2:104"
+              "src": "2536:2:106"
             },
             "returnParameters": {
-              "id": 41562,
+              "id": 41691,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 41561,
+                  "id": 41690,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 41575,
-                  "src": "2560:20:104",
+                  "scope": 41704,
+                  "src": "2560:20:106",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_NetworkConfig_$41510_memory_ptr",
+                    "typeIdentifier": "t_struct$_NetworkConfig_$41639_memory_ptr",
                     "typeString": "struct HelperConfig.NetworkConfig"
                   },
                   "typeName": {
-                    "id": 41560,
+                    "id": 41689,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 41559,
+                      "id": 41688,
                       "name": "NetworkConfig",
                       "nameLocations": [
-                        "2560:13:104"
+                        "2560:13:106"
                       ],
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 41510,
-                      "src": "2560:13:104"
+                      "referencedDeclaration": 41639,
+                      "src": "2560:13:106"
                     },
-                    "referencedDeclaration": 41510,
-                    "src": "2560:13:104",
+                    "referencedDeclaration": 41639,
+                    "src": "2560:13:106",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_NetworkConfig_$41510_storage_ptr",
+                      "typeIdentifier": "t_struct$_NetworkConfig_$41639_storage_ptr",
                       "typeString": "struct HelperConfig.NetworkConfig"
                     }
                   },
                   "visibility": "internal"
                 }
               ],
-              "src": "2559:22:104"
+              "src": "2559:22:106"
             },
-            "scope": 41576,
+            "scope": 41705,
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "public"
@@ -1881,18 +1881,18 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 41502,
+              "id": 41631,
               "name": "Script",
               "nameLocations": [
-                "1363:6:104"
+                "1363:6:106"
               ],
               "nodeType": "IdentifierPath",
               "referencedDeclaration": 1895,
-              "src": "1363:6:104"
+              "src": "1363:6:106"
             },
-            "id": 41503,
+            "id": 41632,
             "nodeType": "InheritanceSpecifier",
-            "src": "1363:6:104"
+            "src": "1363:6:106"
           }
         ],
         "canonicalName": "HelperConfig",
@@ -1900,7 +1900,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "linearizedBaseContracts": [
-          41576,
+          41705,
           1895,
           1858,
           1843,
@@ -1909,12 +1909,13 @@
           3793
         ],
         "name": "HelperConfig",
-        "nameLocation": "1347:12:104",
-        "scope": 41577,
-        "usedErrors": []
+        "nameLocation": "1347:12:106",
+        "scope": 41706,
+        "usedErrors": [],
+        "usedEvents": []
       }
     ],
     "license": "MIT"
   },
-  "id": 104
+  "id": 106
 }

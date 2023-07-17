@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.20;
 
 import {Script} from "forge-std/Script.sol";
 import {DominantJuice} from "../src/DominantJuice.sol";
@@ -28,7 +28,7 @@ contract DeployDominantJuice is Script {
         JBETHPaymentTerminal3_1_1 ethPaymentTerminal3_1_1 = JBETHPaymentTerminal3_1_1(_ethPaymentTerminal3_1_1);
 
         vm.startBroadcast();
-        DominantJuice dominantJuice = new DominantJuice(controller, paymentTerminalStore3_1_1);
+        DominantJuice dominantJuice = new DominantJuice();
         vm.stopBroadcast();
         return (dominantJuice, controller, paymentTerminalStore3_1_1, ethPaymentTerminal3_1_1);
     }

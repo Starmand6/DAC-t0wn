@@ -7,7 +7,7 @@ verbosity = 3 # display errors
 match_contract = "Unit" # only runs unit tests by default
 sizes = true
 gas_reports = ["*"]
-solc = "0.8.18"
+solc = "0.8.20"
 
 [profile.CI] # run via FOUNDRY_PROFILE=CI foundry test
 fs_permissions = [{ access = "read", path = "./node_modules/@jbx-protocol/juice-contracts-v3/deployments/mainnet"}] # Get the deployment addresses for forking

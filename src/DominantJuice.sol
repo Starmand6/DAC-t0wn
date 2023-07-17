@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.20;
 
 // import {mulDiv} from '@prb/math/src/Common.sol';
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -31,21 +31,20 @@ import {JBRedemptionDelegateAllocation3_1_1} from
 import {JBSingleTokenPaymentTerminalStore3_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/JBSingleTokenPaymentTerminalStore3_1.sol";
 import {JBTokenAmount} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBTokenAmount.sol";
-//import {DeployMyDelegateData} from "./structs/DeployMyDelegateData.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "forge-std/console.sol";
 
 /**
  * @title Dominant Juice
  * @author Armand Daigle
- * @notice This contract is a JB Data Source, JB Pay Delegate, JB Redemption Delegate, and a Refund Bonus Escrow.
- * Campaigns, referred to as cycles from here on, that use this contract as a Data Source will incorporate
- * Alex Tabarrok's dominant assurance mechanism, which incentivize early pledgers with a campaign
+ * @notice This contract is a JB Data Source, JB Pay Delegate, JB Redemption Delegate, and a Refund Bonus Escrow
+ * implementation. Campaigns, referred to as cycles from here on, that use this implementation as a Data Source
+ * will incorporate Alex Tabarrok's dominant assurance mechanism, which incentivize early pledgers with a campaign
  * creator-provided refund bonus that can be withdrawn from this contract after a failed campaign.
  * @dev This contract uses the JB Data Source, Pay Delegate, and Pay Redemption interfaces and extends the
- * functionality of a Juicebox project. This contract is written to only be used for one cycle. If projects want
- * dominant assurance on more cycles, refactoring is required.
+ * functionality of a Juicebox project. There is no constructor since each campaign will deploy a clone of this
+ * contract. The initialize() function acts as the constructor. This contract is written to only be used for one cycle.
+ * If projects want dominant assurance on more cycles, refactoring is required.
  */
 contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, IJBRedemptionDelegate3_1_1, Ownable {
     /// Juicebox Contract Interfaces
@@ -55,22 +54,10 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     IJBSingleTokenPaymentTerminal public paymentTerminal;
     IJBSingleTokenPaymentTerminalStore3_1_1 public paymentTerminalStore;
 
-    // address JBDirectory_Goeri = "0x8E05bcD2812E1449f0EC3aE24E2C395F533d9A99";
-    // address JBDirectory_Mainnet = "0x65572FB928b46f9aDB7cfe5A4c41226F636161ea";
-    // JBFundAccessContraintsStore Mainnet = "0xA4425A1E5b7B28Cb689719B1428e3088C1F89E30";
-    // JBFundAccessContraintsStore Goerli = "0xbF8b5ea02e50073348767fd9418beDEd30C835D4";
-    // JBSingleTokenPaymentTerminalStore3_1 Mainnet = "0x77b0A81AeB61d08C0b23c739969d22c5C9950336";
-    // JBSingleTokenPaymentTerminalStore3_1 Goerli = "0x101cA528F6c2E35664529eB8aa0419Ae1f724b49";
-    // Controller mainnet = "0x97a5b9D9F0F7cD676B69f584F29048D0Ef4BB59b";
-    // Controller Goerli = "0x1d260DE91233e650F136Bf35f8A4ea1F2b68aDB6";
-
     /// Juicebox Project State Variables
     uint256 public projectId;
     uint256 public projectConfiguration;
     address public paymentToken;
-
-    /// @notice Addresses allowed to make payments to the treasury.
-    // mapping(address => bool) public paymentFromAddressIsAllowed;
 
     /// Dominant Assurance State Variables
     uint256 public cycleExpiryDate;
@@ -101,7 +88,6 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     error InvalidPaymentEvent(address caller, uint256 projectId, uint256 value);
     error CycleHasExpired();
     error NoRefundsForSuccessfulCycle();
-    // error PAYER_NOT_ON_ALLOWLIST(address payer);
     error ContractAlreadyInitialized();
     error AmountIsBelowMinimumPledge(uint256 minAmount);
     error FundsMustMatchInputAmount(uint256 input);
@@ -120,67 +106,56 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
             || _interfaceId == type(IJBRedemptionDelegate3_1_1).interfaceId;
     }
 
-    constructor(IJBController3_1 _controller, IJBSingleTokenPaymentTerminalStore3_1_1 _paymentTerminalStore) {
-        controller = _controller;
-        paymentTerminalStore = _paymentTerminalStore;
-    }
-
-    receive() external payable {}
-
-    fallback() external payable {}
-
-    /// @notice Initializes the Dominant Assurance part of this contract with project details
-    /// and a directory from which ecosystem payment terminals and controller can be found.
-    /// Function should be called prior to funding cycle start.
+    /// @notice Initializes the Dominant Assurance cloned contract with project details
+    /// and the pertinent Juicebox architecture contracts. Function should be called by the
+    /// Delegate Deployer contract directly after it creates the clone for each new project.
     /// @param _projectId The ID of the project this contract's functionality applies to.
     function initialize(
         uint256 _projectId,
         uint256 _cycleTarget,
         uint256 _minimumPledgeAmount,
-        uint32 _maxEarlyPledgers
-    ) external onlyOwner {
+        uint32 _maxEarlyPledgers,
+        IJBController3_1 _controller,
+        IJBSingleTokenPaymentTerminalStore3_1_1 _paymentTerminalStore
+    ) external {
         // Stop re-initialization.
         if (projectId != 0) revert ContractAlreadyInitialized();
 
         // Store project parameters and ready JB architecture contracts for calling
-        projectId = _projectId;
-        directory = controller.directory();
-        fundAccessConstraintsStore = controller.fundAccessConstraintsStore();
-        address tempTerminal = address(directory.terminalsOf(projectId)[0]);
-        paymentTerminal = IJBSingleTokenPaymentTerminal(tempTerminal);
-        paymentToken = paymentTerminal.token();
-
-        // Store cycle parameters
-        (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(projectId);
-        cycleExpiryDate = cycleData.start + cycleData.duration;
         cycleTarget = _cycleTarget;
         minimumPledgeAmount = _minimumPledgeAmount;
         maxEarlyPledgers = _maxEarlyPledgers;
+        projectId = _projectId;
+        controller = _controller;
+        paymentTerminalStore = _paymentTerminalStore;
+        directory = controller.directory();
+        fundAccessConstraintsStore = controller.fundAccessConstraintsStore();
 
-        // Store the allow list.
-        // uint256 _numberOfAllowedAddresses = _deployMyDelegateData
-        //     .allowList
-        //     .length;
-        // for (uint256 _i; _i < _numberOfAllowedAddresses; ) {
-        //     paymentFromAddressIsAllowed[
-        //         _deployMyDelegateData.allowList[_i]
-        //     ] = true;
-        //     unchecked {
-        //         ++_i;
-        //     }
-        // }
+        // launchProjetFor() call is still active at this line of code, so the rest of the
+        // project parameters can't be populated until the call finishes. They will be populated
+        // when depositRefundBonus() is called.
     }
 
     /**
-     * @notice Refund bonus is deposited before funding cycle start to increase potential pledger confidence.
+     * @notice Project creator calls this function to deposit refund bonus before funding cycle start
+     * to increase potential pledger confidence.
      * @dev Can only be called by the contract owner / project creator.
      */
     function depositRefundBonus(uint256 refundBonusAmount) external payable onlyOwner {
         // Reverts if initialize() has not been called yet.
         if (projectId == 0) revert DataSourceNotInitialized();
 
+        // Reverts if ETH sent does not match input amount.
         if (msg.value != refundBonusAmount) revert FundsMustMatchInputAmount(refundBonusAmount);
 
+        // Store remaining parameters not stored during initialize() call.
+        address tempTerminal = address(directory.terminalsOf(projectId)[0]);
+        paymentTerminal = IJBSingleTokenPaymentTerminal(tempTerminal);
+        paymentToken = paymentTerminal.token();
+        (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(projectId);
+        cycleExpiryDate = cycleData.start + cycleData.duration;
+
+        // Updates contract refund bonus variable.
         totalRefundBonus = refundBonusAmount;
 
         emit RefundBonusDeposited(msg.sender, totalRefundBonus);
@@ -229,10 +204,6 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         ) revert InvalidPaymentEvent(msg.sender, _data.projectId, msg.value);
 
         if (block.timestamp >= cycleExpiryDate) revert CycleHasExpired();
-
-        // Make sure the address is on the allow list.
-        // if (!paymentFromAddressIsAllowed[_data.payer])
-        //     revert PAYER_NOT_ON_ALLOWLIST(_data.payer);
 
         // Get payer address and amount paid
         address payer = _data.payer;

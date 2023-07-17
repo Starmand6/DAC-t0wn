@@ -10,19 +10,19 @@
   },
   "ast": {
     "absolutePath": "src/structs/DeployMyDelegateData.sol",
-    "id": 39411,
+    "id": 43267,
     "exportedSymbols": {
       "DeployMyDelegateData": [
-        39410
+        43266
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "32:170:100",
+    "src": "32:170:112",
     "nodes": [
       {
-        "id": 39406,
+        "id": 43262,
         "nodeType": "PragmaDirective",
-        "src": "32:23:100",
+        "src": "32:23:112",
         "nodes": [],
         "literals": [
           "solidity",
@@ -32,21 +32,21 @@
         ]
       },
       {
-        "id": 39410,
+        "id": 43266,
         "nodeType": "StructDefinition",
-        "src": "145:56:100",
+        "src": "145:56:112",
         "nodes": [],
         "canonicalName": "DeployMyDelegateData",
         "members": [
           {
             "constant": false,
-            "id": 39409,
+            "id": 43265,
             "mutability": "mutable",
             "name": "allowList",
-            "nameLocation": "189:9:100",
+            "nameLocation": "189:9:112",
             "nodeType": "VariableDeclaration",
-            "scope": 39410,
-            "src": "179:19:100",
+            "scope": 43266,
+            "src": "179:19:112",
             "stateVariable": false,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -55,19 +55,19 @@
             },
             "typeName": {
               "baseType": {
-                "id": 39407,
+                "id": 43263,
                 "name": "address",
                 "nodeType": "ElementaryTypeName",
-                "src": "179:7:100",
+                "src": "179:7:112",
                 "stateMutability": "nonpayable",
                 "typeDescriptions": {
                   "typeIdentifier": "t_address",
                   "typeString": "address"
                 }
               },
-              "id": 39408,
+              "id": 43264,
               "nodeType": "ArrayTypeName",
-              "src": "179:9:100",
+              "src": "179:9:112",
               "typeDescriptions": {
                 "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                 "typeString": "address[]"
@@ -77,12 +77,12 @@
           }
         ],
         "name": "DeployMyDelegateData",
-        "nameLocation": "152:20:100",
-        "scope": 39411,
+        "nameLocation": "152:20:112",
+        "scope": 43267,
         "visibility": "public"
       }
     ],
     "license": "MIT"
   },
-  "id": 100
+  "id": 112
 }

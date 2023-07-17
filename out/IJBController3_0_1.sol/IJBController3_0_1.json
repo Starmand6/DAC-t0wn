@@ -53,10 +53,10 @@
     "reservedTokenBalanceOf(uint256)": "bdd504d7",
     "totalOutstandingTokensOf(uint256)": "c18f2d31"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"name\":\"reservedTokenBalanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"name\":\"totalOutstandingTokensOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_0_1.sol\":\"IJBController3_0_1\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@chainlink/=node_modules/@chainlink/\",\":@ensdomains/=node_modules/@ensdomains/\",\":@jbx-protocol/=node_modules/@jbx-protocol/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":@paulrberg/=node_modules/@paulrberg/\",\":@prb/=node_modules/@prb/\",\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":prb-math/=node_modules/prb-math/\"]},\"sources\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_0_1.sol\":{\"keccak256\":\"0xf64926bf7ab5850ea9b7ec27d92a021f02344a3fadb0396af80966ad08b3dd2b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://803da92446a210c66b1226ae88f13b185040ecbd53b292d363e60ac5abaf82de\",\"dweb:/ipfs/Qmb9MWB9bnCakpjokXN9ncEAmVYLctabq3oVt8r8jF7YFW\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"name\":\"reservedTokenBalanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"name\":\"totalOutstandingTokensOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_0_1.sol\":\"IJBController3_0_1\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@chainlink/=node_modules/@chainlink/\",\":@ensdomains/=node_modules/@ensdomains/\",\":@jbx-protocol/=node_modules/@jbx-protocol/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":@paulrberg/=node_modules/@paulrberg/\",\":@prb/=node_modules/@prb/\",\":ds-test/=lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":prb-math/=node_modules/prb-math/\"]},\"sources\":{\"node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_0_1.sol\":{\"keccak256\":\"0xf64926bf7ab5850ea9b7ec27d92a021f02344a3fadb0396af80966ad08b3dd2b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://803da92446a210c66b1226ae88f13b185040ecbd53b292d363e60ac5abaf82de\",\"dweb:/ipfs/Qmb9MWB9bnCakpjokXN9ncEAmVYLctabq3oVt8r8jF7YFW\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
-      "version": "0.8.18+commit.87f61d96"
+      "version": "0.8.20+commit.a1b79de6"
     },
     "language": "Solidity",
     "output": {
@@ -149,19 +149,19 @@
   },
   "ast": {
     "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_0_1.sol",
-    "id": 31910,
+    "id": 34776,
     "exportedSymbols": {
       "IJBController3_0_1": [
-        31909
+        34775
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "32:233:25",
+    "src": "32:233:27",
     "nodes": [
       {
-        "id": 31894,
+        "id": 34760,
         "nodeType": "PragmaDirective",
-        "src": "32:23:25",
+        "src": "32:23:27",
         "nodes": [],
         "literals": [
           "solidity",
@@ -171,34 +171,34 @@
         ]
       },
       {
-        "id": 31909,
+        "id": 34775,
         "nodeType": "ContractDefinition",
-        "src": "57:207:25",
+        "src": "57:207:27",
         "nodes": [
           {
-            "id": 31901,
+            "id": 34767,
             "nodeType": "FunctionDefinition",
-            "src": "90:83:25",
+            "src": "90:83:27",
             "nodes": [],
             "functionSelector": "bdd504d7",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "reservedTokenBalanceOf",
-            "nameLocation": "99:22:25",
+            "nameLocation": "99:22:27",
             "parameters": {
-              "id": 31897,
+              "id": 34763,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 31896,
+                  "id": 34762,
                   "mutability": "mutable",
                   "name": "projectId",
-                  "nameLocation": "130:9:25",
+                  "nameLocation": "130:9:27",
                   "nodeType": "VariableDeclaration",
-                  "scope": 31901,
-                  "src": "122:17:25",
+                  "scope": 34767,
+                  "src": "122:17:27",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -206,10 +206,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 31895,
+                    "id": 34761,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "122:7:25",
+                    "src": "122:7:27",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -218,21 +218,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "121:19:25"
+              "src": "121:19:27"
             },
             "returnParameters": {
-              "id": 31900,
+              "id": 34766,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 31899,
+                  "id": 34765,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 31901,
-                  "src": "164:7:25",
+                  "scope": 34767,
+                  "src": "164:7:27",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -240,10 +240,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 31898,
+                    "id": 34764,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "164:7:25",
+                    "src": "164:7:27",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -252,37 +252,37 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "163:9:25"
+              "src": "163:9:27"
             },
-            "scope": 31909,
+            "scope": 34775,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 31908,
+            "id": 34774,
             "nodeType": "FunctionDefinition",
-            "src": "177:85:25",
+            "src": "177:85:27",
             "nodes": [],
             "functionSelector": "c18f2d31",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "totalOutstandingTokensOf",
-            "nameLocation": "186:24:25",
+            "nameLocation": "186:24:27",
             "parameters": {
-              "id": 31904,
+              "id": 34770,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 31903,
+                  "id": 34769,
                   "mutability": "mutable",
                   "name": "projectId",
-                  "nameLocation": "219:9:25",
+                  "nameLocation": "219:9:27",
                   "nodeType": "VariableDeclaration",
-                  "scope": 31908,
-                  "src": "211:17:25",
+                  "scope": 34774,
+                  "src": "211:17:27",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -290,10 +290,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 31902,
+                    "id": 34768,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "211:7:25",
+                    "src": "211:7:27",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -302,21 +302,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "210:19:25"
+              "src": "210:19:27"
             },
             "returnParameters": {
-              "id": 31907,
+              "id": 34773,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 31906,
+                  "id": 34772,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 31908,
-                  "src": "253:7:25",
+                  "scope": 34774,
+                  "src": "253:7:27",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -324,10 +324,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 31905,
+                    "id": 34771,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "253:7:25",
+                    "src": "253:7:27",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -336,9 +336,9 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "252:9:25"
+              "src": "252:9:27"
             },
-            "scope": 31909,
+            "scope": 34775,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -351,15 +351,16 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          31909
+          34775
         ],
         "name": "IJBController3_0_1",
-        "nameLocation": "67:18:25",
-        "scope": 31910,
-        "usedErrors": []
+        "nameLocation": "67:18:27",
+        "scope": 34776,
+        "usedErrors": [],
+        "usedEvents": []
       }
     ],
     "license": "MIT"
   },
-  "id": 25
+  "id": 27
 }
