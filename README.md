@@ -28,9 +28,14 @@ This is a Juicebox Delegate Hackathon project repo that translates Alex Tabarrok
 
 -   [Juicebox Docs](https://docs.juicebox.money/dev/)
 -   [Juicebox Github](https://github.com/jbx-protocol)
--   [Goerli Etherscan Verified Contract Page](https://goerli.etherscan.io/address/0xa9e390e216e072106b989fcc8a41d3858f4daad7#readContract)
-    <br />
--   Contract Address: `0xa9E390E216E072106B989fcc8a41D3858f4dAAd7`
+-   Contracts on Goerli Etherscan
+    -   [DominantJuice.sol (unverified unforch)](https://goerli.etherscan.io/address/0xf2caabcb6395744e60f59d2c4bc4871d479c2956#code)
+    -   [MyDelegateDeployer.sol (verified)](https://goerli.etherscan.io/address/0xee968fdf2cf9dfd9cb0a38fa87f3d6e837398c16)
+    -   [MyDelegateProjectDeployer.sol (verified)](https://goerli.etherscan.io/address/0x78941aced225fef09d91742c4070dd3a427a4a0e)
+    -   [Front End Demo](https://64b6337700fa1631c6a0faaa--precious-figolla-4091c3.netlify.app/#/)
+-   [Front end Github](https://github.com/electrone901/Dominant-Assurance-Juicebox)
+
+_HACKATHON DSICLAIMERS: We didn't have enough time to get the front end fully operational, and we couldn't get the DominantJuice contract verified on Etherscan. Every function works as intended from the command line and repo, except for `reconfigureCyclesFor()`. We didn't fully realize until the last day that the owner's wallet with the JB project NFT needs to directly call the JB Operator to give reconfigure rights to MyDelegateProjectDeployer (which we would not do in production, but it was a way to try to complete the project for hackathon purposes), and we just ran out of time._
 
 <!-- DOMINANT ASSURANCE BACKGROUND -->
 
