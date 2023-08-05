@@ -28,11 +28,8 @@ import {JBPayParamsData} from "@jbx-protocol/juice-contracts-v3/contracts/struct
 import {JBRedeemParamsData} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBRedeemParamsData.sol";
 import {JBRedemptionDelegateAllocation3_1_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/structs/JBRedemptionDelegateAllocation3_1_1.sol";
-import {JBSingleTokenPaymentTerminalStore3_1} from
-    "@jbx-protocol/juice-contracts-v3/contracts/JBSingleTokenPaymentTerminalStore3_1.sol";
 import {JBTokenAmount} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBTokenAmount.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import "forge-std/console.sol";
 
 /**
  * @title Dominant Juice
@@ -47,12 +44,12 @@ import "forge-std/console.sol";
  * If projects want dominant assurance on more cycles, refactoring is required.
  */
 contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, IJBRedemptionDelegate3_1_1, Ownable {
-    /// Juicebox Contract Interfaces
+    /// Juicebox Contracts
     IJBController3_1 public controller;
     IJBDirectory public directory; // directory of terminals and controllers for projects.
     IJBFundAccessConstraintsStore public fundAccessConstraintsStore;
-    IJBSingleTokenPaymentTerminal public paymentTerminal;
     IJBSingleTokenPaymentTerminalStore3_1_1 public paymentTerminalStore;
+    IJBSingleTokenPaymentTerminal public paymentTerminal;
 
     /// Juicebox Project State Variables
     uint256 public projectId;
@@ -62,37 +59,39 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     /// Dominant Assurance State Variables
     uint256 public cycleExpiryDate;
     uint256 public cycleTarget;
-    uint256 public earlyPledgerRefundBonus;
     uint256 public minimumPledgeAmount;
     uint256 public totalRefundBonus;
     uint256 public totalAmountPledged;
-    uint32 public maxEarlyPledgers;
-    uint32 public numEarlyPledgers = 0;
+    uint256 public totalAmountPledged_fromJB;
+    uint32 public rateOfDecay = 75; // Need to confirm we want to hardcode this
     bool public isCycleExpired = false;
     bool public isTargetMet = false;
     bool public hasCreatorWithdrawnAllFunds = false;
 
-    /// Early Pledger Mappings and Array
-    mapping(address => bool) isEarlyPledger;
-    mapping(address => uint256) earlyPledgerAmount;
-    mapping(address => bool) hasBeenRefunded;
-    // address payable[] public earlyPledgers;
+    /// Pledger Mappings and Array
+    mapping(address => uint256) public pledgedAmount;
+    mapping(address => bool) public hasBeenRefunded;
+    mapping(uint256 => mapping(address => uint256)) public orderToPledgerToAmount;
+    address[] public pledgers;
+    uint32 public pledgeOrder; // make internal?
 
-    // Events for transparency to pledgers.
+    // Events for transparency to pledgers
     event RefundBonusDeposited(address, uint256 indexed);
     event CycleHasClosed(bool indexed, bool indexed);
     event CycleRefundBonusWithdrawal(address indexed, uint256 indexed);
     event OwnerWithdrawal(address, uint256);
+    event Test(string, uint256);
 
     error DataSourceNotInitialized();
+    error FundsMustMatchInputAmount(uint256 input);
+    error AmountIsBelowMinimumPledge(uint256 minAmount);
     error InvalidPaymentEvent(address caller, uint256 projectId, uint256 value);
     error CycleHasExpired();
+    error FunctionHasAlreadyBeenCalled();
+    error MustBePledger();
+    error CycleHasNotEndedYet(uint256 endTimestamp);
     error NoRefundsForSuccessfulCycle();
     error ContractAlreadyInitialized();
-    error AmountIsBelowMinimumPledge(uint256 minAmount);
-    error FundsMustMatchInputAmount(uint256 input);
-    error FunctionCanOnlyBeCalledOnce();
-    error CycleHasNotEndedYet(uint256 endTimestamp);
     error AlreadyWithdrawnRefund();
     error InsufficientFunds();
 
@@ -114,7 +113,6 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         uint256 _projectId,
         uint256 _cycleTarget,
         uint256 _minimumPledgeAmount,
-        uint32 _maxEarlyPledgers,
         IJBController3_1 _controller,
         IJBSingleTokenPaymentTerminalStore3_1_1 _paymentTerminalStore
     ) external {
@@ -124,15 +122,14 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         // Store project parameters and ready JB architecture contracts for calling
         cycleTarget = _cycleTarget;
         minimumPledgeAmount = _minimumPledgeAmount;
-        maxEarlyPledgers = _maxEarlyPledgers;
         projectId = _projectId;
         controller = _controller;
         paymentTerminalStore = _paymentTerminalStore;
         directory = controller.directory();
         fundAccessConstraintsStore = controller.fundAccessConstraintsStore();
-        address tempTerminal = address(directory.terminalsOf(projectId)[0]);
-        paymentTerminal = IJBSingleTokenPaymentTerminal(tempTerminal);
-        paymentToken = paymentTerminal.token();
+        address terminalAddr = address(directory.terminalsOf(projectId)[0]);
+        paymentTerminal = IJBSingleTokenPaymentTerminal(terminalAddr);
+        //paymentToken = paymentTerminal.token();
         (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(projectId);
         cycleExpiryDate = cycleData.start + cycleData.duration;
     }
@@ -188,7 +185,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     /// @dev Reverts if the calling contract is not one of the project's terminals.
     /// @dev This example implementation reverts if the payer isn't on the allow list.
     /// @param _data Standard Juicebox project payment data.
-    /// See https://docs.juicebox.money/dev/api/data-structures/jbdidpaydata/.
+    /// See https://docs.juicebox.money/dev/api/data-structures/jbdidpaydata3_1_1/.
     function didPay(JBDidPayData3_1_1 calldata _data) external payable virtual override {
         // Make sure the caller is a terminal of the project, and that the call is
         // being made on behalf of an interaction with the correct project.
@@ -199,24 +196,17 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
 
         if (block.timestamp >= cycleExpiryDate) revert CycleHasExpired();
 
-        // Get payer address and amount paid
+        // Get payer address and amount paid from JB DidPay data struct
         address payer = _data.payer;
         JBTokenAmount memory amount = _data.amount;
         uint256 paymentAmount = amount.value;
 
-        // Check to see if payer qualifies as an early pledger.
-        if (isEarlyPledger[payer] == false && numEarlyPledgers < maxEarlyPledgers) {
-            // Update early pledger variables
-            isEarlyPledger[payer] = true;
-            //earlyPledgers.push(payer);
-            numEarlyPledgers++;
-            earlyPledgerAmount[payer] += paymentAmount;
-            totalAmountPledged += paymentAmount;
-        } else {
-            // If payer is not an early pledger, then this function should only update
-            // the totalAmountPledged variable.
-            totalAmountPledged += paymentAmount;
-        }
+        // Update storage variables
+        totalAmountPledged += paymentAmount;
+        pledgedAmount[payer] = paymentAmount;
+        pledgers.push(payer);
+        orderToPledgerToAmount[pledgeOrder][payer] = paymentAmount;
+        pledgeOrder++;
     }
 
     /**
@@ -224,13 +214,18 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
      * @dev
      */
     function relayCycleResults() public {
-        if (isCycleExpired == true) revert FunctionCanOnlyBeCalledOnce();
+        if (isCycleExpired == true) revert FunctionHasAlreadyBeenCalled();
         if (block.timestamp < cycleExpiryDate) revert CycleHasNotEndedYet(cycleExpiryDate);
         // This function can only be called once.
         isCycleExpired = true;
 
-        // Calculate campaign success
-        //uint256 cycleBalance = paymentTerminalStore.balanceOf(paymentTerminal, projectId);
+        // Sanity check comparison with JB total amount pledged. If same, lock in. If different,
+        // go to fallback scenario.
+        // totalAmountPledged_fromJB = paymentTerminalStore.balanceOf(paymentTerminal, projectId);
+        // if (totalAmountPledged != totalAmountPledged_fromJB) {
+        //     totalAmountPledged = totalAmountPledged_fromJB;
+        // Need fallback scenario here, or is ^ this adequate?
+        // }
         if (totalAmountPledged >= cycleTarget) {
             isTargetMet = true;
         }
@@ -258,6 +253,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         address payable redeemer = payable(_data.holder);
 
         // The if statements are the only changes from the redeemParams() template.
+        if (pledgedAmount[redeemer] == 0) revert MustBePledger();
         if (isCycleExpired != true) revert CycleHasNotEndedYet(cycleExpiryDate);
         if (isTargetMet == true) revert NoRefundsForSuccessfulCycle();
         if (hasBeenRefunded[redeemer] == true) revert AlreadyWithdrawnRefund();
@@ -274,29 +270,27 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     }
 
     /// @notice If cycle meets project target, then this function cannot be called, since pauseRedemptions will be on.
-    /// If cycle fails to meet target, then this function will proceed all the way through for early pledgers.
+    /// If cycle fails to meet its target, then this function will proceed all the way through for pledgers.
     function didRedeem(JBDidRedeemData3_1_1 calldata _data) external payable {
         address payable redeemer = payable(_data.holder);
+        if (pledgedAmount[redeemer] == 0) revert MustBePledger();
         if (isCycleExpired != true) revert CycleHasNotEndedYet(cycleExpiryDate);
         if (isTargetMet == true) revert NoRefundsForSuccessfulCycle();
         if (hasBeenRefunded[redeemer] == true) revert AlreadyWithdrawnRefund();
 
-        // If caller is not an early pledger, function stops here and call chain continues
-        // through Juicebox's downstream architecture.
+        // Calculates the refund bonus, based on the time and size of the pledge
+        uint256 pledgerRefundBonus = calculateRefundBonus(redeemer);
 
-        if (isEarlyPledger[redeemer] == true) {
-            earlyPledgerRefundBonus = earlyRefundBonusCalc();
-            // Sanity Check
-            if (address(this).balance < earlyPledgerRefundBonus) revert InsufficientFunds();
+        // Sanity Check
+        if (address(this).balance < pledgerRefundBonus) revert InsufficientFunds();
 
-            // Function is now locked for redeeming address.
-            hasBeenRefunded[redeemer] = true;
+        // This redeeem function is now locked for the current redeeming address.
+        hasBeenRefunded[redeemer] = true;
 
-            // Sending early pledger refund bonus.
-            (bool sendSuccess,) = redeemer.call{value: earlyPledgerRefundBonus}("");
-            require(sendSuccess, "Failed to send refund bonus.");
-            emit CycleRefundBonusWithdrawal(redeemer, earlyPledgerRefundBonus);
-        }
+        // Sending early pledger refund bonus.
+        (bool sendSuccess,) = redeemer.call{value: pledgerRefundBonus}("");
+        require(sendSuccess, "Failed to send refund bonus.");
+        emit CycleRefundBonusWithdrawal(redeemer, pledgerRefundBonus);
     }
 
     /**
@@ -321,9 +315,67 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     }
 
     /// Getters and Helpers
-    function earlyRefundBonusCalc() public view returns (uint256) {
-        uint256 individualRefundBonus =
-            totalRefundBonus / ((numEarlyPledgers >= maxEarlyPledgers) ? maxEarlyPledgers : numEarlyPledgers);
+    function calculateRefundBonus(address _pledger) public returns (uint256) {
+        require(pledgedAmount[_pledger] > 0, "Address is not a pledger.");
+
+        uint256 numPledgers = pledgers.length;
+        uint256 individualRefundBonus = 0;
+        uint256 pledgeAmount_orderLoop;
+        uint256 pledgeAmount_amountLoop;
+
+        // Donations and order of pledges are weighted to benefit earlier, larger pledges
+        uint256 orderWeight;
+        uint256 sumOfOrderWeights;
+        // Memory array of normalized order weights (w-1s)
+        uint256[] memory orderWeightNormalized = new uint[](numPledgers);
+        uint256 sumOfAmountsXNormalizedOrderWeights;
+        // uint256 donationWeight;
+        // uint256 donationWeightNormalized;
+        // Represents the combined order and pledge amount weighting.
+        uint256 overallPledgeWeight;
+        emit Test("numPledgers", numPledgers);
+        emit Test("totalAmountPledged", totalAmountPledged);
+        // First, get the sum of pledge order weights to use in the normalizing loop
+        for (uint32 i = 0; i < numPledgers; i++) {
+            sumOfOrderWeights += (rateOfDecay ** i) * 1 ether; // No decimals
+            emit Test("sumOfOrderWeights", sumOfOrderWeights);
+        }
+
+        // Refund Bonus calculation prep work:
+        for (uint32 j = 0; j < numPledgers; j++) {
+            // Earlier pledges are given more weight according to the exponential decay rate.
+            orderWeight = (rateOfDecay ** j) * 1 ether; // No decimals
+            emit Test("orderWeight", orderWeight);
+            // Order weights are normalized to compare each pledge to the total pledging data.
+            // Save in memory array for use in next for loop.
+            orderWeightNormalized[j] = (orderWeight * 1 ether) / sumOfOrderWeights;
+            emit Test("orderWeightNormalized[j]", orderWeightNormalized[j]);
+            // Get the payment amount for each order
+            pledgeAmount_orderLoop = orderToPledgerToAmount[j][pledgers[j]];
+            // Multiply payments by their respective normalized weight. Sum all products by
+            // looping (=sum(x*w_1)). Use in next for loop
+            sumOfAmountsXNormalizedOrderWeights =
+                sumOfAmountsXNormalizedOrderWeights + (pledgeAmount_orderLoop * orderWeightNormalized[j] / 1 ether);
+            emit Test("sumOfAmountsXNormalizedOrderWeights", sumOfAmountsXNormalizedOrderWeights);
+        }
+
+        // Next, give more weight to larger contribution amounts by multiplying each pledge amount with its
+        // orderWeightNormalized. Looping logic is for the possibility of repeat pledgers
+        for (uint32 k = 0; k < numPledgers; k++) {
+            if (pledgers[k] == _pledger) {
+                pledgeAmount_amountLoop = orderToPledgerToAmount[k][_pledger];
+                overallPledgeWeight =
+                    (pledgeAmount_amountLoop * orderWeightNormalized[k] * 1 ether) / sumOfAmountsXNormalizedOrderWeights;
+                emit Test("overallPledgeWeight", overallPledgeWeight);
+            }
+            // Multiply totalRefundBonus by overallWeight to get the individual refund. Loop again.
+            // If pledger's address is found in the pledger array again, add to individual total.
+            individualRefundBonus = individualRefundBonus + (overallPledgeWeight * totalRefundBonus);
+            emit Test("individualRefundBonus", individualRefundBonus);
+        }
+
+        // Need sanity check fuzz testing for all individual bonuses to exactly equal the refund bonus
+
         return individualRefundBonus;
     }
 
@@ -336,11 +388,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
         return (totalAmountPledged, percentOfGoal, isTargetMet, hasCreatorWithdrawnAllFunds);
     }
 
-    function getEarlyPledgerStatus(address addy) public view returns (bool) {
-        return isEarlyPledger[addy];
-    }
-
     function getPledgerAmount(address _address) public view returns (uint256) {
-        return earlyPledgerAmount[_address];
+        return pledgedAmount[_address];
     }
 }

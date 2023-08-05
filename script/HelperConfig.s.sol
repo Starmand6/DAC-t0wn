@@ -18,6 +18,7 @@ import {JBSplit} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBSpli
 contract HelperConfig is Script {
     struct NetworkConfig {
         address controller;
+        address operatorStore;
         address paymentTerminalStore3_1_1;
         address ethPaymentTerminal3_1_1;
     }
@@ -31,21 +32,12 @@ contract HelperConfig is Script {
         if (block.chainid == 1) {
             activeNetworkConfig = getMainnetConfig();
         }
-        // else {
-        //     activeNetworkConfig = getAnvilConfig();
-        // }
     }
-
-    // function getAnvilConfig() public returns (NetworkConfig memory) {
-    //     vm.startBroadcast();
-    //     // Mocks go here if desired.
-    //     vm.stopBroadcast();
-    // }
 
     function getGoerliConfig() public pure returns (NetworkConfig memory) {
         NetworkConfig memory goerliConfig = NetworkConfig({
-            // JBController 3_1:
-            controller: 0x1d260DE91233e650F136Bf35f8A4ea1F2b68aDB6,
+            controller: 0x1d260DE91233e650F136Bf35f8A4ea1F2b68aDB6, // JBController 3_1
+            operatorStore: 0x99dB6b517683237dE9C494bbd17861f3608F3585,
             paymentTerminalStore3_1_1: 0x5d8eC74256DB2326843714B852df3acE45144492,
             ethPaymentTerminal3_1_1: 0x82129d4109625F94582bDdF6101a8Cd1a27919f5
         });
@@ -54,8 +46,8 @@ contract HelperConfig is Script {
 
     function getMainnetConfig() public pure returns (NetworkConfig memory) {
         NetworkConfig memory mainnetConfig = NetworkConfig({
-            // JBController 3_1:
-            controller: 0x97a5b9D9F0F7cD676B69f584F29048D0Ef4BB59b,
+            controller: 0x97a5b9D9F0F7cD676B69f584F29048D0Ef4BB59b, // JBController 3_1
+            operatorStore: 0x6F3C5afCa0c9eDf3926eF2dDF17c8ae6391afEfb,
             paymentTerminalStore3_1_1: 0x82129d4109625F94582bDdF6101a8Cd1a27919f5,
             ethPaymentTerminal3_1_1: 0x457cD63bee88ac01f3cD4a67D5DCc921D8C0D573
         });
