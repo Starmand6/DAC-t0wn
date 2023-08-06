@@ -28,11 +28,10 @@ This repo translates Alex Tabarrok’s “dominant assurance” contract idea to
 
 -   [Juicebox Docs](https://docs.juicebox.money/dev/)
 -   [Juicebox Github](https://github.com/jbx-protocol)
--   Contracts on Goerli Etherscan
-    -   [DominantJuice.sol (unverified unforch)](https://goerli.etherscan.io/address/0xf2caabcb6395744e60f59d2c4bc4871d479c2956#code)
-    -   [MyDelegateDeployer.sol (verified)](https://goerli.etherscan.io/address/0xee968fdf2cf9dfd9cb0a38fa87f3d6e837398c16)
-    -   [DelegateProjectDeployer.sol (verified)](https://goerli.etherscan.io/address/0x78941aced225fef09d91742c4070dd3a427a4a0e)
-    -   [Example of an older, verified version of DominantJuice.sol contract](https://goerli.etherscan.io/address/0x58226a843b27cb5153797983eb6cab5c1d338e74#readContract)
+-   Contracts on Goerli Etherscan (PLACEHOLDERS ONLY. OLD LINKS HAVE BEEN REMOVED)
+    -   [DominantJuice.sol]()
+    -   [MyDelegateDeployer.sol (verified)]()
+    -   [DelegateProjectDeployer.sol (verified)]()
 -   Front End coming soon
 -   Front End Github soon
 
