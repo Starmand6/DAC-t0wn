@@ -30,6 +30,7 @@ import {JBRedemptionDelegateAllocation3_1_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/structs/JBRedemptionDelegateAllocation3_1_1.sol";
 import {JBTokenAmount} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBTokenAmount.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {UD60x18, ud, add, pow, powu, div, mul, wrap, unwrap} from "@prb/math/UD60x18.sol";
 
 /**
  * @title Dominant Juice
@@ -45,6 +46,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  */
 contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, IJBRedemptionDelegate3_1_1, Ownable {
     /// Juicebox Contracts
+
     IJBController3_1 public controller;
     IJBDirectory public directory; // directory of terminals and controllers for projects.
     IJBFundAccessConstraintsStore public fundAccessConstraintsStore;
@@ -63,7 +65,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     uint256 public totalRefundBonus;
     uint256 public totalAmountPledged;
     uint256 public totalAmountPledged_fromJB;
-    uint32 public rateOfDecay = 75; // Need to confirm we want to hardcode this
+    UD60x18 public rateOfDecay = ud(0.75e18); // Need to confirm we want to hardcode this
     bool public isCycleExpired = false;
     bool public isTargetMet = false;
     bool public hasCreatorWithdrawnAllFunds = false;
@@ -93,6 +95,7 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     error NoRefundsForSuccessfulCycle();
     error ContractAlreadyInitialized();
     error AlreadyWithdrawnRefund();
+    error InvalidRedemptionEvent(address caller, uint256 projectId, uint256 value);
     error InsufficientFunds();
 
     /// @notice Indicates if this contract adheres to the specified interface.
@@ -272,6 +275,11 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     /// @notice If cycle meets project target, then this function cannot be called, since pauseRedemptions will be on.
     /// If cycle fails to meet its target, then this function will proceed all the way through for pledgers.
     function didRedeem(JBDidRedeemData3_1_1 calldata _data) external payable {
+        if (
+            msg.value != 0 || !directory.isTerminalOf(projectId, IJBPaymentTerminal(msg.sender))
+                || _data.projectId != projectId
+        ) revert InvalidRedemptionEvent(msg.sender, _data.projectId, msg.value);
+
         address payable redeemer = payable(_data.holder);
         if (pledgedAmount[redeemer] == 0) revert MustBePledger();
         if (isCycleExpired != true) revert CycleHasNotEndedYet(cycleExpiryDate);
@@ -315,68 +323,62 @@ contract DominantJuice is IJBFundingCycleDataSource3_1_1, IJBPayDelegate3_1_1, I
     }
 
     /// Getters and Helpers
+
+    // Due to decimnal precision and calculating the power of floating-point numbers, we use PRBMath for this helper function.
     function calculateRefundBonus(address _pledger) public returns (uint256) {
         require(pledgedAmount[_pledger] > 0, "Address is not a pledger.");
 
         uint256 numPledgers = pledgers.length;
-        uint256 individualRefundBonus = 0;
-        uint256 pledgeAmount_orderLoop;
-        uint256 pledgeAmount_amountLoop;
+        UD60x18 individualRefundBonus;
+        UD60x18 pledgeAmount_orderLoop;
+        UD60x18 pledgeAmount_amountLoop;
 
         // Donations and order of pledges are weighted to benefit earlier, larger pledges
-        uint256 orderWeight;
-        uint256 sumOfOrderWeights;
+        UD60x18 orderWeight;
+        UD60x18 sumOfOrderWeights;
         // Memory array of normalized order weights (w-1s)
         uint256[] memory orderWeightNormalized = new uint[](numPledgers);
-        uint256 sumOfAmountsXNormalizedOrderWeights;
+        UD60x18 sumOfAmountsXNormalizedOrderWeights;
         // uint256 donationWeight;
         // uint256 donationWeightNormalized;
         // Represents the combined order and pledge amount weighting.
-        uint256 overallPledgeWeight;
-        emit Test("numPledgers", numPledgers);
+        UD60x18 overallPledgeWeight;
         emit Test("totalAmountPledged", totalAmountPledged);
         // First, get the sum of pledge order weights to use in the normalizing loop
         for (uint32 i = 0; i < numPledgers; i++) {
-            sumOfOrderWeights += (rateOfDecay ** i) * 1 ether; // No decimals
-            emit Test("sumOfOrderWeights", sumOfOrderWeights);
+            // Add 1 to i because rateOfDecay is being raised to the pledge ordereth power
+            sumOfOrderWeights = add(sumOfOrderWeights, rateOfDecay.powu(i + 1));
         }
 
         // Refund Bonus calculation prep work:
         for (uint32 j = 0; j < numPledgers; j++) {
             // Earlier pledges are given more weight according to the exponential decay rate.
-            orderWeight = (rateOfDecay ** j) * 1 ether; // No decimals
-            emit Test("orderWeight", orderWeight);
+            // Add 1 to j because rateOfDecay is being raised to the ordereth power.
+            orderWeight = rateOfDecay.powu(j + 1);
             // Order weights are normalized to compare each pledge to the total pledging data.
             // Save in memory array for use in next for loop.
-            orderWeightNormalized[j] = (orderWeight * 1 ether) / sumOfOrderWeights;
-            emit Test("orderWeightNormalized[j]", orderWeightNormalized[j]);
+            orderWeightNormalized[j] = unwrap(orderWeight / sumOfOrderWeights);
             // Get the payment amount for each order
-            pledgeAmount_orderLoop = orderToPledgerToAmount[j][pledgers[j]];
+            pledgeAmount_orderLoop = wrap(orderToPledgerToAmount[j][pledgers[j]]);
             // Multiply payments by their respective normalized weight. Sum all products by
             // looping (=sum(x*w_1)). Use in next for loop
             sumOfAmountsXNormalizedOrderWeights =
-                sumOfAmountsXNormalizedOrderWeights + (pledgeAmount_orderLoop * orderWeightNormalized[j] / 1 ether);
-            emit Test("sumOfAmountsXNormalizedOrderWeights", sumOfAmountsXNormalizedOrderWeights);
+                add(sumOfAmountsXNormalizedOrderWeights, mul(pledgeAmount_orderLoop, wrap(orderWeightNormalized[j])));
         }
 
         // Next, give more weight to larger contribution amounts by multiplying each pledge amount with its
         // orderWeightNormalized. Looping logic is for the possibility of repeat pledgers
         for (uint32 k = 0; k < numPledgers; k++) {
             if (pledgers[k] == _pledger) {
-                pledgeAmount_amountLoop = orderToPledgerToAmount[k][_pledger];
+                pledgeAmount_amountLoop = wrap(orderToPledgerToAmount[k][_pledger]);
                 overallPledgeWeight =
-                    (pledgeAmount_amountLoop * orderWeightNormalized[k] * 1 ether) / sumOfAmountsXNormalizedOrderWeights;
-                emit Test("overallPledgeWeight", overallPledgeWeight);
+                    mul(pledgeAmount_amountLoop, wrap(orderWeightNormalized[k])) / sumOfAmountsXNormalizedOrderWeights;
+                // Multiply totalRefundBonus by overallWeight to get the individual refund. Loop again.
+                // If pledger's address is found in the pledger array again, add to individual total.
+                individualRefundBonus = add(individualRefundBonus, mul(overallPledgeWeight, wrap(totalRefundBonus)));
             }
-            // Multiply totalRefundBonus by overallWeight to get the individual refund. Loop again.
-            // If pledger's address is found in the pledger array again, add to individual total.
-            individualRefundBonus = individualRefundBonus + (overallPledgeWeight * totalRefundBonus);
-            emit Test("individualRefundBonus", individualRefundBonus);
         }
-
-        // Need sanity check fuzz testing for all individual bonuses to exactly equal the refund bonus
-
-        return individualRefundBonus;
+        return unwrap(individualRefundBonus);
     }
 
     function getBalance() public view returns (uint256) {

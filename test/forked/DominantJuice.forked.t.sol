@@ -32,7 +32,8 @@ import {JBGlobalFundingCycleMetadata} from
     "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol";
 
 // All 41 tests passing on forked url. No mocks, so "forge test" on local Anvil network does not work.
-// Run "forge test --fork-url $GOERLI_RPC_URL --fork-block-number 9289741 -vvv", but can be any block # after 9289741.
+// Run "forge test --fork-url $GOERLI_RPC_URL --fork-block-number 9289741 -vvv". Juicebox upgraded their contracts
+// to v3-1-1 in the middle of this project. To be safe, use 9289741 or after for the block number.
 
 contract DominantJuiceTest_Unit is Test {
     // Contracts and Structs for JB functions: launchProjectFor(), pay(), redeemTokensOf()
@@ -165,10 +166,6 @@ contract DominantJuiceTest_Unit is Test {
             _terminals,
             ""
         );
-    }
-
-    function testOwner() public {
-        assertEq(dominantJuice.owner(), msg.sender);
     }
 
     // function testJBFunctionsWithExistingProject() public {

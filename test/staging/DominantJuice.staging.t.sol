@@ -73,16 +73,6 @@ contract DominantJuiceTest_Unit is Test {
     uint32 public constant MAX_EARLY_PLEDGERS = 2;
     address public ethToken = 0x000000000000000000000000000000000000EEEe;
 
-    // Variables before Juicebox Goerli architecture was updated to 3_1_1.
-    // Test project that was created beforehand, using the Juicebox UI at http://goerli.juicebox.money
-    // Run test at --fork-block-number 9289741 or after to ensure test chain picks up this project launch.
-    uint256 PROJECT_1_ID = 1064; // duration: 86400, weight: 1, start: 1, overflowOf: 1e14
-    // "JBETHPaymentTerminal3_1" goerli address, which is "JBPayoutRedemptionPaymentTerminal3_1" (abstract)
-    IJBSingleTokenPaymentTerminalStore public paymentTerminalStore =
-        IJBSingleTokenPaymentTerminalStore(0x101cA528F6c2E35664529eB8aa0419Ae1f724b49);
-    IJBSingleTokenPaymentTerminal goerliETHTerminal3_1 =
-        IJBSingleTokenPaymentTerminal(0x0baCb87Cf7DbDdde2299D92673A938E067a9eb29);
-
     // Events
     event RefundBonusDeposited(address owner, uint256 indexed totalRefundBonus);
     event CycleHasClosed(bool indexed, bool indexed);
@@ -170,14 +160,6 @@ contract DominantJuiceTest_Unit is Test {
         assertEq(fundingCycle2_success.duration, 172800);
         vm.stopPrank();
     }
-
-    // function testJBFunctionsWithExistingProject() public {
-    //     (JBFundingCycle memory data,) = controller.currentFundingCycleOf(PROJECT_1_ID);
-    //     assertEq(data.duration, 86400);
-
-    //     uint256 overflow = paymentTerminalStore.currentOverflowOf(goerliETHTerminal3_1, PROJECT_1_ID);
-    //     assertEq(overflow, 1e14);
-    // }
 
     // ///////////////////////////////////
     // // initialize() Tests //

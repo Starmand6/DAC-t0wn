@@ -34,19 +34,19 @@ contract DelegateDeployerTest_Unit is Test {
     DelegateProjectDeployer public delegateProjectDeployer;
     address public deployerAddress;
 
-    // Test helper contract for internal/private functions and variables
+    // Test helper contract for internal/private functions and variables if needed
     // TestDelegateDeployer testDelegateDeployer;
 
     // Juicebox addresses and interfaces
-    address operatorStoreAddr = makeAddr("operatoreStore");
+    IJBOperatorStore operatorStore = IJBOperatorStore(makeAddr("operatoreStore"));
     address paymentTerminalStoreAddr = makeAddr("paymentTerminalStore");
-    IJBController3_1 controller = IJBController3_1(makeAddr("controller")); // Controller that configures funding cycles
+    IJBController3_1 controller = IJBController3_1(makeAddr("controller")); // Controller that configures & tracks funding cycles
     IJBProjects projects = IJBProjects(makeAddr("projects"));
     IJBSingleTokenPaymentTerminalStore3_1_1 paymentTerminalStore =
         IJBSingleTokenPaymentTerminalStore3_1_1(makeAddr("paymentTerminalStore")); // Stores all payment terminals
     JBETHPaymentTerminal3_1_1 paymentTerminal = JBETHPaymentTerminal3_1_1(makeAddr("paymentTerminal")); // Default ETH payment terminal
 
-    // Project Launch parameters / data structs
+    // launchProjetFor() parameters / data structs
     IJBPaymentTerminal[] _terminals; // default empty
     JBGroupedSplits[] _groupedSplits; // Default empty
     JBFundAccessConstraints[] _fundAccessConstraints; // Default empty
@@ -66,25 +66,33 @@ contract DelegateDeployerTest_Unit is Test {
     uint256 public constant MIN_PLEDGE_AMOUNT = 1000 gwei; // 0.000001 ether, 1e12 wei
     mapping(uint256 => address) public delegateOfProject;
 
+    // For reconfigureFundingCyclesOf() tests to help avoid stack too deep errors
+    uint256 reconfigureID = 8;
+    uint256 configurationNumber = 6;
+    address storedDelegate;
+
     event DelegateDeployed(uint256 projectId, address delegate, address owner);
     event OwnershipTransferred(address, address);
 
     function setUp() external {
         vm.etch(address(controller), "The snozzberries taste like snozzberries");
         vm.etch(address(projects), "The snozzberries taste like snozzberries");
-        vm.etch(operatorStoreAddr, "The snozzberries taste like snozzberries");
+        vm.etch(address(operatorStore), "The snozzberries taste like snozzberries");
         vm.etch(address(paymentTerminalStore), "The snozzberries taste like snozzberries");
         vm.etch(address(paymentTerminal), "The snozzberries taste like snozzberries");
 
+        vm.deal(projectOwner, 10 ether);
+
         // Instantiate delegateProjectDeployer and pre-computed delegate address
         delegateProjectDeployer =
-        new DelegateProjectDeployer(address(controller), operatorStoreAddr, address(paymentTerminalStore), address(paymentTerminal));
+        new DelegateProjectDeployer(address(controller), address(operatorStore), address(paymentTerminalStore), address(paymentTerminal));
         deployerAddress = address(delegateProjectDeployer);
         // This util gets the next deterministic contract address that will be deployed for the given deployer address and deployer nonce.
         delegateAddr = computeCreateAddress(deployerAddress, 1);
         vm.etch(address(delegateAddr), "The snozzberries taste like snozzberries");
         delegate = DominantJuice(delegateAddr);
 
+        // Readying launchProjectFor() data structs
         _projectMetadata = JBProjectMetadata({content: "QmZpzHK5tuNwVkm2EyJp2tVraD6xSJqdF2TE39hzinr9Bs", domain: 0});
 
         _cycleData = JBFundingCycleData({
@@ -116,21 +124,37 @@ contract DelegateDeployerTest_Unit is Test {
         });
 
         _terminals.push(paymentTerminal);
+
+        // For reconfigureCyclesOf() tests
+        storedDelegate = makeAddr("storedDelegate");
+        stdstore.target(address(delegateProjectDeployer)).sig("delegateOfProject(uint256)").with_key(reconfigureID)
+            .checked_write(storedDelegate);
+        stdstore.target(deployerAddress).sig("projectOwner(uint256)").with_key(reconfigureID).checked_write(
+            projectOwner
+        );
     }
 
     //////////////////////////
     // launchProjectFor Tests
     //////////////////////////
 
+    // PASSING
+    function test_launchProjectFor_revertsWhenZeroAddress() public {
+        vm.expectRevert("Invalid address");
+        delegateProjectDeployer.launchProjectFor(
+            address(0), "", CYCLE_TARGET, block.timestamp, CYCLE_DURATION, MIN_PLEDGE_AMOUNT
+        );
+    }
+
+    // Not passing. See below 2 tests.
     function test_launchProjectFor_happyPath() public {
-        // gets projectID
-        //address projects = makeAddr("projects");
+        // Gets projectID
         uint256 currentCount = 100;
         vm.mockCall(address(controller), abi.encodeCall(controller.projects, ()), abi.encode(projects));
         vm.expectCall(address(controller), abi.encodeCall(controller.projects, ()));
         vm.mockCall(address(projects), abi.encodeCall(projects.count, ()), abi.encode(currentCount));
         vm.expectCall(address(projects), abi.encodeCall(projects.count, ()));
-        //projectID = currentCount + 1;
+        projectID = currentCount + 1;
 
         //delegate = new DominantJuice();
 
@@ -190,119 +214,30 @@ contract DelegateDeployerTest_Unit is Test {
         );
 
         vm.expectEmit(true, true, true, true, delegateAddr);
-        emit DelegateDeployed(currentCount + 1, delegateAddr, projectOwner);
+        emit DelegateDeployed(projectID, delegateAddr, projectOwner);
 
-        delegateProjectDeployer.launchProjectFor(
+        vm.prank(projectOwner);
+        uint256 _projectID = delegateProjectDeployer.launchProjectFor(
             projectOwner, "", CYCLE_TARGET, block.timestamp, CYCLE_DURATION, MIN_PLEDGE_AMOUNT
         );
 
         // Asserts
-        // assertEq(delegateAddr, delegateProjectDeployer.delegateOfProject(projectID));
-        // assertEq(projectOwner, delegateProjectDeployer.projectOwner(projectID));
-
-        // returns projectID
-    }
-
-    function test_launchProjectFor_MOCK() public {
-        // gets projectID
-        //address projects = makeAddr("projects");
-        vm.mockCall(address(controller), abi.encodeCall(controller.projects, ()), abi.encode(projects));
-        vm.expectCall(address(controller), abi.encodeCall(controller.projects, ()));
-        vm.mockCall(address(projects), abi.encodeCall(projects.count, ()), abi.encode(100));
-        vm.expectCall(address(projects), abi.encodeCall(projects.count, ()));
-        projectID = 100 + 1;
-
-        vm.mockCall(
-            address(controller),
-            abi.encodeCall(
-                controller.launchProjectFor,
-                (
-                    projectOwner,
-                    _projectMetadata,
-                    _cycleData,
-                    _launchProjectData,
-                    block.timestamp,
-                    _groupedSplits,
-                    _fundAccessConstraints,
-                    _terminals,
-                    ""
-                )
-            ),
-            abi.encode(projectID)
-        );
-        vm.expectCall(
-            address(controller),
-            abi.encodeCall(
-                controller.launchProjectFor,
-                (
-                    projectOwner,
-                    _projectMetadata,
-                    _cycleData,
-                    _launchProjectData,
-                    block.timestamp,
-                    _groupedSplits,
-                    _fundAccessConstraints,
-                    _terminals,
-                    ""
-                )
-            )
-        );
-        // initializes delegate
-        // vm.mockCall(
-        //     delegateAddr,
-        //     abi.encodeCall(
-        //         dac.initialize, (projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore)
-        //     ),
-        //     abi.encode(100)
-        // );
-        // vm.expectCall(
-        //     delegateAddr,
-        //     abi.encodeCall(
-        //         dac.initialize, (projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore)
-        //     )
-        // );
-
-        // vm.expectEmit(true, true, true, true, address(delegateAddr));
-        // emit DelegateDeployed(projectID, projectOwner);
-
-        projectID = delegateProjectDeployer.launchProjectFor(
-            msg.sender, "", CYCLE_TARGET, block.timestamp, CYCLE_DURATION, MIN_PLEDGE_AMOUNT
-        );
-
-        //address delegateAddr = delegateProjectDeployer.delegateOfProject(projectID);
-        //DominantJuice dac = DominantJuice(delegateAddr);
-
-        //vm.mockCall(delegateAddr, abi.encodeCall(dac.transferOwnership, (delegateOwner)), "");
-        //vm.expectCall(delegateAddr, abi.encodeCall(dac.transferOwnership, (delegateOwner)));
-
-        // Asserts
         assertEq(delegateAddr, delegateProjectDeployer.delegateOfProject(projectID));
         assertEq(projectOwner, delegateProjectDeployer.projectOwner(projectID));
-
-        // returns projectID
-    }
-
-    function test_MOCK() public {
-        projectID = delegateProjectDeployer.launchProjectFor(
-            msg.sender, "", CYCLE_TARGET, block.timestamp, CYCLE_DURATION, MIN_PLEDGE_AMOUNT
-        );
+        assertEq(projectID, _projectID);
     }
 
     //////////////////////////
     // deployDelegateFor Tests
     //////////////////////////
 
+    // Traces show new delegate is only 40 bytes of code and calls it "Unknown"
     function test_deployDelegateFor_happyPath() public {
-        // vm.assume(_owner != address(0));
-        // vm.assume(_projectID != 0);
         uint256 _projectID = 4;
-        //address _delegateAddr = computeCreateAddress(deployerAddress, 2); // deployed once in setup(), so nonce = 2.
-        //vm.etch(_delegateAddr, "The snozzberries taste like snozzberries");
-        DominantJuice _delegateInstance = new DominantJuice();
 
-        // mockCall to delegate address to transfer ownership
-        vm.mockCall(delegateAddr, abi.encodeCall(_delegateInstance.transferOwnership, (projectOwner)), "");
-        vm.expectCall(delegateAddr, abi.encodeCall(_delegateInstance.transferOwnership, (projectOwner)));
+        // Mock call to delegate address to transfer ownership
+        vm.mockCall(delegateAddr, abi.encodeCall(delegate.transferOwnership, (projectOwner)), "");
+        vm.expectCall(delegateAddr, abi.encodeCall(delegate.transferOwnership, (projectOwner)));
 
         vm.expectEmit(true, true, true, true, address(delegateAddr));
         emit OwnershipTransferred(address(0), deployerAddress);
@@ -313,12 +248,19 @@ contract DelegateDeployerTest_Unit is Test {
         vm.expectEmit(true, true, true, true, deployerAddress);
         emit DelegateDeployed(_projectID, delegateAddr, projectOwner);
 
+        vm.prank(projectOwner);
         DominantJuice _delegate = delegateProjectDeployer.deployDelegateFor(projectOwner, _projectID);
-        //delegateProjectDeployer.deployDelegateFor(projectOwner, _projectID);
         assertEq(address(_delegate), delegateAddr);
         assertEq(address(_delegate), delegateProjectDeployer.delegateOfProject(_projectID));
-        //assertEq(_owner, _delegate.owner());
+        assertEq(projectOwner, _delegate.owner());
         //console.log(address(_delegate), delegateAddr);
+    }
+
+    // Traces show new delegate is 10,000+ bytes of code and calls it "DominantJuice"
+    function test_onlyDelegateDeployment() public {
+        vm.prank(projectOwner);
+        DominantJuice _delegateInstance = new DominantJuice();
+        _delegateInstance;
     }
 
     // PASSING
@@ -327,9 +269,9 @@ contract DelegateDeployerTest_Unit is Test {
         delegateProjectDeployer.deployDelegateFor(address(0), 4);
     }
 
-    //////////////////////////
+    ///////////////////////////////////
     // reconfigureFundingCyclesOf Tests
-    //////////////////////////
+    ///////////////////////////////////
 
     // PASSING
     function testFuzz_reconfigureFundingCyclesOf_revertsWhenNotOwner(address _notOwner) public {
@@ -351,54 +293,117 @@ contract DelegateDeployerTest_Unit is Test {
         delegateProjectDeployer.reconfigureFundingCyclesOf(projId, _result);
     }
 
-    // Happy Path, returns configuration number
-    function test_reconfigureFundingCyclesOf_happyPaths(uint256 _result) public {
-        _result = bound(_result, 0, 2);
-        uint8 result = uint8(_result);
-        uint256 projId = 4;
-        stdstore.target(deployerAddress).sig("projectOwner(uint256)").with_key(projId).checked_write(projectOwner);
+    // Not passing. happy path, returns configuration number
+    function test_reconfigureFundingCyclesOf_tooCloseToCallHappyPath() public {
+        //_result = bound(_result, 0, 2);
+        //uint8 result = uint8(_result);
 
-        //vm.mockCall(address(controller), abi.encodeCall(controller.reconfigureFundingCyclesOf, ()), abi.encode(---));
-        //vm.expectCall(address(controller), abi.encodeCall(controller.reconfigureFundingCyclesOf, ()));
+        // Input parameter is 0 for "too close to call" scenario.
+        JBFundingCycleMetadata memory _fcMetadata = fundingCycleMetadataHelper(0);
 
-        vm.startPrank(projectOwner);
-        if (result == 0) {
-            delegateProjectDeployer.reconfigureFundingCyclesOf(projId, result);
-            //assertEq()
-        }
+        // Mock that projectOwner has already given reconfiguration permissions to the deployer.
+        vm.mockCall(
+            address(operatorStore),
+            abi.encodeCall(operatorStore.hasPermission, (deployerAddress, projectOwner, 0, 1)),
+            abi.encode(true)
+        );
 
-        vm.stopPrank();
+        vm.mockCall(
+            address(controller),
+            abi.encodeCall(
+                controller.reconfigureFundingCyclesOf,
+                (reconfigureID, _cycleData, _fcMetadata, block.timestamp, _groupedSplits, _fundAccessConstraints, "")
+            ),
+            abi.encode(configurationNumber)
+        );
+        vm.expectCall(
+            address(controller),
+            abi.encodeCall(
+                controller.reconfigureFundingCyclesOf,
+                (reconfigureID, _cycleData, _fcMetadata, block.timestamp, _groupedSplits, _fundAccessConstraints, "")
+            )
+        );
+
+        vm.prank(projectOwner);
+        uint256 _configurationNumber = delegateProjectDeployer.reconfigureFundingCyclesOf(reconfigureID, 0);
+        assertEq(configurationNumber, _configurationNumber);
     }
 
-    // need to save delegate address and make it programmable in this function
+    // Not a test
+    function fundingCycleMetadataHelper(uint8 _result) public view returns (JBFundingCycleMetadata memory) {
+        uint256 _cycleDuration;
+        bool _pauseTransfers;
+        uint256 _redemptionRate;
+        bool _pauseDistributions;
+        bool _pauseRedeem;
+        bool _pauseBurn;
+        bool _useDataSourceForRedeem;
 
-    //////////////////////////
-    // Edge Case Tests
-    //////////////////////////
+        if (_result == 0) {
+            // Frozen cycle lasts for two days to allow time to reconfigure next payout or redemption cycle.
+            _cycleDuration = 172800; // Two days in seconds
+            _pauseTransfers = true;
+            _redemptionRate = 0;
+            _pauseDistributions = true;
+            _pauseRedeem = true;
+            _pauseBurn = true;
+            _useDataSourceForRedeem = false;
+        } else if (_result == 1) {
+            // If cycle has met funding goal, this is a project creator payout closing cycle.
+            _cycleDuration = 172800; // Arbitrary two days of seconds.
+            _pauseTransfers = false;
+            _redemptionRate = 0;
+            _pauseDistributions = false;
+            _pauseRedeem = true;
+            _pauseBurn = false;
+            _useDataSourceForRedeem = false;
+        } else {
+            // If cycle failed to meet funding goal, this is a pledger redemption closing cycle.
+            _cycleDuration = 172800; // Arbitrary two days of seconds.
+            _pauseTransfers = false;
+            _redemptionRate = 100;
+            _pauseDistributions = true;
+            _pauseRedeem = false;
+            _pauseBurn = false;
+            _useDataSourceForRedeem = true;
+        }
 
-    //////////////////////////
-    // Getter and Misc. Tests
-    //////////////////////////
+        JBFundingCycleMetadata memory _jbFCMetadata = JBFundingCycleMetadata({
+            global: JBGlobalFundingCycleMetadata({
+                allowSetTerminals: false,
+                allowSetController: false,
+                pauseTransfers: _pauseTransfers
+            }),
+            reservedRate: 0,
+            redemptionRate: _redemptionRate,
+            ballotRedemptionRate: 0,
+            pausePay: true,
+            pauseDistributions: _pauseDistributions,
+            pauseRedeem: _pauseRedeem,
+            pauseBurn: _pauseBurn,
+            allowMinting: false,
+            allowTerminalMigration: false,
+            allowControllerMigration: false,
+            holdFees: false,
+            preferClaimedTokenOverride: false,
+            useTotalOverflowForRedemptions: false,
+            useDataSourceForPay: false,
+            useDataSourceForRedeem: _useDataSourceForRedeem,
+            dataSource: storedDelegate,
+            metadata: 0
+        });
+        return _jbFCMetadata;
+    }
+
+    /////////////////////////////
+    // Getter and Edge Case Tests
+    /////////////////////////////
 
     // PASSING
     function test_getDelegateOfProject(uint256 _projectID) public {
-        address storedDelegate = makeAddr("storedDelegate");
-        stdstore.target(address(delegateProjectDeployer)).sig("delegateOfProject(uint256)").with_key(_projectID)
-            .checked_write(storedDelegate);
         assertEq(storedDelegate, delegateProjectDeployer.getDelegateOfProject(_projectID));
     }
 }
 
 // contract TestDelegateDeployer is DelegateProjectDeployer, Test {
-//     function projectOwner(uint256 _ID) external returns (address) {
-//         return DelegateProjectDeployer.projectOwner(_ID);
-//     }
 // }
-
-// calls deployDelegateFor and deploys delegate
-// DominantJuice _delegate = new DominantJuice();
-//address delegateAddr = makeAddr(_delegate);
-// address delegateAddr = makeAddr("delegateAddr");
-// DominantJuice dac = DominantJuice(delegateAddr);
-
-// console.log(address(this));

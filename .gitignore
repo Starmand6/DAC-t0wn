@@ -11,6 +11,8 @@ not_used
 solidity-flattener
 out/
 broadcast/
+/broadcast/
+!/broadcast
 .gas-snapshot
 .prettierrc
 lcov.info

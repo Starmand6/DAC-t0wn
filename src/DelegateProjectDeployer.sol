@@ -26,8 +26,8 @@ import {LaunchProjectData} from "./structs/LaunchProjectData.sol";
 
 /// @notice Deploys a project, or reconfigure an existing project's funding cycles, with a newly deployed Delegate attached.
 contract DelegateProjectDeployer is JBOperatable {
-    /// @notice The dominant assurance contract (DAC) instance
-    DominantJuice public delegate;
+    /// @notice
+    //DominantJuice public delegate;
 
     // Project Launch parameters and addresses
     IJBController3_1 public controller; // Controller that configures funding cycles
@@ -45,6 +45,7 @@ contract DelegateProjectDeployer is JBOperatable {
     mapping(uint256 => address) public delegateOfProject;
 
     event DelegateDeployed(uint256 _projectID, address _delegate, address _owner);
+    event Test(string, uint256); // For testing purposes only. Will delete before audit.
 
     constructor(address _controller, address _operatorStore, address _paymentTerminalStore, address _paymentTerminal)
         JBOperatable(IJBOperatorStore(_operatorStore))
@@ -74,13 +75,10 @@ contract DelegateProjectDeployer is JBOperatable {
         require(_owner != address(0), "Invalid address");
         // Get the project ID, optimistically knowing it will be one greater than the current count.
         IJBProjects projects = controller.projects();
-        _projectID = projects.count() + 1; // TODO: Need to add projects contract here?
-
-        //_projectID = controller.projects().count() + 1;
+        _projectID = projects.count() + 1;
 
         // Deploy the DAC and store the instance. _owner will become new owner of DAC.
         DominantJuice _delegate = deployDelegateFor(_owner, _projectID);
-
         // Set project Launch variables:
 
         _ipfsCID; // Placed inside function to silence unused parameter warning.
@@ -134,9 +132,9 @@ contract DelegateProjectDeployer is JBOperatable {
     /// @param _projectID The ID of the project for which the delegate will be deployed.
     /// @return delegate The address of the newly deployed DominantJuice delegate.
     function deployDelegateFor(address _owner, uint256 _projectID) public returns (DominantJuice) {
-        require(_owner != address(0), "Invalid address");
-        // Deploys a new dominant assurance escrow contract
+        // Deploys a new dominant assurance escrow contract (DAC) and stores the instance in memory
         DominantJuice _delegate = new DominantJuice();
+        // Stores the DAC address in contract mapping.
         delegateOfProject[_projectID] = address(_delegate);
 
         // Transfer delegate / DAC ownership to launchProjectFor() _owner parameter.
@@ -166,7 +164,7 @@ contract DelegateProjectDeployer is JBOperatable {
         bool _pauseBurn;
         bool _useDataSourceForRedeem;
         // Storing _projectId to avoid stack too deep errors.
-        projectID = _projectID;
+        //projectID = _projectID;
 
         // If near the end of the cyle, results are too close to call, create a "frozen" cycle to allow
         // for any final minutes or seconds pledging.
@@ -210,6 +208,7 @@ contract DelegateProjectDeployer is JBOperatable {
         });
         // Reconfigure the funding cycles.
         return _reconfigureFundingCyclesOf(
+            _projectID,
             _cycleData,
             _pauseTransfers,
             _redemptionRate,
@@ -250,6 +249,7 @@ contract DelegateProjectDeployer is JBOperatable {
     /// @dev All input parameters set by reconfigureFundingCyclesOf().
     /// @return The configuration of the successfully reconfigured funding cycle.
     function _reconfigureFundingCyclesOf(
+        uint256 _projectID,
         JBFundingCycleData memory _cycleData,
         bool _pauseTransfers,
         uint256 _redemptionRate,
@@ -258,8 +258,11 @@ contract DelegateProjectDeployer is JBOperatable {
         bool _pauseBurn,
         bool _useDataSourceForRedeem
     ) internal returns (uint256) {
+        // Obtain the delegate address using the _projectID here to avoid stack too deep errors
+        address _delegate = delegateOfProject[_projectID];
+
         return controller.reconfigureFundingCyclesOf(
-            projectID,
+            _projectID,
             _cycleData,
             JBFundingCycleMetadata({
                 global: JBGlobalFundingCycleMetadata({
@@ -282,7 +285,7 @@ contract DelegateProjectDeployer is JBOperatable {
                 useTotalOverflowForRedemptions: false,
                 useDataSourceForPay: false,
                 useDataSourceForRedeem: _useDataSourceForRedeem,
-                dataSource: address(delegate),
+                dataSource: _delegate,
                 metadata: 0
             }),
             block.timestamp,

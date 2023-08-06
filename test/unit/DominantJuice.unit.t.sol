@@ -4,8 +4,6 @@ pragma solidity ^0.8.20;
 import "forge-std/Test.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {Vm} from "forge-std/Vm.sol";
-// import {DeployDominantJuice} from "../script/DeployDominantJuice.s.sol";
-// import {DeployContracts} from "../script/DeployContracts.s.sol";
 import {DominantJuice} from "../../src/DominantJuice.sol";
 import {DelegateProjectDeployer} from "../../src/DelegateProjectDeployer.sol";
 import {IJBController3_1} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_1.sol";
@@ -38,9 +36,7 @@ import {JBFundAccessConstraints} from "@jbx-protocol/juice-contracts-v3/contract
 import {IJBFundingCycleBallot} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleBallot.sol";
 import {JBGlobalFundingCycleMetadata} from
     "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol";
-
-// All 41 tests passing on forked url. No mocks, so "forge test" on local Anvil network does not work.
-// Run "forge test --fork-url $GOERLI_RPC_URL --fork-block-number $FORK_BLOCK_NUMBER -vvv"
+import {UD60x18, ud, add, pow, powu, div, mul, wrap, unwrap} from "@prb/math/UD60x18.sol";
 
 contract DominantJuiceTest_Unit is Test {
     using stdStorage for StdStorage;
@@ -61,7 +57,6 @@ contract DominantJuiceTest_Unit is Test {
     JBDidRedeemData3_1_1 didRedeemData;
     JBPayDelegateAllocation3_1_1[] delegateAllocations;
     JBTokenAmount tokenStruct;
-    //MyDelegateProjectDeployer projectDelegateDeployer;
     IJBController3_1 public controller = IJBController3_1(makeAddr("controller"));
     IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
     IJBFundAccessConstraintsStore public fundAccessConstraintsStore =
@@ -92,31 +87,20 @@ contract DominantJuiceTest_Unit is Test {
     event OwnerWithdrawal(address, uint256);
 
     function setUp() external {
-        //DeployDominantJuice deployDominantJuice = new DeployDominantJuice();
-        //DeployContracts deployContracts = new DeployContracts();
-        // If testing on Mainnet contracts, change "ethPaymentTerminal" variable name to "mainnetETHTerminal3_1_1".
+        // Deploy the target contract.
         vm.prank(owner);
         dominantJuice = new DominantJuice();
-        // (
-        //     controller,
-        //     paymentTerminalStore3_1_1,
-        //     ethPaymentTerminal,
-        //     dominantJuice,
-        //     delegateDeployer,
-        //     projectDelegateDeployer
-        // ) = deployContracts.run();
-        //directory = controller.directory();
-        //owner = payable(dominantJuice.owner());
+
         vm.deal(owner, STARTING_USER_BALANCE);
         vm.deal(pledger1, STARTING_USER_BALANCE);
         vm.deal(pledger2, STARTING_USER_BALANCE);
         vm.deal(rando, STARTING_USER_BALANCE);
 
-        vm.etch(address(controller), "The Dude abides");
-        vm.etch(address(directory), "The Dude abides");
-        vm.etch(address(fundAccessConstraintsStore), "The Dude abides");
-        vm.etch(address(paymentTerminalStore), "The Dude abides");
-        vm.etch(address(ethPaymentTerminal), "The Dude abides");
+        vm.etch(address(controller), "I'm the operator with my pocket calculator");
+        vm.etch(address(directory), "I'm the operator with my pocket calculator");
+        vm.etch(address(fundAccessConstraintsStore), "I'm the operator with my pocket calculator");
+        vm.etch(address(paymentTerminalStore), "I'm the operator with my pocket calculator");
+        vm.etch(address(ethPaymentTerminal), "I'm the operator with my pocket calculator");
 
         // JB Project Launch variables:
         // _projectMetadata = JBProjectMetadata({content: "myIPFSHash", domain: 1});
@@ -166,8 +150,8 @@ contract DominantJuiceTest_Unit is Test {
         projectID = 5;
     }
 
-    ///////////////////////////////////
-    // supportsInterface() Tests //
+    //////////////////////////////////
+    // supportsInterface() Test
     //////////////////////////////////
 
     // PASSING
@@ -183,8 +167,8 @@ contract DominantJuiceTest_Unit is Test {
         assertTrue(redemptionDelegateBool);
     }
 
-    ///////////////////////////////////
-    // initialize() Tests //
+    //////////////////////////////////
+    // initialize() Tests
     //////////////////////////////////
 
     // PASSING
@@ -232,17 +216,6 @@ contract DominantJuiceTest_Unit is Test {
     //////////////////////////////////
 
     modifier initialized() {
-        // cycleExpiryDate = block.timestamp + 3 weeks;
-        // stdstore.target(address(dominantJuice)).sig("projectId()").checked_write(5);
-        // stdstore.target(address(dominantJuice)).sig("cycleTarget()").checked_write(CYCLE_TARGET);
-        // stdstore.target(address(dominantJuice)).sig("minimumPledgeAmount()").checked_write(MIN_PLEDGE_AMOUNT);
-        //stdstore.target(address(dominantJuice)).sig("controller()").checked_write(controller);
-        //stdstore.target(address(dominantJuice)).sig("directory()").checked_write(directory);
-        //stdstore.target(address(dominantJuice)).sig("projectId()").checked_write(paymentTerminalStore);
-        //stdstore.target(address(dominantJuice)).sig("fundAccessConstraintsStore()").checked_write(
-        //fundAccessConstraintsStore
-        //);
-        //stdstore.target(address(dominantJuice)).sig("paymentTerminal()").checked_write(ethPaymentTerminal);
         uint256 expiryDate = block.timestamp + 3 weeks;
         stdstore.target(address(dominantJuice)).sig("cycleExpiryDate()").checked_write(expiryDate);
 
@@ -260,6 +233,7 @@ contract DominantJuiceTest_Unit is Test {
         );
 
         dominantJuice.initialize(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore);
+        vm.clearMockedCalls();
         _;
     }
 
@@ -321,11 +295,10 @@ contract DominantJuiceTest_Unit is Test {
 
     // PASSING (unimplemented feature error)
     function test_payParams_returnsMemoryVariables() public initialized bonusDeposited {
-        tokenStruct = JBTokenAmount(ethToken, MIN_PLEDGE_AMOUNT, 18, 1);
-
+        payParamsData.payer = pledger1;
         payParamsData.weight = 1;
         payParamsData.memo = "juice";
-        payParamsData.amount = tokenStruct;
+        payParamsData.amount = JBTokenAmount(ethToken, MIN_PLEDGE_AMOUNT, 18, 1);
 
         // Error: Unimplemented feature (/solidity/libsolidity/codegen/ArrayUtils.cpp:228):
         // Copying of type struct JBPayDelegateAllocation3_1_1 memory[] memory to storage not yet supported.
@@ -469,15 +442,17 @@ contract DominantJuiceTest_Unit is Test {
     modifier FailedCycleHasExpired() {
         uint256 pledger1Amount = 40000 gwei;
         uint256 pledger2Amount = 20000 gwei;
-        uint256 randoAmount = 1000 gwei;
-        uint256 totalPledgerAmount = pledger1Amount + pledger2Amount + randoAmount;
+        uint256 pledger3Amount = 1000 gwei;
+        uint256 totalPledgerAmount = pledger1Amount + pledger2Amount + pledger3Amount;
         stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger1).checked_write(
             pledger1Amount
         );
         stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger2).checked_write(
             pledger2Amount
         );
-        stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(rando).checked_write(randoAmount);
+        stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger3).checked_write(
+            pledger3Amount
+        );
         // stdstore.target(address(dominantJuice)).sig("pledgedAmount()").checked_write(CYCLE_TARGET);
         // stdstore.target(address(dominantJuice)).sig("orderToPledgerToAmount()").checked_write(CYCLE_TARGET);
         // stdstore.target(address(dominantJuice)).sig("orderToPledgerToAmount()").checked_write(CYCLE_TARGET);
@@ -495,22 +470,11 @@ contract DominantJuiceTest_Unit is Test {
     }
 
     // Sets fund balance, isCycleExpired and isTargetMet booleans, emits CycleHasClosed event
-    // TODO: Need to add fallback test if paymentTerminal.balanceOf returns a different balance.
     function testFuzz_relayCycle_happyPath(uint256 _amount) public initialized bonusDeposited {
         //stdstore.target(address(dominantJuice)).sig("cycleTarget()").checked_write(CYCLE_TARGET);
         stdstore.target(address(dominantJuice)).sig("totalAmountPledged()").checked_write(_amount);
         vm.warp(dominantJuice.cycleExpiryDate() + 100);
 
-        vm.mockCall(
-            address(paymentTerminalStore),
-            abi.encodeCall(paymentTerminalStore.balanceOf, (ethPaymentTerminal, projectID)),
-            abi.encode(_amount)
-        );
-        vm.expectCall(
-            address(paymentTerminalStore),
-            abi.encodeCall(paymentTerminalStore.balanceOf, (ethPaymentTerminal, projectID))
-        );
-
         if (_amount < CYCLE_TARGET) {
             vm.expectEmit(true, true, true, true, address(dominantJuice));
             emit CycleHasClosed(true, false);
@@ -519,50 +483,6 @@ contract DominantJuiceTest_Unit is Test {
             emit CycleHasClosed(true, true);
         }
 
-        vm.prank(rando);
-        dominantJuice.relayCycleResults();
-
-        bool expired = dominantJuice.isCycleExpired();
-        assertEq(expired, true);
-
-        if (_amount < CYCLE_TARGET) {
-            bool isMet = dominantJuice.isTargetMet();
-            assertEq(isMet, false);
-        } else {
-            bool isMet = dominantJuice.isTargetMet();
-            assertEq(isMet, true);
-        }
-    }
-
-    function testFuzz_relayCycle_JBAndContractPledgeAmountsMatch(uint256 _amount) public initialized bonusDeposited {
-        //stdstore.target(address(dominantJuice)).sig("cycleTarget()").checked_write(CYCLE_TARGET);
-        stdstore.target(address(dominantJuice)).sig("totalAmountPledged()").checked_write(_amount);
-        vm.warp(dominantJuice.cycleExpiryDate() + 100);
-        uint256 amount_fromJB = _amount;
-
-        vm.mockCall(
-            address(paymentTerminalStore),
-            abi.encodeCall(paymentTerminalStore.balanceOf, (ethPaymentTerminal, projectID)),
-            abi.encode(amount_fromJB)
-        );
-        vm.expectCall(
-            address(paymentTerminalStore),
-            abi.encodeCall(paymentTerminalStore.balanceOf, (ethPaymentTerminal, projectID))
-        );
-
-        if (dominantJuice.totalAmountPledged() != amount_fromJB) {
-            stdstore.target(address(dominantJuice)).sig("totalAmountPledged()").checked_write(amount_fromJB);
-        }
-
-        if (_amount < CYCLE_TARGET) {
-            vm.expectEmit(true, true, true, true, address(dominantJuice));
-            emit CycleHasClosed(true, false);
-        } else {
-            vm.expectEmit(true, true, true, true, address(dominantJuice));
-            emit CycleHasClosed(true, true);
-        }
-
-        vm.prank(rando);
         dominantJuice.relayCycleResults();
 
         bool expired = dominantJuice.isCycleExpired();
@@ -582,7 +502,8 @@ contract DominantJuiceTest_Unit is Test {
     //////////////////////////////////
 
     // PASSING
-    function test_redeemParams_revertsIfNotPledger() public initialized bonusDeposited FailedCycleHasExpired {
+    function test_redeemParams_revertsIfNotPledger() public initialized bonusDeposited {
+        vm.warp(dominantJuice.cycleExpiryDate() + 100);
         redeemParamsData.holder = rando;
         dominantJuice.relayCycleResults();
         vm.prank(rando);
@@ -591,13 +512,17 @@ contract DominantJuiceTest_Unit is Test {
     }
 
     // PASSING
-    function test_redeemParams_revertsDuringCycle() public initialized bonusDeposited {
+    function testFuzz_redeemParams_revertsDuringCycle(uint256 _seconds) public initialized bonusDeposited {
+        vm.assume(_seconds < dominantJuice.cycleExpiryDate() - block.timestamp);
+        vm.warp(_seconds);
         redeemParamsData.holder = pledger2;
         stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger2).checked_write(
             MIN_PLEDGE_AMOUNT
         );
         vm.prank(pledger2);
-        vm.expectRevert(abi.encodeWithSelector(DominantJuice.CycleHasNotEndedYet.selector, cycleExpiryDate));
+        vm.expectRevert(
+            abi.encodeWithSelector(DominantJuice.CycleHasNotEndedYet.selector, dominantJuice.cycleExpiryDate())
+        );
         dominantJuice.redeemParams(redeemParamsData);
     }
 
@@ -650,33 +575,107 @@ contract DominantJuiceTest_Unit is Test {
     //////////////////////////////////
 
     // PASSING
+    function test_didRedeem_revertsIfPaymentSent() public initialized {
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                DominantJuice.InvalidRedemptionEvent.selector, rando, didRedeemData.projectId, MIN_PLEDGE_AMOUNT
+            )
+        );
+        vm.prank(rando);
+        dominantJuice.didRedeem{value: MIN_PLEDGE_AMOUNT}(didRedeemData);
+    }
+
+    // PASSING
+    function test_didRedeem_revertsIfNotPaymentTerminal() public initialized {
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, IJBPaymentTerminal(rando))),
+            abi.encode(false)
+        );
+        vm.expectCall(
+            address(directory), abi.encodeCall(directory.isTerminalOf, (projectID, IJBPaymentTerminal(rando)))
+        );
+        vm.prank(rando); // non-paymentTerminal calling
+        vm.expectRevert(
+            abi.encodeWithSelector(DominantJuice.InvalidRedemptionEvent.selector, rando, didRedeemData.projectId, 0)
+        );
+        dominantJuice.didRedeem(didRedeemData);
+    }
+
+    // PASSING
+    function test_didRedeem_revertsOnWrongProjectId() public initialized {
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+        didRedeemData.projectId = 50000; // not a correct projectId
+        vm.prank(address(ethPaymentTerminal)); // Payment terminal calling
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                DominantJuice.InvalidRedemptionEvent.selector, address(ethPaymentTerminal), didRedeemData.projectId, 0
+            )
+        );
+        dominantJuice.didRedeem(didRedeemData);
+    }
+
+    // PASSING
     function test_didRedeem_revertsIfNotPledger() public initialized bonusDeposited FailedCycleHasExpired {
         didRedeemData.holder = rando;
+        didRedeemData.projectId = projectID;
         dominantJuice.relayCycleResults();
-        vm.prank(rando);
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
         vm.expectRevert(abi.encodeWithSelector(DominantJuice.MustBePledger.selector));
         dominantJuice.didRedeem(didRedeemData);
     }
 
     // PASSING
-    function test_didRedeem_revertsDuringCycle() public initialized bonusDeposited {
+    function testFuzz_didRedeem_revertsDuringCycle(uint256 _seconds) public initialized bonusDeposited {
+        vm.assume(_seconds != 0);
+        vm.assume(_seconds < dominantJuice.cycleExpiryDate() - block.timestamp);
+        vm.warp(_seconds);
         didRedeemData.holder = pledger2;
+        didRedeemData.projectId = projectID;
         stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger2).checked_write(
             MIN_PLEDGE_AMOUNT
         );
-        vm.prank(pledger2);
-        vm.expectRevert(abi.encodeWithSelector(DominantJuice.CycleHasNotEndedYet.selector, cycleExpiryDate));
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
+        vm.expectRevert(
+            abi.encodeWithSelector(DominantJuice.CycleHasNotEndedYet.selector, dominantJuice.cycleExpiryDate())
+        );
         dominantJuice.didRedeem(didRedeemData);
     }
 
     // PASSING
     function test_didRedeem_revertsIfSuccessfulCycle() public initialized bonusDeposited successfulCycleHasExpired {
         didRedeemData.holder = pledger2;
+        didRedeemData.projectId = projectID;
         stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger2).checked_write(
             MIN_PLEDGE_AMOUNT
         );
         dominantJuice.relayCycleResults();
-        vm.prank(pledger2);
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
         vm.expectRevert(abi.encodeWithSelector(DominantJuice.NoRefundsForSuccessfulCycle.selector));
         dominantJuice.didRedeem(didRedeemData);
     }
@@ -685,24 +684,39 @@ contract DominantJuiceTest_Unit is Test {
     function test_didRedeem_revertsIfAlreadyWithdrawn() public initialized bonusDeposited FailedCycleHasExpired {
         dominantJuice.relayCycleResults();
         didRedeemData.holder = pledger1;
+        didRedeemData.projectId = projectID;
         stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger1).checked_write(
             MIN_PLEDGE_AMOUNT
         );
         stdstore.target(address(dominantJuice)).sig("hasBeenRefunded(address)").with_key(pledger1).checked_write(true);
 
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
         vm.expectRevert(abi.encodeWithSelector(DominantJuice.AlreadyWithdrawnRefund.selector));
         dominantJuice.didRedeem(didRedeemData);
     }
 
     // TODO
     // calculates refund bonus correctly and sends to pledger
-    function test_didRedeem_happyPath() public initialized bonusDeposited FailedCycleHasExpired {
-        // stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger1).checked_write(
-        //     MIN_PLEDGE_AMOUNT
-        // );
+    function test_didRedeem_happyPath() public initialized bonusDeposited {
+        pledger1Pays(MIN_PLEDGE_AMOUNT);
+        vm.warp(dominantJuice.cycleExpiryDate() + 100);
+
         didRedeemData.holder = pledger1;
+        didRedeemData.projectId = projectID;
         dominantJuice.relayCycleResults();
-        vm.prank(pledger1);
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+        vm.expectCall(address(directory), abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)));
 
         uint256 pledgerRefundBonus = dominantJuice.calculateRefundBonus(pledger1);
         console.log(pledgerRefundBonus, "pledgerRefundBonus");
@@ -714,17 +728,24 @@ contract DominantJuiceTest_Unit is Test {
         vm.expectEmit(true, true, true, true, address(dominantJuice));
         emit CycleRefundBonusWithdrawal(pledger1, pledgerRefundBonus);
 
+        vm.prank(address(ethPaymentTerminal));
         dominantJuice.didRedeem(didRedeemData);
         // Asserts
         assertEq(true, dominantJuice.hasBeenRefunded(pledger1));
-        assertEq(pledger1.balance, STARTING_USER_BALANCE - MIN_PLEDGE_AMOUNT + pledgerRefundBonus);
+        assertEq(0, dominantJuice.getBalance());
+        // Since pledger1 pays through the JB architecture, it doesn't subtract from pledger1's balance.
+        // The unit test shouldn't cover outside state, but this was just an additional sanity assert.
+        assertEq(STARTING_USER_BALANCE + pledgerRefundBonus, pledger1.balance);
     }
 
-    // EDGE CASE
-    function test_didRedeem_revertsIfInsufficientFunds() public initialized bonusDeposited FailedCycleHasExpired {
-        vm.mockCall(address(dominantJuice), abi.encodeCall(dominantJuice.getBalance, ()), abi.encode(1000 gwei));
-        // stdstore.target(address(dominantJuice)).sig("balance()").with_key(pledger1).checked_write(100 gwei);
+    // EDGE CASE. Need to figure out how to mock.
+    function test_didRedeem_revertsIfInsufficientFunds() public initialized bonusDeposited {
+        pledger1Pays(20000 gwei);
+        vm.warp(dominantJuice.cycleExpiryDate() + 100);
         dominantJuice.relayCycleResults();
+        vm.mockCall(address(dominantJuice), abi.encodeCall(dominantJuice.getBalance, ()), abi.encode(100 gwei));
+        stdstore.target(address(dominantJuice)).sig("getBalance()").checked_write(100 gwei);
+        stdstore.target(address(dominantJuice)).sig("balance()").checked_write(100 gwei);
         didRedeemData.holder = pledger1;
 
         uint256 pledgerRefundBonus = dominantJuice.calculateRefundBonus(pledger1);
@@ -822,7 +843,7 @@ contract DominantJuiceTest_Unit is Test {
     }
 
     ///////////////////////////////////
-    // Getter Tests //
+    // Getter Tests
     //////////////////////////////////
 
     // PASSING
@@ -835,61 +856,9 @@ contract DominantJuiceTest_Unit is Test {
         dominantJuice.calculateRefundBonus(_notPledger);
     }
 
-    function test_calculateRefundBonus_HappyPath() public initialized bonusDeposited {
-        // uint256 pledger1Amount = 40000 gwei;
-        // uint256 pledger2Amount = 20000 gwei;
-        // uint256 randoAmount = 1000 gwei;
-        // 3 pledgers make payments
-        JBDidPayData3_1_1 memory didPayData_pledger1;
-        didPayData_pledger1.payer = pledger1;
-        didPayData.amount.value = 20000 gwei;
-        //JBTokenAmount memory amount = didPayData.amount;
-        //amount.value = MIN_PLEDGE_AMOUNT;
-        //uint256 paymentAmount = amount.value;
-        JBDidPayData3_1_1 memory didPayData_pledger2;
-        didPayData_pledger2.payer = pledger2;
-        didPayData_pledger2.amount.value = 20000 gwei;
-
-        JBDidPayData3_1_1 memory didPayData_pledger3;
-        didPayData_pledger3.payer = pledger3;
-        didPayData_pledger3.amount.value = 1000 gwei;
-
-        vm.mockCall(
-            address(directory),
-            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
-            abi.encode(true)
-        );
-        //vm.expectCall(address(directory), abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)));
-        vm.startPrank(address(ethPaymentTerminal));
-        dominantJuice.didPay(didPayData_pledger1);
-        dominantJuice.didPay(didPayData_pledger2);
-        dominantJuice.didPay(didPayData_pledger3);
-        vm.stopPrank();
-
-        uint256 individualBonus = dominantJuice.calculateRefundBonus(pledger1);
-        //assertEq(TOTAL_REFUND_BONUS, individualBonus);
-    }
-
-    function testFuzz_calculateRefundBonus(uint256 _amount) public initialized bonusDeposited {
-        stdstore.target(address(dominantJuice)).sig("orderToPledgerAmount(uint256)").with_key(pledger1).checked_write(
-            _amount
-        );
-        stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger2).checked_write(_amount);
-        stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(rando).checked_write(_amount);
-        uint256 individualBonus = dominantJuice.calculateRefundBonus(pledger1);
-        assertEq(individualBonus, TOTAL_REFUND_BONUS);
-    }
-
-    function test_pretestcalculateRefundBonus() public initialized bonusDeposited {
-        // uint256 pledge1Amount = 40000 gwei;
-        // uint256 total = 80000 gwei;
-        // stdstore.target(address(dominantJuice)).sig("orderToPledgerAmount(uint256,address)").with_key(1).with_key(
-        //     pledger1
-        // ).checked_write(pledge1Amount);
-        // stdstore.target(address(dominantJuice)).sig("pledgedAmount(address)").with_key(pledger1).checked_write(
-        //     pledge1Amount
-        // );
-        // stdstore.target(address(dominantJuice)).sig("totalAmountPledged()").checked_write(total);
+    // PASSING: 3 pledgers
+    function test_calculateRefundBonus_happyPath() public initialized bonusDeposited {
+        // Simulate 3 pledgers pledging (and 11 pipers piping)
         JBDidPayData3_1_1 memory didPayData_pledger1;
         didPayData_pledger1.projectId = 5;
         didPayData_pledger1.payer = pledger1;
@@ -901,14 +870,13 @@ contract DominantJuiceTest_Unit is Test {
             abi.encode(true)
         );
 
-        vm.startPrank(address(ethPaymentTerminal));
+        vm.prank(address(ethPaymentTerminal));
         dominantJuice.didPay(didPayData_pledger1);
-
         vm.clearMockedCalls();
 
         JBDidPayData3_1_1 memory didPayData_pledger2;
         didPayData_pledger2.projectId = 5;
-        didPayData_pledger2.payer = pledger1;
+        didPayData_pledger2.payer = pledger2;
         didPayData_pledger2.amount.value = 30000 gwei;
 
         vm.mockCall(
@@ -917,17 +885,94 @@ contract DominantJuiceTest_Unit is Test {
             abi.encode(true)
         );
 
-        vm.startPrank(address(ethPaymentTerminal));
+        vm.prank(address(ethPaymentTerminal));
         dominantJuice.didPay(didPayData_pledger2);
+        vm.clearMockedCalls();
+
+        JBDidPayData3_1_1 memory didPayData_pledger3;
+        didPayData_pledger3.projectId = 5;
+        didPayData_pledger3.payer = pledger3;
+        didPayData_pledger3.amount.value = 1000 gwei;
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
+        dominantJuice.didPay(didPayData_pledger3);
+        vm.clearMockedCalls();
 
         vm.warp(dominantJuice.cycleExpiryDate() + 60);
         dominantJuice.relayCycleResults();
 
-        uint256 individualBonus1 = dominantJuice.calculateRefundBonus(pledger1);
-        console.log("individualBonus1 =", individualBonus1);
-        uint256 individualBonus2 = dominantJuice.calculateRefundBonus(pledger2);
-        console.log("individualBonus2 =", individualBonus2);
-        //assertEq(individualBonus, TOTAL_REFUND_BONUS);
+        uint256 totalRefundsCalculated = dominantJuice.calculateRefundBonus(pledger1)
+            + dominantJuice.calculateRefundBonus(pledger2) + dominantJuice.calculateRefundBonus(pledger3);
+        uint256 diff = TOTAL_REFUND_BONUS - totalRefundsCalculated;
+        console.log(diff);
+        assertLe(diff, 100); // 100 is one 100 millionth of a % of error or 1x10e-8 %.
+        assertLe(totalRefundsCalculated, TOTAL_REFUND_BONUS);
+    }
+
+    // PASSING: 3 pledgers, one fuzzed input amount.
+    function testFuzz_calculateRefundBonus_happyPath(uint256 _amount) public initialized bonusDeposited {
+        _amount = bound(_amount, MIN_PLEDGE_AMOUNT, CYCLE_TARGET - 50001 gwei);
+        // Simulate 3 pledgers pledging (and 11 pipers piping)
+        JBDidPayData3_1_1 memory didPayData_pledger1;
+        didPayData_pledger1.projectId = 5;
+        didPayData_pledger1.payer = pledger1;
+        didPayData_pledger1.amount.value = 20000 gwei;
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
+        dominantJuice.didPay(didPayData_pledger1);
+        vm.clearMockedCalls();
+
+        JBDidPayData3_1_1 memory didPayData_pledger2;
+        didPayData_pledger2.projectId = 5;
+        didPayData_pledger2.payer = pledger2;
+        didPayData_pledger2.amount.value = 30000 gwei;
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
+        dominantJuice.didPay(didPayData_pledger2);
+        vm.clearMockedCalls();
+
+        JBDidPayData3_1_1 memory didPayData_pledger3;
+        didPayData_pledger3.projectId = 5;
+        didPayData_pledger3.payer = pledger3;
+        didPayData_pledger3.amount.value = _amount;
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
+        dominantJuice.didPay(didPayData_pledger3);
+        vm.clearMockedCalls();
+
+        vm.warp(dominantJuice.cycleExpiryDate() + 60);
+        dominantJuice.relayCycleResults();
+
+        uint256 totalRefundsCalculated = dominantJuice.calculateRefundBonus(pledger1)
+            + dominantJuice.calculateRefundBonus(pledger2) + dominantJuice.calculateRefundBonus(pledger3);
+        uint256 diff = TOTAL_REFUND_BONUS - totalRefundsCalculated;
+        console.log(diff);
+        assertLe(diff, 1000); // 1000 is one 10 millionth of a % of error or 1x10e-7 %.
+        assertLe(totalRefundsCalculated, TOTAL_REFUND_BONUS);
     }
 
     // PASSING
@@ -955,27 +1000,145 @@ contract DominantJuiceTest_Unit is Test {
         uint256 amount = dominantJuice.getPledgerAmount(_address);
         assertEq(amount, _amount);
     }
+
+    ///////////////////////////////////
+    // Test Helpers
+    //////////////////////////////////
+
+    function pledger1Pays(uint256 _value) public {
+        JBDidPayData3_1_1 memory didPayData_pledger1;
+        didPayData_pledger1.projectId = projectID;
+        didPayData_pledger1.payer = pledger1;
+        didPayData_pledger1.amount.value = _value;
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        vm.prank(address(ethPaymentTerminal));
+        dominantJuice.didPay(didPayData_pledger1);
+        vm.clearMockedCalls();
+    }
 }
 
-// uint256 pledger1Amount = 40000 gwei;
-// uint256 pledger2Amount = 20000 gwei;
-// uint256 randoAmount = 1000 gwei;
-// Simulate pledges (pledgedAmount for each has already been stored in FailedCycleHasExpired modifier)
+// To test the calculateRefundBonus function, I put in a bunch of Test events in DominantJuice.sol so I could
+// see what was happening on each line. To keep the main .sol file clean, all of that is here to add back in,
+// in case you want to test it that way.
+// function calculateRefundBonus(address _pledger) public returns (uint256) {
+//         require(pledgedAmount[_pledger] > 0, "Address is not a pledger.");
 
-// Pledger1
-// stdstore.target(address(dominantJuice)).sig("pledgers(uint256)").with_key(0).checked_write(pledger1);
-// stdstore.target(address(dominantJuice)).sig("orderToPledgerToAmount(uint256,address)").with_key(0).with_key(
-//     pledger1
-// ).checked_write(40000 gwei);
-// // Pledger2
-// stdstore.target(address(dominantJuice)).sig("pledgers(uint256)").with_key(1).checked_write(pledger2);
-// stdstore.target(address(dominantJuice)).sig("orderToPledgerToAmount(uint256,address)").with_key(1).with_key(
-//     pledger2
-// ).checked_write(20000 gwei);
-// // Rando
-// stdstore.target(address(dominantJuice)).sig("pledgers(uint256)").with_key(2).checked_write(rando);
-// stdstore.target(address(dominantJuice)).sig("orderToPledgerToAmount(uint256,address)").with_key(2).with_key(
-//     rando
-// ).checked_write(MIN_PLEDGE_AMOUNT);
-// // Contract variables
-// stdstore.target(address(dominantJuice)).sig("pledgeOrder()").checked_write(3);
+//         uint256 numPledgers = pledgers.length;
+//         UD60x18 individualRefundBonus;
+//         UD60x18 pledgeAmount_orderLoop;
+//         UD60x18 pledgeAmount_amountLoop;
+
+//         // Donations and order of pledges are weighted to benefit earlier, larger pledges
+//         UD60x18 orderWeight;
+//         UD60x18 sumOfOrderWeights;
+//         // Memory array of normalized order weights (w-1s)
+//         uint256[] memory orderWeightNormalized = new uint[](numPledgers);
+//         UD60x18 sumOfAmountsXNormalizedOrderWeights;
+//         // uint256 donationWeight;
+//         // uint256 donationWeightNormalized;
+//         // Represents the combined order and pledge amount weighting.
+//         UD60x18 overallPledgeWeight;
+//         emit Test("numPledgers", numPledgers);
+//         emit Test("totalAmountPledged", totalAmountPledged);
+//         // First, get the sum of pledge order weights to use in the normalizing loop
+//         for (uint32 i = 0; i < numPledgers; i++) {
+//             //UD60x18 i_ud = wrap(i + 1);
+//             //emit Test("i_ud", unwrap(i_ud));
+//             // Add 1 to i because rateOfDecay is being raised to the pledge ordereth power
+//             sumOfOrderWeights = add(sumOfOrderWeights, rateOfDecay.powu(i + 1));
+//             //sumOfOrderWeights += (rateOfDecay ** i) * 1 ether;
+//             UD60x18 power = rateOfDecay.powu(4);
+//             emit Test("rateOfDecay", unwrap(rateOfDecay));
+//             emit Test("power", unwrap(power));
+//             emit Test("sumOfOrderWeights", unwrap(sumOfOrderWeights));
+//         }
+
+//         // Refund Bonus calculation prep work:
+//         for (uint32 j = 0; j < numPledgers; j++) {
+//             //UD60x18 j_ud = wrap(j + 1);
+//             // Earlier pledges are given more weight according to the exponential decay rate.
+//             // Add 1 to j because rateOfDecay is being raised to the ordereth power.
+//             orderWeight = rateOfDecay.powu(j + 1); // No decimals
+//             //orderWeight = (rateOfDecay ** j) * 1 ether;
+//             emit Test("orderWeight", unwrap(orderWeight));
+//             // Order weights are normalized to compare each pledge to the total pledging data.
+//             // Save in memory array for use in next for loop.
+//             orderWeightNormalized[j] = unwrap(orderWeight / sumOfOrderWeights);
+//             emit Test("orderWeightNormalized[j]", orderWeightNormalized[j]);
+//             // Get the payment amount for each order
+//             pledgeAmount_orderLoop = wrap(orderToPledgerToAmount[j][pledgers[j]]);
+//             // Multiply payments by their respective normalized weight. Sum all products by
+//             // looping (=sum(x*w_1)). Use in next for loop
+//             sumOfAmountsXNormalizedOrderWeights =
+//                 add(sumOfAmountsXNormalizedOrderWeights, mul(pledgeAmount_orderLoop, wrap(orderWeightNormalized[j])));
+//             emit Test(
+//                 "AmountXNormalizedOrderWeight", unwrap(mul(pledgeAmount_orderLoop, wrap(orderWeightNormalized[j])))
+//             );
+//             emit Test("sumOfAmountsXNormalizedOrderWeights", unwrap(sumOfAmountsXNormalizedOrderWeights));
+//         }
+
+//         // Next, give more weight to larger contribution amounts by multiplying each pledge amount with its
+//         // orderWeightNormalized. Looping logic is for the possibility of repeat pledgers
+//         for (uint32 k = 0; k < numPledgers; k++) {
+//             if (pledgers[k] == _pledger) {
+//                 pledgeAmount_amountLoop = wrap(orderToPledgerToAmount[k][_pledger]);
+//                 overallPledgeWeight =
+//                     mul(pledgeAmount_amountLoop, wrap(orderWeightNormalized[k])) / sumOfAmountsXNormalizedOrderWeights;
+//                 emit Test("overallPledgeWeight", unwrap(overallPledgeWeight));
+//                 // Multiply totalRefundBonus by overallWeight to get the individual refund. Loop again.
+//                 // If pledger's address is found in the pledger array again, add to individual total.
+//                 individualRefundBonus = add(individualRefundBonus, mul(overallPledgeWeight, wrap(totalRefundBonus)));
+//                 emit Test("individualRefundBonus", unwrap(individualRefundBonus));
+//             }
+//         }
+//         return unwrap(individualRefundBonus);
+//     }
+
+// DO NOT USE:
+// function testFuzz_relayCycle_JBAndContractPledgeAmountsMatch(uint256 _amount) public initialized bonusDeposited {
+//         stdstore.target(address(dominantJuice)).sig("totalAmountPledged()").checked_write(_amount);
+//         vm.warp(dominantJuice.cycleExpiryDate() + 100);
+//         uint256 amount_fromJB = _amount;
+
+//         if (dominantJuice.totalAmountPledged() != amount_fromJB) {
+//         stdstore.target(address(dominantJuice)).sig("totalAmountPledged()").checked_write(amount_fromJB);
+//     }
+
+//         vm.mockCall(
+//             address(paymentTerminalStore),
+//             abi.encodeCall(paymentTerminalStore.balanceOf, (ethPaymentTerminal, projectID)),
+//             abi.encode(amount_fromJB)
+//         );
+//         vm.expectCall(
+//             address(paymentTerminalStore),
+//             abi.encodeCall(paymentTerminalStore.balanceOf, (ethPaymentTerminal, projectID))
+//         );
+
+//         if (_amount < CYCLE_TARGET) {
+//             vm.expectEmit(true, true, true, true, address(dominantJuice));
+//             emit CycleHasClosed(true, false);
+//         } else {
+//             vm.expectEmit(true, true, true, true, address(dominantJuice));
+//             emit CycleHasClosed(true, true);
+//         }
+
+//         vm.prank(rando);
+//         dominantJuice.relayCycleResults();
+
+//         bool expired = dominantJuice.isCycleExpired();
+//         assertEq(expired, true);
+
+//         if (_amount < CYCLE_TARGET) {
+//             bool isMet = dominantJuice.isTargetMet();
+//             assertEq(isMet, false);
+//         } else {
+//             bool isMet = dominantJuice.isTargetMet();
+//             assertEq(isMet, true);
+//         }
+//     }
