@@ -98,6 +98,7 @@ For quickstart, in a parent directory of your choosing, `git clone` the repo usi
 
 -   Smart contracts, scripting, and testing: Solidity and Foundry
 -   OpenZeppelin inherited contracts: Ownable, ReentrancyGuard
+-   The wizardry PRBMath for decimal precision and exponentiation functionality.
 -   The fresh and finest imports from the land of Juicebox
 -   Front End: TBD
 
