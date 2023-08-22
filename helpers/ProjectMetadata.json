@@ -1,9 +1,9 @@
 {
-    "name":"DJ Test #1",
-    "description":"Test test test",
+    "name":"t0wn Campaign",
+    "description":"Placeholder for when we get verbiage from t0wn team",
     "logoUri":"https://jbx.mypinata.cloud/ipfs/QmWXCt1zYAJBkNb7cLXTNRNisuWu9mRAmXTaW9CLFYkWVS",
     "infoUri":"https://snapshot.org/",
-    "twitter":"DJ",
+    "twitter":"t0wn twitter link",
     "discord":"https://discord.gg/W9mTVG4QhD",
     "payButton":"Pledge"
 }

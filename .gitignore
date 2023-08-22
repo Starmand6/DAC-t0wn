@@ -9,10 +9,8 @@ lib/forge-std/
 yarn-error.log
 not_used
 solidity-flattener
-out/
-broadcast/
+/out/
 /broadcast/
-!/broadcast
 .gas-snapshot
 .prettierrc
 lcov.info
