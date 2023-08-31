@@ -51,16 +51,19 @@ contract DominantJuice is
     bytes32 private constant CAMPAIGN_MANAGER_ROLE = keccak256("CAMPAIGN_MANAGER_ROLE");
 
     /// Juicebox Contracts
-    IJBController3_1 public immutable controller;
-    IJBDirectory public immutable directory; // directory of terminals and controllers for projects.
-    IJBFundAccessConstraintsStore public immutable fundAccessConstraintsStore;
-    IJBSingleTokenPaymentTerminalStore3_1_1 public immutable paymentTerminalStore;
-    IJBSingleTokenPaymentTerminal public immutable paymentTerminal;
+    struct JBContracts {
+        IJBController3_1 controller;
+        IJBDirectory directory; // directory of terminals and controllers for projects.
+        IJBFundAccessConstraintsStore fundAccessConstraintsStore;
+        IJBSingleTokenPaymentTerminalStore3_1_1 paymentTerminalStore;
+        IJBSingleTokenPaymentTerminal paymentTerminal;
+    }
 
     /// Main Campaign Parameters
     struct Campaign {
         uint256 projectId;
         uint256 cycleTarget;
+        uint256 cycleStart;
         uint256 cycleExpiryDate;
         uint256 minimumPledgeAmount;
         uint256 totalRefundBonus;
@@ -74,6 +77,7 @@ contract DominantJuice is
         bool hasCreatorWithdrawnAllFunds;
     }
 
+    /// Refund Bonus Data
     struct Pledgers {
         uint256 totalAmountPledged;
         UD60x18 totalPledgeWeight;
@@ -82,11 +86,13 @@ contract DominantJuice is
     }
 
     /// State Variables
+    JBContracts private jbContracts;
     Campaign private campaign;
     Pledgers private pledgers;
     UD60x18 private immutable rateOfDecay = ud(0.99e18);
+    uint256 private constant lockPeriod = 14 * 24 * 60 * 60; // Two weeks of seconds
 
-    // Events for transparency to pledgers
+    /// Campaign Events
     event RefundBonusDeposited(address, uint256 indexed);
     event PledgeMade(address, uint256);
     event CycleHasClosed(bool indexed, bool indexed);
@@ -94,9 +100,11 @@ contract DominantJuice is
     event CreatorWithdrawal(address, uint256);
 
     error BonusAlreadyDeposited(uint256 bonusAmount);
+    error CycleHasNotStarted();
     error RefundBonusNotDeposited();
     error AmountIsBelowMinimumPledge(uint256 minAmount);
-    error InvalidPaymentEvent(address caller, uint256 projectId, uint256 value);
+    error PledgeThroughJuiceboxSiteOnly();
+    error CallerMustBeJBPaymentTerminal();
     error CycleHasExpired();
     error IncorrectProjectID();
     error FunctionHasAlreadyBeenCalled();
@@ -104,22 +112,29 @@ contract DominantJuice is
     error CycleHasNotEndedYet(uint256 endTimestamp);
     error NoRefundsForSuccessfulCycle();
     error AlreadyWithdrawnRefund();
-    error InvalidRedemptionEvent(address caller, uint256 projectId, uint256 value);
     error InsufficientFunds();
 
     // Make sure the caller is a terminal of the project, and that the call is being made
     // on behalf of an interaction with the correct project.
     modifier terminalCheck() {
-        require(msg.value == 0, "Pledges should be made through JB website.");
-        require(
-            directory.isTerminalOf(campaign.projectId, IJBPaymentTerminal(msg.sender)),
-            "Caller must be a JB Payment Terminal."
-        );
+        if (msg.value != 0) revert PledgeThroughJuiceboxSiteOnly();
+        if (!jbContracts.directory.isTerminalOf(campaign.projectId, IJBPaymentTerminal(msg.sender))) {
+            revert CallerMustBeJBPaymentTerminal();
+        }
+        _;
+    }
+
+    modifier payCycleCheck() {
+        (JBFundingCycle memory jbCycle,) = jbContracts.controller.currentFundingCycleOf(campaign.projectId);
+        if (block.timestamp < campaign.cycleStart) revert CycleHasNotStarted();
+        if (campaign.totalRefundBonus == 0) revert RefundBonusNotDeposited();
+        // This is an insurance check, since payments should be paused for 2nd cycle initially.
+        if (hasCycleExpired()) revert CycleHasExpired();
         _;
     }
 
     modifier redeemCycleCheck() {
-        // This is an insurance check, since project should have redemptions paused during 1st cycle.
+        // The first if is an insurance check, since project redemptions should be paused during 1st cycle.
         if (!hasCycleExpired()) revert CycleHasNotEndedYet(campaign.cycleExpiryDate);
         if (isTargetMet()) revert NoRefundsForSuccessfulCycle();
         _;
@@ -127,16 +142,14 @@ contract DominantJuice is
 
     /// @param _projectId Obtained via Juicebox after project creation.
     constructor(
-        address payable _campaignManager,
         uint256 _projectId,
         uint256 _cycleTarget,
         uint256 _minimumPledgeAmount,
         IJBController3_1 _controller,
         IJBSingleTokenPaymentTerminalStore3_1_1 _paymentTerminalStore
     ) {
-        // Assign roles
+        // Assign admin role to grant Campaign Manager Role after deployment.
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(CAMPAIGN_MANAGER_ROLE, _campaignManager);
 
         // Store parameters of a project launched on the Juicebox platform.
         campaign.cycleTarget = _cycleTarget;
@@ -144,16 +157,18 @@ contract DominantJuice is
         campaign.projectId = _projectId;
 
         // Store JB architecture contracts
-        controller = _controller;
-        paymentTerminalStore = _paymentTerminalStore;
-        directory = controller.directory();
-        fundAccessConstraintsStore = controller.fundAccessConstraintsStore();
+        jbContracts.controller = _controller;
+        jbContracts.paymentTerminalStore = _paymentTerminalStore;
+        jbContracts.directory = jbContracts.controller.directory();
+        jbContracts.fundAccessConstraintsStore = jbContracts.controller.fundAccessConstraintsStore();
 
         // Get the default ETH payment terminal of the project from the JB directory.
-        paymentTerminal = IJBSingleTokenPaymentTerminal(address(directory.terminalsOf(campaign.projectId)[0]));
+        jbContracts.paymentTerminal =
+            IJBSingleTokenPaymentTerminal(address(jbContracts.directory.terminalsOf(campaign.projectId)[0]));
 
         // Destructure cycleData struct to access cycle start and duration timestamps
-        (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(campaign.projectId);
+        (JBFundingCycle memory cycleData,) = jbContracts.controller.currentFundingCycleOf(campaign.projectId);
+        campaign.cycleStart = cycleData.start;
         campaign.cycleExpiryDate = cycleData.start + cycleData.duration;
     }
 
@@ -205,12 +220,11 @@ contract DominantJuice is
         view
         virtual
         override
+        payCycleCheck
         returns (uint256 weight, string memory memo, JBPayDelegateAllocation3_1_1[] memory delegateAllocations)
     {
-        // The if statements are the only changes from the payParams() template. This is also not a payable
+        // The modifier and if statement are the only changes from the payParams() template. This is not a payable
         // function, so calls with msg.value will revert.
-        if (getBalance() == 0) revert RefundBonusNotDeposited();
-        if (hasCycleExpired()) revert CycleHasExpired();
         if (_data.amount.value < campaign.minimumPledgeAmount) {
             revert AmountIsBelowMinimumPledge(campaign.minimumPledgeAmount);
         }
@@ -219,7 +233,8 @@ contract DominantJuice is
         weight = _data.weight;
         // Forward the default memo received from the payer.
         memo = _data.memo;
-        // Add `this` contract as a Pay Delegate so that it receives a `didPay` call. Don't send funds to the delegate (keep in treasury).
+        // Add `this` contract as a Pay Delegate so that it receives a `didPay` call.
+        // Don't send funds to the delegate (keep in treasury).
         delegateAllocations = new JBPayDelegateAllocation3_1_1[](1);
         delegateAllocations[0] = JBPayDelegateAllocation3_1_1(this, 0, "");
     }
@@ -231,8 +246,12 @@ contract DominantJuice is
      * @param _data Standard Juicebox project payment data.
      * See https://docs.juicebox.money/dev/api/data-structures/jbdidpaydata3_1_1/.
      */
-    function didPay(JBDidPayData3_1_1 calldata _data) external payable virtual override terminalCheck {
+    function didPay(JBDidPayData3_1_1 calldata _data) external payable virtual override terminalCheck payCycleCheck {
         if (_data.projectId != campaign.projectId) revert IncorrectProjectID();
+        // Insurance check if somehow both payParams() and JB Architecture let a pledge below minimum through
+        if (_data.amount.value < campaign.minimumPledgeAmount) {
+            revert AmountIsBelowMinimumPledge(campaign.minimumPledgeAmount);
+        }
 
         // Get payer address and amount paid from JB DidPay data struct
         address payer = _data.payer;
@@ -240,13 +259,14 @@ contract DominantJuice is
         uint256 paymentAmount = amount.value;
 
         // Get time of pledge from campaign start.
-        (JBFundingCycle memory cycleData,) = controller.currentFundingCycleOf(campaign.projectId);
+        (JBFundingCycle memory cycleData,) = jbContracts.controller.currentFundingCycleOf(campaign.projectId);
         uint256 hourOfPledge = (block.timestamp - cycleData.start) / 3600;
 
         // Update storage variables
         pledgers.totalAmountPledged += paymentAmount;
-        pledgers.pledgerWeight[payer] = mul(rateOfDecay.powu(hourOfPledge), wrap(paymentAmount));
-        pledgers.totalPledgeWeight = add(pledgers.totalPledgeWeight, pledgers.pledgerWeight[payer]);
+        UD60x18 currentPledgerWeight = rateOfDecay.powu(hourOfPledge).mul(wrap(paymentAmount));
+        pledgers.pledgerWeight[payer] = pledgers.pledgerWeight[payer].add(currentPledgerWeight);
+        pledgers.totalPledgeWeight = pledgers.totalPledgeWeight.add(currentPledgerWeight);
 
         emit PledgeMade(payer, paymentAmount);
     }
@@ -275,15 +295,15 @@ contract DominantJuice is
             JBRedemptionDelegateAllocation3_1_1[] memory delegateAllocations
         )
     {
-        address payable redeemer = payable(_data.holder);
+        address payable pledger = payable(_data.holder);
 
         // The if statements are the only changes from the redeemParams() template.
-        if (unwrap(pledgers.pledgerWeight[redeemer]) == 0) revert MustBePledger();
-        if (pledgers.hasBeenRefunded[redeemer]) revert AlreadyWithdrawnRefund();
+        if (pledgers.pledgerWeight[pledger].unwrap() == 0) revert MustBePledger();
+        if (pledgers.hasBeenRefunded[pledger]) revert AlreadyWithdrawnRefund();
 
         // Forward the default reclaimAmount received from the protocol.
         reclaimAmount = _data.reclaimAmount.value;
-        // Forward the default memo received from the redeemer.
+        // Forward the default memo received from the pledger.
         memo = _data.memo;
         // Add `this` contract as a Redeem Delegate so that it receives a `didRedeem` call. Don't send any extra funds to the delegate.
         delegateAllocations = new JBRedemptionDelegateAllocation3_1_1[](1);
@@ -302,34 +322,34 @@ contract DominantJuice is
     function didRedeem(JBDidRedeemData3_1_1 calldata _data) external payable terminalCheck redeemCycleCheck {
         if (_data.projectId != campaign.projectId) revert IncorrectProjectID();
 
-        address payable redeemer = payable(_data.holder);
-        if (unwrap(pledgers.pledgerWeight[redeemer]) == 0) revert MustBePledger();
-        if (pledgers.hasBeenRefunded[redeemer]) revert AlreadyWithdrawnRefund();
+        address payable pledger = payable(_data.holder);
+        if (pledgers.pledgerWeight[pledger].unwrap() == 0) revert MustBePledger();
+        if (pledgers.hasBeenRefunded[pledger]) revert AlreadyWithdrawnRefund();
 
         // Calculates the refund bonus, using PRBMath, based on the time from cycle start and the size of the pledge
-        uint256 pledgerRefundBonus = unwrap(
-            mul(div(pledgers.pledgerWeight[redeemer], pledgers.totalPledgeWeight), wrap(campaign.totalRefundBonus))
-        );
+        uint256 pledgerRefundBonus = (
+            pledgers.pledgerWeight[pledger].div(pledgers.totalPledgeWeight).mul(wrap(campaign.totalRefundBonus))
+        ).unwrap();
 
         // Sanity Check
         if (address(this).balance < pledgerRefundBonus) revert InsufficientFunds();
 
         // This redeeem function is now locked for the current redeeming address.
-        pledgers.hasBeenRefunded[redeemer] = true;
+        pledgers.hasBeenRefunded[pledger] = true;
 
         // Sending early pledger refund bonus.
-        (bool sendSuccess,) = redeemer.call{value: pledgerRefundBonus}("");
+        (bool sendSuccess,) = pledger.call{value: pledgerRefundBonus}("");
         require(sendSuccess, "Failed to send refund bonus.");
 
-        emit CycleRefundBonusWithdrawal(redeemer, pledgerRefundBonus);
+        emit CycleRefundBonusWithdrawal(pledger, pledgerRefundBonus);
     }
 
     /**
      * @notice This function is callable after cycleExpiryDate if goal is met. However, for
-     * contingency, where a redeemer is unable to retrieve funds, after a locked period, the
-     * Campaign Manager can withdraw funds for disbursement to remaining redeemers . The unlock
-     * time is hardcoded for two weeks after the cycleExpiryDate to give pledgers confidence
-     * that funds are programmatically guaranteed to remain in the contract for that time.
+     * contingency, where a pledger is unable to retrieve funds, after the predetermined time lock
+     * expires, the Campaign Manager can withdraw funds for disbursement to affected pledgers. The
+     * locked period is hardcoded for two weeks after the cycleExpiryDate to give pledgers a
+     * programmatic guarantee that funds will remain in the contract for that time.
      * @param receivingAddress Campaign Manager must call this function but can withdraw funds to
      * another address if desired.
      */
@@ -338,10 +358,13 @@ contract DominantJuice is
         payable
         onlyRole(CAMPAIGN_MANAGER_ROLE)
     {
-        uint256 unlockTime = campaign.cycleExpiryDate + 1209600; // Two weeks after expiry date
+        bool successfulCycleClosed = hasCycleExpired() && isTargetMet();
+        uint256 unlockTime = campaign.cycleExpiryDate + lockPeriod;
+        bool timeLockHasEnded = block.timestamp > unlockTime;
+
         require(
-            (hasCycleExpired() && isTargetMet()) || ((block.timestamp > unlockTime) && !isTargetMet()),
-            "Cycle must be expired and successful, or it must be passed the lock period."
+            successfulCycleClosed || timeLockHasEnded,
+            "Cycle must be expired and successful, or it must be past the lock period."
         );
         if (amount > address(this).balance) revert InsufficientFunds();
 
@@ -362,38 +385,35 @@ contract DominantJuice is
     }
 
     function isTargetMet() public view returns (bool) {
-        if (pledgers.totalAmountPledged >= campaign.cycleTarget) return true;
-        else return false;
+        return pledgers.totalAmountPledged >= campaign.cycleTarget;
     }
 
     function hasCycleExpired() public view returns (bool) {
-        if (block.timestamp >= campaign.cycleExpiryDate) {
-            return true;
-        } else {
-            return false;
-        }
+        return block.timestamp >= campaign.cycleExpiryDate;
     }
 
     function getCycleFundingStatus() public view returns (FundingStatus memory) {
-        FundingStatus memory status;
-
-        status.totalPledged = pledgers.totalAmountPledged;
-        status.percentOfGoal = ((100 * pledgers.totalAmountPledged) / campaign.cycleTarget);
-        status.isTargetMet = isTargetMet();
-        status.hasCycleExpired = hasCycleExpired();
-        if (isTargetMet() && address(this).balance == 0) status.hasCreatorWithdrawnAllFunds = true;
-
-        return status;
-    }
-
-    function getPledgerAndTotalWeights(address _pledger) public view returns (uint256, uint256) {
-        uint256 pledgerWeight = unwrap(pledgers.pledgerWeight[_pledger]);
-        uint256 totalWeight = unwrap(pledgers.totalPledgeWeight);
-
-        return (pledgerWeight, totalWeight);
+        return FundingStatus({
+            totalPledged: pledgers.totalAmountPledged,
+            percentOfGoal: ((100 * pledgers.totalAmountPledged) / campaign.cycleTarget),
+            isTargetMet: isTargetMet(),
+            hasCycleExpired: hasCycleExpired(),
+            hasCreatorWithdrawnAllFunds: isTargetMet() && address(this).balance == 0
+        });
     }
 
     function getPledgerRefundStatus(address _pledger) public view returns (bool) {
         return pledgers.hasBeenRefunded[_pledger];
+    }
+
+    function _getPledgerAndTotalWeights(address _pledger) internal view returns (uint256, uint256) {
+        uint256 pledgerWeight = pledgers.pledgerWeight[_pledger].unwrap();
+        uint256 totalWeight = pledgers.totalPledgeWeight.unwrap();
+
+        return (pledgerWeight, totalWeight);
+    }
+
+    function _getJBContracts() internal view returns (JBContracts memory) {
+        return jbContracts;
     }
 }

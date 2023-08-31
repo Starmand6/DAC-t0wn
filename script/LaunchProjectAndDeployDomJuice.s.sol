@@ -6,7 +6,6 @@ import {DominantJuice} from "../src/DominantJuice.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 import {IJBController3_1} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController3_1.sol";
 import {IJBFundingCycleBallot} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleBallot.sol";
-// import {IJBOperatorStore} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBOperatorStore.sol";
 import {IJBProjects} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBProjects.sol";
 import {IJBSingleTokenPaymentTerminalStore3_1_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminalStore3_1_1.sol";
@@ -18,11 +17,7 @@ import {JBFundingCycleMetadata} from "@jbx-protocol/juice-contracts-v3/contracts
 import {JBGlobalFundingCycleMetadata} from
     "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol";
 import {JBGroupedSplits} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGroupedSplits.sol";
-//import {JBOperatable} from "@jbx-protocol/juice-contracts-v3/contracts/abstract/JBOperatable.sol";
-//import {JBOperations} from "@jbx-protocol/juice-contracts-v3/contracts/libraries/JBOperations.sol";
-//import {JBOperatorData} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBOperatorData.sol";
 import {JBProjectMetadata} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol";
-//import {LaunchProjectData} from "./structs/LaunchProjectData.sol";
 
 contract LaunchAndDeploy is Script {
     // Juicebox contracts
@@ -91,7 +86,7 @@ contract LaunchAndDeploy is Script {
 
         /// Deploy the dominant assurance escrow delegate w/ the calculated project ID and store the instance.
         DominantJuice delegate =
-        new DominantJuice(_owner, _projectID, _cycleTarget, _minimumPledgeAmount, contracts.controller, contracts.paymentTerminalStore);
+        new DominantJuice(_projectID, _cycleTarget, _minimumPledgeAmount, contracts.controller, contracts.paymentTerminalStore);
 
         emit DelegateDeployed(_projectID, address(delegate), _owner);
 
