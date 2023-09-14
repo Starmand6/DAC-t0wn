@@ -6,17 +6,10 @@ import {IJBController3_1} from "@jbx-protocol/juice-contracts-v3/contracts/inter
 import {IJBDirectory} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBDirectory.sol";
 import {IJBFundingCycleDataSource3_1_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleDataSource3_1_1.sol";
-import {IJBFundingCycleStore} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundingCycleStore.sol";
-import {IJBFundAccessConstraintsStore} from
-    "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundAccessConstraintsStore.sol";
 import {IJBPayDelegate3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPayDelegate3_1_1.sol";
 import {IJBPaymentTerminal} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol";
 import {IJBRedemptionDelegate3_1_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBRedemptionDelegate3_1_1.sol";
-import {IJBSingleTokenPaymentTerminal} from
-    "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminal.sol";
-import {IJBSingleTokenPaymentTerminalStore3_1_1} from
-    "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminalStore3_1_1.sol";
 import {JBDidPayData3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBDidPayData3_1_1.sol";
 import {JBDidRedeemData3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBDidRedeemData3_1_1.sol";
 import {JBFundingCycle} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycle.sol";
@@ -52,11 +45,8 @@ contract DominantJuice is
 
     /// Juicebox Contracts
     struct JBContracts {
-        IJBController3_1 controller;
-        IJBDirectory directory; // directory of terminals and controllers for projects.
-        IJBFundAccessConstraintsStore fundAccessConstraintsStore;
-        IJBSingleTokenPaymentTerminalStore3_1_1 paymentTerminalStore;
-        IJBSingleTokenPaymentTerminal paymentTerminal;
+        IJBController3_1 controller; // Manages cycles and funds for projects
+        IJBDirectory directory; // Directory of terminals and controllers for projects
     }
 
     /// Main Campaign Parameters
@@ -69,6 +59,7 @@ contract DominantJuice is
         uint256 totalRefundBonus;
     }
 
+    /// Campaign Status
     struct FundingStatus {
         uint256 totalPledged;
         uint256 percentOfGoal;
@@ -77,7 +68,7 @@ contract DominantJuice is
         bool hasCreatorWithdrawnAllFunds;
     }
 
-    /// Refund Bonus Data
+    /// Pledging and Refund Bonus Data
     struct Pledgers {
         uint256 totalAmountPledged;
         UD60x18 totalPledgeWeight;
@@ -99,6 +90,7 @@ contract DominantJuice is
     event CycleRefundBonusWithdrawal(address indexed, uint256 indexed);
     event CreatorWithdrawal(address, uint256);
 
+    /// Campaign Custom Errors
     error BonusAlreadyDeposited(uint256 bonusAmount);
     error CycleHasNotStarted();
     error RefundBonusNotDeposited();
@@ -114,10 +106,9 @@ contract DominantJuice is
     error AlreadyWithdrawnRefund();
     error InsufficientFunds();
 
-    // Make sure the caller is a terminal of the project, and that the call is being made
-    // on behalf of an interaction with the correct project.
     modifier terminalCheck() {
         if (msg.value != 0) revert PledgeThroughJuiceboxSiteOnly();
+        // Make sure the caller is a terminal of the project linked to this contract
         if (!jbContracts.directory.isTerminalOf(campaign.projectId, IJBPaymentTerminal(msg.sender))) {
             revert CallerMustBeJBPaymentTerminal();
         }
@@ -125,7 +116,6 @@ contract DominantJuice is
     }
 
     modifier payCycleCheck() {
-        (JBFundingCycle memory jbCycle,) = jbContracts.controller.currentFundingCycleOf(campaign.projectId);
         if (block.timestamp < campaign.cycleStart) revert CycleHasNotStarted();
         if (campaign.totalRefundBonus == 0) revert RefundBonusNotDeposited();
         // This is an insurance check, since payments should be paused for 2nd cycle initially.
@@ -141,14 +131,8 @@ contract DominantJuice is
     }
 
     /// @param _projectId Obtained via Juicebox after project creation.
-    constructor(
-        uint256 _projectId,
-        uint256 _cycleTarget,
-        uint256 _minimumPledgeAmount,
-        IJBController3_1 _controller,
-        IJBSingleTokenPaymentTerminalStore3_1_1 _paymentTerminalStore
-    ) {
-        // Assign admin role to grant Campaign Manager Role after deployment.
+    constructor(uint256 _projectId, uint256 _cycleTarget, uint256 _minimumPledgeAmount, IJBController3_1 _controller) {
+        // Assign admin role to deployer to grant Campaign Manager Role after deployment.
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
         // Store parameters of a project launched on the Juicebox platform.
@@ -158,16 +142,10 @@ contract DominantJuice is
 
         // Store JB architecture contracts
         jbContracts.controller = _controller;
-        jbContracts.paymentTerminalStore = _paymentTerminalStore;
         jbContracts.directory = jbContracts.controller.directory();
-        jbContracts.fundAccessConstraintsStore = jbContracts.controller.fundAccessConstraintsStore();
-
-        // Get the default ETH payment terminal of the project from the JB directory.
-        jbContracts.paymentTerminal =
-            IJBSingleTokenPaymentTerminal(address(jbContracts.directory.terminalsOf(campaign.projectId)[0]));
 
         // Destructure cycleData struct to access cycle start and duration timestamps
-        (JBFundingCycle memory cycleData,) = jbContracts.controller.currentFundingCycleOf(campaign.projectId);
+        (JBFundingCycle memory cycleData,) = jbContracts.controller.queuedFundingCycleOf(campaign.projectId);
         campaign.cycleStart = cycleData.start;
         campaign.cycleExpiryDate = cycleData.start + cycleData.duration;
     }
@@ -253,8 +231,8 @@ contract DominantJuice is
             revert AmountIsBelowMinimumPledge(campaign.minimumPledgeAmount);
         }
 
-        // Get payer address and amount paid from JB DidPay data struct
-        address payer = _data.payer;
+        // Get pledger/payer address and amount paid from JB DidPay data struct
+        address pledgerAddress = _data.payer;
         JBTokenAmount memory amount = _data.amount;
         uint256 paymentAmount = amount.value;
 
@@ -265,10 +243,10 @@ contract DominantJuice is
         // Update storage variables
         pledgers.totalAmountPledged += paymentAmount;
         UD60x18 currentPledgerWeight = rateOfDecay.powu(hourOfPledge).mul(wrap(paymentAmount));
-        pledgers.pledgerWeight[payer] = pledgers.pledgerWeight[payer].add(currentPledgerWeight);
+        pledgers.pledgerWeight[pledgerAddress] = pledgers.pledgerWeight[pledgerAddress].add(currentPledgerWeight);
         pledgers.totalPledgeWeight = pledgers.totalPledgeWeight.add(currentPledgerWeight);
 
-        emit PledgeMade(payer, paymentAmount);
+        emit PledgeMade(pledgerAddress, paymentAmount);
     }
 
     /**
@@ -355,7 +333,6 @@ contract DominantJuice is
      */
     function creatorWithdraw(address payable receivingAddress, uint256 amount)
         external
-        payable
         onlyRole(CAMPAIGN_MANAGER_ROLE)
     {
         bool successfulCycleClosed = hasCycleExpired() && isTargetMet();

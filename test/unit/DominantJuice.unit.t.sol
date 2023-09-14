@@ -10,14 +10,12 @@ import {IJBDirectory} from "@jbx-protocol/juice-contracts-v3/contracts/interface
 import {IJBSingleTokenPaymentTerminalStore3_1_1} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminalStore3_1_1.sol";
 import {JBFundingCycle} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycle.sol";
-import {IJBFundAccessConstraintsStore} from
-    "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBFundAccessConstraintsStore.sol";
 import {IJBPaymentTerminal} from "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol";
 import {IJBSingleTokenPaymentTerminal} from
     "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminal.sol";
 import {JBPayParamsData} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBPayParamsData.sol";
 import {JBDidPayData3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBDidPayData3_1_1.sol";
-import {JBETHPaymentTerminal3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/JBETHPaymentTerminal3_1_1.sol";
+import {JBETHPaymentTerminal3_1_2} from "@jbx-protocol/juice-contracts-v3/contracts/JBETHPaymentTerminal3_1_2.sol";
 import {JBRedeemParamsData} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBRedeemParamsData.sol";
 import {JBDidRedeemData3_1_1} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBDidRedeemData3_1_1.sol";
 import {JBRedemptionDelegateAllocation3_1_1} from
@@ -36,24 +34,20 @@ import {IJBFundingCycleBallot} from "@jbx-protocol/juice-contracts-v3/contracts/
 import {JBGlobalFundingCycleMetadata} from
     "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol";
 
-//import {UD60x18, ud, add, pow, powu, div, mul, wrap, unwrap} from "@prb/math/UD60x18.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
-import "../../src/test/ABDKMath64x64.sol";
 
-// Will do a general clean up and remove all the "PASSINGS', console.logs, etc before audit.
+// AccessControl is inherited only to gain access to the special DEFAULT_ADMIN_ROLE syntax.
 contract DominantJuiceTest_Unit is Test, AccessControl {
     using stdStorage for StdStorage;
 
     // Juicebox (JB) Contracts
     IJBController3_1 public controller = IJBController3_1(makeAddr("controller"));
     IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
-    IJBFundAccessConstraintsStore public fundAccessConstraintsStore =
-        IJBFundAccessConstraintsStore(makeAddr("fundAccessConstraintsStore"));
     IJBSingleTokenPaymentTerminalStore3_1_1 public paymentTerminalStore =
         IJBSingleTokenPaymentTerminalStore3_1_1(makeAddr("paymentTerminalStore"));
-    IJBSingleTokenPaymentTerminal ethPaymentTerminal = IJBSingleTokenPaymentTerminal(makeAddr("ethPaymentTerminal"));
+    IJBPaymentTerminal ethPaymentTerminal = IJBPaymentTerminal(makeAddr("ethPaymentTerminal"));
 
     // Data structs for JB functions: launchProjectFor(), pay(), redeemTokensOf()
     JBFundingCycle _cycle;
@@ -69,7 +63,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     address payable public pledger2 = payable(makeAddr("pledger2"));
     address payable public pledger3 = payable(makeAddr("pledger3"));
     address payable public rando = payable(makeAddr("rando"));
-    address public ethToken = makeAddr("ethToken");
 
     // DAC constants
     uint256 public constant STARTING_BALANCE = 10000 ether;
@@ -90,7 +83,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     event CycleHasClosed(bool indexed, bool indexed);
     event CycleRefundBonusWithdrawal(address indexed, uint256 indexed);
     event CreatorWithdrawal(address, uint256);
-    event Test(string, uint256); // Will remove before audit.
 
     function setUp() external {
         vm.deal(campaignManager, STARTING_BALANCE);
@@ -103,20 +95,19 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         vm.etch(address(controller), "I'm the operator with my pocket calculator");
         vm.etch(address(directory), "I'm the operator with my pocket calculator");
-        vm.etch(address(fundAccessConstraintsStore), "I'm the operator with my pocket calculator");
         vm.etch(address(paymentTerminalStore), "I'm the operator with my pocket calculator");
         vm.etch(address(ethPaymentTerminal), "I'm the operator with my pocket calculator");
 
         // Deploy the target contract.
         mockExternalCallsForConstructor();
         vm.startPrank(admin);
-        dominantJuice = new DominantJuice(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore);
+        dominantJuice = new DominantJuice(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
 
-        // Get cycleExpiryDate for use in tests
+        // Get cycleExpiryDate for base contract instance for use in tests
         DominantJuice.Campaign memory campaign = dominantJuice.getCampaignInfo();
         cycleExpiryDate = campaign.cycleExpiryDate;
 
-        // Adming grants Campaign Manager role
+        // Default Admin grants Campaign Manager role
         dominantJuice.grantRole(campaignManagerRole, campaignManager);
         vm.stopPrank();
     }
@@ -131,7 +122,8 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
      * the input pledger with the input amount.
      * - dominantJuiceTesterSetup(): deploys a tester instance of dominantJuice with a delayed start.
      * Refund bonus is also deposited. This additional contract instance exposes the target contract's
-     * internal _getPledgerAndTotalWeights().
+     * internal _getPledgerAndTotalWeights(), internal _getJBContracts(), and has an additional function removeFunds()
+     * that can siphon funds from the contract instance.
      * - pledgeToTester(): makes a pledge to the local contract instance for the input pledger with the input amount.
      * - successfulCycleHasExpired(): Mocks 3 pledgers pledging over target amount and advances time past cycleExpiryDate
      * - failedCycleHasExpired(): Mocks 3 pledgers pledging under target amount and advances time past cycleExpiryDate
@@ -144,12 +136,11 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // Constructor and Grant Role Tests
     ///////////////////////////////////////
 
-    // PASSING
     function test_constructor_storesAllVariablesAndContracts() public {
         mockExternalCallsForConstructor();
 
         DominantJuiceTestHelper dominantJuice_constructorTest =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
 
         DominantJuice.Campaign memory campaign = dominantJuice_constructorTest.getCampaignInfo();
         uint256 projectId = campaign.projectId;
@@ -171,12 +162,10 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(0, totalRefundBonus); // Since bonus has not been deposited yet.
         assertEq(address(controller), address(contracts.controller));
         assertEq(address(directory), address(contracts.directory));
-        assertEq(address(fundAccessConstraintsStore), address(contracts.fundAccessConstraintsStore));
-        assertEq(address(ethPaymentTerminal), address(contracts.paymentTerminal));
     }
 
-    // PASSING
     function test_grantRole_assignsRoles() public {
+        // Asserting the base contract instance from setUp()
         assertTrue(dominantJuice.hasRole(campaignManagerRole, campaignManager));
         assertTrue(dominantJuice.hasRole(DEFAULT_ADMIN_ROLE, admin));
     }
@@ -185,7 +174,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // supportsInterface() Test
     //////////////////////////////////
 
-    // PASSING
     function test_supportsInterface_supportsAllInheritedInterfaces() public {
         // Interface IDs from Juicebox docs: https://docs.juicebox.money/dev/build/namespace/
         bytes4 dataSourceID = 0x71700c69;
@@ -211,16 +199,15 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // depositRefundBonus() Tests
     ///////////////////////////////////
 
-    // PASSING
     function test_depositRefundBonus_revertsForNotCampaignManager() public {
         vm.prank(rando); // rando account address: 0x8e24d86be44ab9006bd1277bddc948ecebbfbf6c
+        // 0x5022544358ee0bece556b72ae8983c7f24341bd5b9483ce8a19bff5efbb2de92 is the bytes32 representation of CAMPAIGN_MANAGER_ROLE
         vm.expectRevert(
             "AccessControl: account 0x8e24d86be44ab9006bd1277bddc948ecebbfbf6c is missing role 0x5022544358ee0bece556b72ae8983c7f24341bd5b9483ce8a19bff5efbb2de92"
         );
         dominantJuice.depositRefundBonus{value: TOTAL_REFUND_BONUS}();
     }
 
-    // PASSING
     function test_depositRefundBonus_revertsWhenAdminCalls() public {
         vm.prank(admin); // admin account address: 0xaa10a84ce7d9ae517a52c6d5ca153b369af99ecf
         vm.expectRevert(
@@ -230,7 +217,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     }
 
     function testFuzz_depositRefundBonus_revertsWhenNoCalls(address _notManager) public {
-        // Forge can't expectRevert() off partial error messages. Since address
+        // Can't figure out how to get Forge to expectRevert() off partial error messages. Since address
         // would change each try, it is used here without a parameter.
         vm.assume(_notManager != campaignManager);
 
@@ -239,22 +226,22 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.depositRefundBonus{value: TOTAL_REFUND_BONUS}();
     }
 
-    // PASSING - Happy Path
     function testFuzz_depositRefundBonus_allowsManagerDepositAndEmitsEvent(uint256 _bonus) public {
-        // assume realistic values
+        // Assume realistic values
         _bonus = bound(_bonus, 1, 1000 ether);
 
         vm.expectEmit(true, true, true, true, address(dominantJuice));
         emit RefundBonusDeposited(campaignManager, _bonus);
 
+        // Deposit the bonus
         vm.prank(campaignManager);
         dominantJuice.depositRefundBonus{value: _bonus}();
 
+        // The contract balance should equal the bonus now
         assertEq(_bonus, dominantJuice.getBalance());
     }
 
-    // PASSING
-    function test_depositRefundBonus_revertsWhenCalledTwice() public {
+    function test_depositRefundBonus_revertsIfAlreadyDeposited() public {
         vm.prank(campaignManager);
         dominantJuice.depositRefundBonus{value: TOTAL_REFUND_BONUS}();
 
@@ -272,36 +259,30 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
     // All payParams() tests use same JBPayParamsData struct with 100 ether as amount.value
 
-    // PASSING
     function test_payParams_revertsIfCycleHasNotStarted() public {
-        // Use a new deployment with a cycle start that is 2 days after "now."
+        // Use a new deployment with a cycle start that is 2 days after "now." See test helper section
         (DominantJuice dominantJuice_start,) = dominantJuiceTesterSetup();
         JBPayParamsData memory payParamsData = payParamsDataStruct();
-
-        vm.mockCall(
-            address(directory),
-            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
-            abi.encode(true)
-        );
 
         vm.prank(address(paymentTerminalStore));
         vm.expectRevert(DominantJuice.CycleHasNotStarted.selector);
         dominantJuice_start.payParams(payParamsData);
     }
 
-    // PASSING
     function testFuzz_payParams_revertsIfNoBonusDeposit(address _random) public {
+        // Base contract instance cycle has already started, so no need to advance time, typical all similar tests.
         JBPayParamsData memory payParamsData = payParamsDataStruct();
 
+        // The JB Payment Terminal Store will normally call this function, but anyone can call so mocking a direct
+        // call is a good check for unit testing purposes. During cycle, calls should revert with refundBonus error.
         vm.prank(_random);
         vm.expectRevert(DominantJuice.RefundBonusNotDeposited.selector);
         dominantJuice.payParams(payParamsData);
     }
 
-    // PASSING
     function test_payParams_revertsWhenCycleHasExpired() public {
-        bonusDeposited();
-        vm.warp(CYCLE_DURATION + 1);
+        bonusDeposited(); // See test helper section
+        vm.warp(CYCLE_DURATION + 1); // Advance past cycle expiry
         JBPayParamsData memory payParamsData = payParamsDataStruct();
 
         vm.prank(address(paymentTerminalStore));
@@ -309,8 +290,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.payParams(payParamsData);
     }
 
-    // PASSING - In reality, payParams() will be called by the JB Payment Terminal Store, but mocking a
-    // direct call is a good check for unit testing purposes.
     function testFuzz_payParams_revertsWhenBelowMinPledge(uint256 _value) public {
         bonusDeposited();
 
@@ -318,12 +297,11 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         vm.assume(_value < MIN_PLEDGE_AMOUNT);
         payParamsData.amount.value = _value;
 
-        vm.prank(rando);
+        vm.prank(address(paymentTerminalStore));
         vm.expectRevert(abi.encodeWithSelector(DominantJuice.AmountIsBelowMinimumPledge.selector, MIN_PLEDGE_AMOUNT));
         dominantJuice.payParams(payParamsData);
     }
 
-    // PASSING - Happy Path
     function test_payParams_returnsMemoryVariables() public {
         bonusDeposited();
 
@@ -351,7 +329,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(TOTAL_REFUND_BONUS, dominantJuice.getBalance());
     }
 
-    // PASSING - Happy Path with JB Payment Terminal Store calling
     function test_payParams_executesUpToCycleClose() public {
         bonusDeposited();
         vm.warp(CYCLE_DURATION - 1);
@@ -363,21 +340,20 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         vm.prank(address(paymentTerminalStore));
         dominantJuice.payParams(payParamsData);
 
-        // Extra confirm that call executes past time check.
+        // Extra confirm that call executes logic after time check.
         (uint256 _weight,,) = dominantJuice.payParams(payParamsData);
         assertEq(payParamsData.weight, _weight);
     }
 
     // payParams() function is non-payable, the parent function that calls it is nonReentrant, and
     // there are only statements and logic to satisfy Juicebox architecture, thus not many unit tests
-    // here. This function can be called directly, but nothing would happen. The only way to pledge
+    // here. This function can be called directly, but no contract state changes. The only way to pledge
     // correctly is by calling `JBPayoutRedemptionPaymentTerminal3_1_1.pay()`.
 
     ///////////////////////
     // didPay() Tests
     ///////////////////////
 
-    // PASSING
     function testFuzz_didPay_revertsIfPaymentSent(uint256 _amount) public {
         bonusDeposited();
         _amount = bound(_amount, 1, STARTING_BALANCE);
@@ -386,12 +362,12 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         // Change value from base 100 ether to _amount
         didPayData.amount.value = _amount;
 
+        // This function can only be called by a JB payment terminal of the project
         vm.prank(address(ethPaymentTerminal));
         vm.expectRevert(DominantJuice.PledgeThroughJuiceboxSiteOnly.selector);
         dominantJuice.didPay{value: _amount}(didPayData);
     }
 
-    // PASSING
     function testFuzz_didPay_revertsIfNotPaymentTerminal(address _random) public {
         bonusDeposited();
         vm.assume(_random != address(ethPaymentTerminal));
@@ -429,7 +405,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice_start.didPay(didPayData);
     }
 
-    // PASSING
     function test_didPay_revertsIfNoBonusDeposit() public {
         JBDidPayData3_1_1 memory didPayData = didPayDataStruct(pledger1);
 
@@ -444,7 +419,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didPay(didPayData);
     }
 
-    // PASSING
     function test_didPay_revertsWhenCycleHasExpired() public {
         bonusDeposited();
         vm.warp(CYCLE_DURATION + 1);
@@ -462,7 +436,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didPay(didPayData);
     }
 
-    // PASSING
     function test_didPay_revertsWithEmptyDataStruct() public {
         bonusDeposited();
         JBDidPayData3_1_1 memory didPayData; // empty struct
@@ -479,7 +452,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didPay(didPayData);
     }
 
-    // PASSING
     function test_didPay_revertsOnWrongProjectId() public {
         bonusDeposited();
 
@@ -496,7 +468,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didPay(didPayData);
     }
 
-    // PASSING
     function testFuzz_didPay_revertsWhenBelowMinPledge(uint256 _value) public {
         bonusDeposited();
 
@@ -515,7 +486,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didPay(didPayData);
     }
 
-    // PASSING - Happy path
     function test_didPay_singlePledger_campaignUpdates() public {
         bonusDeposited();
 
@@ -528,6 +498,8 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
             abi.encode(true)
         );
         vm.expectCall(address(directory), abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)));
+
+        // Mock call to obtain time of pledge for pledge weight calculations
         vm.mockCall(
             address(controller),
             abi.encodeCall(controller.currentFundingCycleOf, (projectID)),
@@ -535,9 +507,11 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         );
         vm.expectCall(address(controller), abi.encodeCall(controller.currentFundingCycleOf, (projectID)));
 
+        // Expect pledge event
         vm.expectEmit(true, true, true, true, address(dominantJuice));
         emit PledgeMade(pledger1, MIN_PLEDGE_AMOUNT);
 
+        // The DAC call after pledge has been recorded and sent to Juicebox
         vm.prank(address(ethPaymentTerminal));
         dominantJuice.didPay(didPayData);
 
@@ -554,7 +528,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(false, status.hasCreatorWithdrawnAllFunds);
     }
 
-    // PASSING - Happy path
     function testFuzz_didPay_singlePledger(uint256 _value) public {
         bonusDeposited();
 
@@ -564,16 +537,18 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         DominantJuice.FundingStatus memory status = dominantJuice.getCycleFundingStatus();
 
+        // Only this pledge should be recorded
         assertEq(_value, status.totalPledged);
         uint256 percent = (100 * status.totalPledged) / CYCLE_TARGET;
         assertEq(percent, status.percentOfGoal);
     }
 
-    // PASSING
     function test_didPay_singlePledgerMultiplePledges_weights() public {
+        // Use test harness instance to gain access to internal _getPledgerAndTotalWeights()
         (DominantJuiceTestHelper dominantJuice_singlePledger, JBFundingCycle memory cycleData) =
             dominantJuiceTesterSetup();
 
+        // Advance past cycle start and pledger1 pledges
         vm.warp(2 days + 1);
         pledgeToTester(dominantJuice_singlePledger, cycleData, pledger1, 115 ether);
 
@@ -587,21 +562,24 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         (uint256 pledgerW2,) = dominantJuice_singlePledger.exposed_getPledgerAndTotalWeights(pledger1);
 
+        // State should reflect both pledges
         assertEq(230 ether, status.totalPledged);
         uint256 percent = (100 * status.totalPledged) / CYCLE_TARGET;
         assertEq(percent, status.percentOfGoal);
+
+        // Campaign booleans should remain false
         assertEq(false, status.isTargetMet);
         assertEq(false, status.hasCycleExpired);
         assertEq(false, status.hasCreatorWithdrawnAllFunds);
+
+        // Pledge weight assertions
         assertEq(pledgerW1, totalW1);
         assertGt(pledgerW2, pledgerW1);
-        // assert that 1st pledge is greater than 2nd pledge, which is pledgerWeight after 2nd pledge minus 1st pledgeWeight
+        // assert that 1st pledge is greater weight than 2nd pledge, which is pledgerWeight after 2nd pledge minus 1st pledgerWeight
         assertGt(pledgerW1, pledgerW2 - pledgerW1);
     }
 
-    // PASSING
     function test_didPay_twoPledgers_weights() public {
-        // Deploy and use test harness for pledger weight testing
         (DominantJuiceTestHelper dominantJuice_twoPledgers, JBFundingCycle memory cycle) = dominantJuiceTesterSetup();
 
         // Pledger 1 pledges 100 ether at the 4th hour of the cycle.
@@ -622,6 +600,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
             abi.encode(cycle, _metadata)
         );
 
+        // Call for 1st pledger
         vm.prank(address(ethPaymentTerminal));
         dominantJuice_twoPledgers.didPay(didPayData_p1);
 
@@ -630,14 +609,12 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         // Multiply 0.99 * 100 to avoid decimals. Then divide by the factored out 100^4 at end to get final result.
         uint256 timeFactor1 = 99 ** hourOfPledge1;
         uint256 calculatedWeight1 = timeFactor1 * 100 ether / (100 ** 4);
-        console.log("calculatedWeight1", calculatedWeight1);
 
         assertEq(calculatedWeight1, pledger1W);
 
         // Pledger 2 pledges 100 ether at the 5th hour of the cycle.
         vm.warp(2 days + (5 * 60 * 60) + 1);
         uint256 hourOfPledge2 = (block.timestamp - cycle.start) / 3600;
-        console.log(hourOfPledge2);
 
         JBDidPayData3_1_1 memory didPayData_p2 = didPayDataStruct(pledger2);
 
@@ -652,6 +629,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
             abi.encode(cycle, _metadata)
         );
 
+        // Call for 2nd pledger
         vm.prank(address(ethPaymentTerminal));
         dominantJuice_twoPledgers.didPay(didPayData_p2);
 
@@ -660,15 +638,14 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         // Multiply 0.99 * 100 to avoid decimals. Then divide by the factored out 100^5 at end to get final result.
         uint256 timeFactor2 = 99 ** hourOfPledge2;
         uint256 calculatedWeight2 = timeFactor2 * 100 ether / (100 ** 5);
-        console.log("calculatedWeight2", calculatedWeight2);
 
-        console.log("pledger2W", pledger2W);
-        console.log("totalW2", totalW2);
+        assertEq(calculatedWeight2, pledger2W);
         assertEq(pledger2W, totalW2 - totalW1);
+
+        // Expect pledger1's weight to be more
         assertGt(pledger1W, pledger2W);
     }
 
-    // PASSING - Happy path
     function test_didPay_multiplePledgers_campaignUpdates() public {
         bonusDeposited();
 
@@ -689,11 +666,11 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(false, status.isTargetMet);
     }
 
-    // PASSING - Three pledgers pledge same amount at different times.
     function test_didPay_multiplePledgersSameAmountDiffTimes_weights() public {
         (DominantJuiceTestHelper dominantJuice_multipledger, JBFundingCycle memory cycleData) =
             dominantJuiceTesterSetup();
 
+        // Three pledgers pledge same amount at different times.
         vm.warp(2 days + 1);
         pledgeToTester(dominantJuice_multipledger, cycleData, pledger1, MIN_PLEDGE_AMOUNT);
 
@@ -704,24 +681,24 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         (uint256 pledger2W, uint256 totalW2) = dominantJuice_multipledger.exposed_getPledgerAndTotalWeights(pledger2);
 
+        assertEq(pledger1W + pledger2W, totalW2); // 1st and 2nd pledger weights equal total weight before 3rd pledge
+
         vm.warp(block.timestamp + 1 weeks);
         pledgeToTester(dominantJuice_multipledger, cycleData, pledger3, MIN_PLEDGE_AMOUNT);
 
         (uint256 pledger3W, uint256 totalW3) = dominantJuice_multipledger.exposed_getPledgerAndTotalWeights(pledger3);
 
-        // Test weights with ABDKLibrary here once pow() value resutls are figured out?
-
         assertLt(pledger2W, pledger1W); // pledger2W is less since pledged later
         assertLt(pledger3W, pledger1W); // pledger3W is less since pledged much later
-        assertEq(pledger1W + pledger2W, totalW2); // 1st and 2nd pledger weights equal total weight
-        assertEq(pledger1W + pledger2W + pledger3W, totalW3); // All three pledges equal total weight
+
+        assertEq(pledger1W + pledger2W + pledger3W, totalW3); // All three pledges now equal total weight
     }
 
-    // PASSING - Two pledgers pledge same amount at same time. Third pledger pledges later.
     function test_didPay_simultaneousPledgersSameAmount_weights() public {
         (DominantJuiceTestHelper dominantJuice_multipledger, JBFundingCycle memory cycleData) =
             dominantJuiceTesterSetup();
 
+        // Two pledgers pledge same amount at same time. Third pledger pledges later.
         vm.warp(3 days);
         pledgeToTester(dominantJuice_multipledger, cycleData, pledger1, MIN_PLEDGE_AMOUNT);
         pledgeToTester(dominantJuice_multipledger, cycleData, pledger2, MIN_PLEDGE_AMOUNT);
@@ -738,10 +715,10 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         assertEq(pledger1W1, pledger2W); // Pledger 1 and pledger 2 should have same weight
         assertLt(pledger3W, pledger2W); // Pledger 3's weight should be less since pledged later
-        assertEq(pledger1W1, pledger1W2); // Pledger 1's weight should not change from other pledgers pledge's.
+        // Pledger 1's individual weight should not change from other pledgers pledge's
+        assertEq(pledger1W1, pledger1W2);
     }
 
-    // PASSING
     function testFuzz_didPay_simultaneousPledgersDiffAmounts(uint256 _pledger2Amount) public {
         (DominantJuiceTestHelper dominantJuice_multipledger, JBFundingCycle memory cycleData) =
             dominantJuiceTesterSetup();
@@ -763,8 +740,8 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(pledger2W + pledger3W, totalW); // total weight should always be sum of both weights
     }
 
-    // PASSING - Pledge of campaign funding target is made at final second: 480 hours after start.
-    // This will more than likely use the largest numbers that are run through the contract math logic.
+    // Pledge of campaign funding target is made at final second: 480 hours after start.
+    // These will more than likely be the largest numbers that are run through the contract math logic.
     function test_didPay_noMathOverflow() public {
         bonusDeposited();
         vm.warp(20 days - 1); // 1 second before cycle close.
@@ -775,14 +752,12 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(CYCLE_TARGET, status.totalPledged);
         uint256 percent = (100 * status.totalPledged) / CYCLE_TARGET;
         assertEq(percent, status.percentOfGoal);
-        console.log(percent); // 100%
     }
 
     ////////////////////////////////
     // redeemParams() Tests
     ////////////////////////////////
 
-    // PASSING
     function testFuzz_redeemParams_revertsDuringCycle(uint256 _seconds) public {
         bonusDeposited();
         JBRedeemParamsData memory redeemParamsData = redeemParamsDataStruct(pledger2);
@@ -797,7 +772,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.redeemParams(redeemParamsData);
     }
 
-    // PASSING
     function test_redeemParams_revertsIfSuccessfulCycle() public {
         bonusDeposited();
         // See Test Helpers section for explanation of this function:
@@ -810,7 +784,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.redeemParams(redeemParamsData);
     }
 
-    // PASSING
     function test_redeemParams_revertsIfNotPledger() public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -818,12 +791,15 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         vm.warp(cycleExpiryDate + 100);
         JBRedeemParamsData memory redeemParamsData = redeemParamsDataStruct(rando);
 
-        vm.prank(rando); // direct call
+        vm.prank(rando); // Direct call
+        vm.expectRevert(abi.encodeWithSelector(DominantJuice.MustBePledger.selector));
+        dominantJuice.redeemParams(redeemParamsData);
+
+        vm.prank(address(paymentTerminalStore)); // JB call
         vm.expectRevert(abi.encodeWithSelector(DominantJuice.MustBePledger.selector));
         dominantJuice.redeemParams(redeemParamsData);
     }
 
-    // PASSING
     function test_redeemParams_revertsIfAlreadyWithdrawn() public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -831,17 +807,17 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         assertFalse(dominantJuice.getPledgerRefundStatus(pledger1));
 
-        // Pledger1 calls redeem
+        // Pledger1 redeems
         redeem(pledger1);
 
         assertTrue(dominantJuice.getPledgerRefundStatus(pledger1));
 
-        vm.prank(address(paymentTerminalStore)); // 2nd call
+        // Pledger 1 tries to redeem again
+        vm.prank(address(paymentTerminalStore));
         vm.expectRevert(DominantJuice.AlreadyWithdrawnRefund.selector);
         dominantJuice.redeemParams(redeemParamsData);
     }
 
-    // PASSING - Happy Path
     function test_redeemParams_returnsMemoryVariables() public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -850,9 +826,11 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         redeemParamsData.reclaimAmount.value = 1;
         redeemParamsData.memo = "juice";
 
+        // Happy path
         vm.prank(address(paymentTerminalStore));
         (uint256 _reclaimAmount, string memory _memo, JBRedemptionDelegateAllocation3_1_1[] memory delegateAllocations)
         = dominantJuice.redeemParams(redeemParamsData);
+
         assertEq(redeemParamsData.reclaimAmount.value, _reclaimAmount);
         assertEq(redeemParamsData.memo, _memo);
         assertEq(0, delegateAllocations[0].amount);
@@ -862,7 +840,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // didRedeem() Tests
     //////////////////////////
 
-    // PASSING
     function testFuzz_didRedeem_revertsIfPaymentSent(uint256 _amount) public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -870,12 +847,12 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         _amount = bound(_amount, 1, 2000 ether);
         JBDidRedeemData3_1_1 memory didRedeemData = didRedeemDataStruct(pledger1);
 
+        // This function's only valid caller is the project's JB payment Terminal
         vm.prank(address(ethPaymentTerminal));
         vm.expectRevert(abi.encodeWithSelector(DominantJuice.PledgeThroughJuiceboxSiteOnly.selector));
         dominantJuice.didRedeem{value: _amount}(didRedeemData);
     }
 
-    // PASSING
     function testFuzz_didRedeem_revertsIfNotPaymentTerminal(address _random) public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -897,10 +874,9 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didRedeem(didRedeemData);
     }
 
-    // PASSING
     function testFuzz_didRedeem_revertsDuringCycle(uint256 _seconds) public {
         bonusDeposited();
-        // pledger3 pledges. Advance time but still be in cycle window.
+        // Pledger3 pledges. Advance time but still be in cycle window.
         pledge(pledger3, 200 ether);
 
         vm.assume(_seconds < cycleExpiryDate - block.timestamp);
@@ -918,7 +894,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didRedeem(didRedeemData);
     }
 
-    // PASSING
     function test_didRedeem_revertsIfSuccessfulCycle() public {
         bonusDeposited();
         successfulCycleHasExpired();
@@ -935,7 +910,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didRedeem(didRedeemData);
     }
 
-    // PASSING
     function testFuzz_didRedeem_revertsOnWrongProjectId(uint256 _projectID) public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -950,17 +924,16 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
             abi.encode(true)
         );
 
-        vm.prank(address(ethPaymentTerminal)); // Payment terminal calling
+        vm.prank(address(ethPaymentTerminal));
         vm.expectRevert(abi.encodeWithSelector(DominantJuice.IncorrectProjectID.selector));
         dominantJuice.didRedeem(didRedeemData);
     }
 
-    // PASSING - Test in case Juicebox architecture goes wonky.
     function test_didRedeem_revertsIfNotPledger() public {
         bonusDeposited();
         failedCycleHasExpired();
 
-        // Insert non-pledging address in data struct
+        // Test in case Juicebox architecture goes wonky: Insert non-pledging address in data struct
         JBDidRedeemData3_1_1 memory didRedeemData = didRedeemDataStruct(rando);
 
         vm.mockCall(
@@ -974,7 +947,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didRedeem(didRedeemData);
     }
 
-    // PASSING
     function test_didRedeem_revertsIfAlreadyWithdrawn() public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -995,25 +967,54 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.didRedeem(didRedeemData);
     }
 
-    // PASSING
+    function test_didRedeem_revertsIfInsufficientFunds() public {
+        JBDidRedeemData3_1_1 memory didRedeemData = didRedeemDataStruct(pledger1);
+
+        // Deploy tester contract that has an unchecked removeFunds function. Pledge to contract, remove
+        // funds, advance time to close campaign, call removeFunds() before pledger can redeeem.
+        (DominantJuiceTestHelper dominantJuice_removeFunds, JBFundingCycle memory cycleData) =
+            dominantJuiceTesterSetup();
+        vm.warp(cycleData.start + 60);
+        pledgeToTester(dominantJuice_removeFunds, cycleData, pledger1, 100 ether);
+        vm.warp(cycleData.duration + 3 days);
+
+        vm.prank(rando);
+        dominantJuice_removeFunds.removeFunds(TOTAL_REFUND_BONUS / 2);
+        console.log(address(dominantJuice_removeFunds).balance);
+
+        vm.mockCall(
+            address(directory),
+            abi.encodeCall(directory.isTerminalOf, (projectID, ethPaymentTerminal)),
+            abi.encode(true)
+        );
+
+        // Since pledger1 is sole pledger, they should get the entire refund bonus. Since half of it has
+        // been stolen, didRedeem will revert with custom error.
+        vm.prank(address(ethPaymentTerminal));
+        vm.expectRevert(DominantJuice.InsufficientFunds.selector);
+        dominantJuice_removeFunds.didRedeem(didRedeemData);
+    }
+
     function test_didRedeem_revertsIfFailedToSendEther() public {
         bonusDeposited();
 
-        // Deploy tester contract to act as a pledger/redeemer. Pledge to main contract instance. Advance
-        // time and call didRedeem() on main contract with tester as pledger/holder, which should revert since
-        // tester contract does not have fallback or receive functions.
+        // Deploy tester contract to act as a pledger/redeemer. Pledge to main contract instance.
         DominantJuiceTestHelper dominantJuice_sender =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
         pledge(address(dominantJuice_sender), 45 ether);
+
+        // Advance time and call didRedeem() on main contract with tester as pledger/holder, which
+        // should revert since tester contract does not have fallback or receive functions.
         vm.warp(cycleExpiryDate);
 
         vm.expectRevert("Failed to send refund bonus.");
         redeem(address(dominantJuice_sender));
     }
 
-    // PASSING
     function test_didRedeem_happyPath() public {
         bonusDeposited();
+
+        // Pledger1 pledges and time advances past cycleExpiryDate, resulting in a failed cycle.
         pledge(pledger1, MIN_PLEDGE_AMOUNT);
         vm.warp(cycleExpiryDate + 100);
         JBDidRedeemData3_1_1 memory didRedeemData = didRedeemDataStruct(pledger1);
@@ -1029,17 +1030,17 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         vm.expectEmit(true, true, true, true, address(dominantJuice));
         emit CycleRefundBonusWithdrawal(pledger1, TOTAL_REFUND_BONUS);
 
+        // Pledger1's JB token redemption is recorded before JB calls didRedeem()
         vm.prank(address(ethPaymentTerminal));
         dominantJuice.didRedeem(didRedeemData);
 
         assertEq(true, dominantJuice.getPledgerRefundStatus(pledger1));
         assertEq(0, dominantJuice.getBalance());
-        // The unit test shouldn't cover outside state, but this was just an additional sanity assert.
+        // The unit test shouldn't cover outside state, but this is an additional sanity assert.
         // Since pledger1 pays through the JB architecture, it doesn't subtract from pledger1's balance.
         assertEq(STARTING_BALANCE + TOTAL_REFUND_BONUS, pledger1.balance);
     }
 
-    // PASSING
     function testFuzz_didRedeem_amountsUpToCycleTarget(uint256 _pledgeAmount) public {
         bonusDeposited();
 
@@ -1063,7 +1064,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertFalse(dominantJuice.isTargetMet());
     }
 
-    // PASSING
     function test_didRedeem_simultaneousPledgersSameAmount() public {
         bonusDeposited();
 
@@ -1081,6 +1081,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
             abi.encode(true)
         );
 
+        // Pledger 1 redeems
         vm.prank(address(ethPaymentTerminal));
         dominantJuice.didRedeem(didRedeemData_p1);
 
@@ -1088,6 +1089,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         uint256 pledger1RefundBonus = TOTAL_REFUND_BONUS / 2;
         assertEq(pledger1RefundBonus, dominantJuice.getBalance());
 
+        // Pledger 2 redeems
         vm.prank(address(ethPaymentTerminal));
         dominantJuice.didRedeem(didRedeemData_p2);
 
@@ -1097,7 +1099,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(STARTING_BALANCE + pledger2RefundBonus, pledger2.balance);
     }
 
-    // PASSING
     function test_didRedeem_multiplePledgers_OnePledgerMultiplePledges() public {
         bonusDeposited();
 
@@ -1114,6 +1115,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
             abi.encode(true)
         );
 
+        // Pledger 1 redeems
         vm.prank(address(ethPaymentTerminal));
         dominantJuice.didRedeem(didRedeemData);
 
@@ -1123,7 +1125,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(4 ether, dominantJuice.getBalance());
     }
 
-    // PASSING
     function test_didRedeem_multiplePledgersSameAmountDiffTimes() public {
         bonusDeposited();
 
@@ -1146,17 +1147,15 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         // Funds withdrawn are pledger 1's refund bonus.
         uint256 pledger1RefundBonus = TOTAL_REFUND_BONUS - dominantJuice.getBalance();
+        uint256 pledger2RefundBonus = TOTAL_REFUND_BONUS - pledger1RefundBonus;
 
         vm.prank(address(ethPaymentTerminal));
         dominantJuice.didRedeem(didRedeemData_p2);
 
-        uint256 pledger2RefundBonus = TOTAL_REFUND_BONUS - pledger1RefundBonus;
-
-        // Pledger 1 should redeem a bunch more than pledger 2
+        // Pledger 1 should redeem more than pledger 2
         assertGt(pledger1RefundBonus, pledger2RefundBonus);
     }
 
-    // PASSING
     function test_didRedeem_simultaneousPledgersDiffAmounts() public {
         bonusDeposited();
 
@@ -1187,10 +1186,9 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(STARTING_BALANCE + 7.5 ether, pledger2.balance);
     }
 
-    // PASSING
     function testFuzz_didRedeem_multiplePledgersDiffTimes(uint256 _pledger3Amount) public {
         bonusDeposited();
-        // Pledger2 pledges half the CYCLE_TARGET in first hour.
+        // Pledger2 pledges the minimum amount in first hour.
         pledge(pledger2, MIN_PLEDGE_AMOUNT);
 
         // 0.99 ^ 140 = ~0.244, so at the 140th hour, pledger3 can pledge any amount between
@@ -1216,6 +1214,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         uint256 pledger2Bonus = TOTAL_REFUND_BONUS - dominantJuice.getBalance();
         uint256 pledger3Bonus = TOTAL_REFUND_BONUS - pledger2Bonus;
 
+        // Pledger 2's bonus should always be more
         assertGt(pledger2Bonus, pledger3Bonus);
 
         vm.prank(address(ethPaymentTerminal));
@@ -1229,7 +1228,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // creatorWithdraw() Tests
     //////////////////////////////
 
-    // PASSING
     function test_creatorWithdraw_revertsForNonOwner() public {
         bonusDeposited();
         successfulCycleHasExpired();
@@ -1241,19 +1239,19 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.creatorWithdraw(rando, TOTAL_REFUND_BONUS);
     }
 
-    // PASSING
     function test_creatorWithdraw_revertsBeforeUnlock() public {
         bonusDeposited();
+        failedCycleHasExpired();
 
         uint256 lockPeriod = 14 * 24 * 60 * 60;
         vm.warp(cycleExpiryDate + lockPeriod); // This is one second before lockPeriod is over.
 
+        // Campaign Manager tried to withdraw
         vm.prank(campaignManager);
         vm.expectRevert("Cycle must be expired and successful, or it must be past the lock period.");
         dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS);
     }
 
-    // PASSING
     function test_creatorWithdraw_revertsIfGoalNotMet() public {
         bonusDeposited();
         failedCycleHasExpired();
@@ -1263,24 +1261,23 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS);
     }
 
-    // PASSING
     function testFuzz_creatorWithdraw_revertsOnOverdraw(uint256 _amount) public {
         bonusDeposited();
         successfulCycleHasExpired();
 
         vm.assume(_amount > dominantJuice.getBalance());
 
+        // Manager tries to withdraw more than contract balance
         vm.prank(campaignManager);
         vm.expectRevert(DominantJuice.InsufficientFunds.selector);
         dominantJuice.creatorWithdraw(campaignManager, _amount);
     }
 
-    // PASSING
     function test_creatorWithdraw_revertsIfFailedToSendEther() public {
         // Deploy contract and grant it campaign manager role. Mock a successful cycle and advance time.
         // creatorWithdraw() should revert since contract does not have fallback or receive functions.
         DominantJuiceTestHelper dominantJuice_manager =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
 
         vm.prank(admin);
         dominantJuice.grantRole(campaignManagerRole, address(dominantJuice_manager));
@@ -1294,7 +1291,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.creatorWithdraw(managerContract, TOTAL_REFUND_BONUS);
     }
 
-    // PASSING - Happy Path
     function test_creatorWithdraw_withdrawsBonus() public {
         bonusDeposited();
         successfulCycleHasExpired();
@@ -1313,7 +1309,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(STARTING_BALANCE, campaignManager.balance);
     }
 
-    // PASSING - Happy Path
     function test_creatorWithdraw_sendsFundsToDifferentAddress() public {
         bonusDeposited();
         successfulCycleHasExpired();
@@ -1325,7 +1320,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(STARTING_BALANCE + TOTAL_REFUND_BONUS, rando.balance);
     }
 
-    // PASSING
     function testFuzz_creatorWithdraw_withdrawsInTwoTransactions(uint256 _amount) public {
         vm.assume(_amount < TOTAL_REFUND_BONUS);
         bonusDeposited();
@@ -1342,11 +1336,11 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(0, dominantJuice.getBalance());
     }
 
-    // PASSING - Happy Path
-    function testFuzz_creatorWithdraw_creatorCanCallAfterUnlock(uint256 _seconds) public {
+    function testFuzz_creatorWithdraw_unlocksAfterFailedCycleLock(uint256 _seconds) public {
         bonusDeposited();
         failedCycleHasExpired();
 
+        // Advance time past the lock period after the failed cycle
         uint256 lockPeriod = 14 * 24 * 60 * 60;
         vm.assume(_seconds > cycleExpiryDate + lockPeriod);
         vm.warp(_seconds);
@@ -1362,7 +1356,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // Getter Tests
     ////////////////////
 
-    // PASSING
     function test_getBalance() public {
         vm.prank(campaignManager);
         dominantJuice.depositRefundBonus{value: 126 ether}();
@@ -1371,9 +1364,9 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(balance, 126 ether);
     }
 
-    // PASSING
     function test_isTargetMet_tracksTotalPledgesCorrectly() public {
-        bonusDeposited(); // CYCLE_TARGET == 1300 ether
+        bonusDeposited();
+        // CYCLE_TARGET == 1300 ether
         pledge(pledger1, 1299 ether);
 
         bool isMet = dominantJuice.isTargetMet();
@@ -1386,7 +1379,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(isTargetMet, true);
     }
 
-    // PASSING
     function test_hasCycleExpired() public {
         vm.warp(cycleExpiryDate - 60);
         assertFalse(dominantJuice.hasCycleExpired());
@@ -1395,7 +1387,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertTrue(dominantJuice.hasCycleExpired());
     }
 
-    // PASSING
     function testFuzz_getCycleFundingStatus_tracksPledgeAmounts(uint256 _amount) public {
         bonusDeposited();
 
@@ -1411,7 +1402,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(false, status.isTargetMet);
     }
 
-    // PASSING
     function test_getCycleFundingStatus_FullCreatorWithdrawal() public {
         bonusDeposited();
         successfulCycleHasExpired();
@@ -1439,18 +1429,10 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         vm.expectCall(address(controller), abi.encodeCall(controller.directory, ()));
         vm.mockCall(
             address(controller),
-            abi.encodeCall(controller.fundAccessConstraintsStore, ()),
-            abi.encode(fundAccessConstraintsStore)
-        );
-        vm.expectCall(address(controller), abi.encodeCall(controller.fundAccessConstraintsStore, ()));
-        vm.mockCall(address(directory), abi.encodeCall(directory.terminalsOf, (projectID)), abi.encode(_terminals));
-        vm.expectCall(address(directory), abi.encodeCall(directory.terminalsOf, (projectID)));
-        vm.mockCall(
-            address(controller),
-            abi.encodeCall(controller.currentFundingCycleOf, (projectID)),
+            abi.encodeCall(controller.queuedFundingCycleOf, (projectID)),
             abi.encode(_cycle, _metadata)
         );
-        vm.expectCall(address(controller), abi.encodeCall(controller.currentFundingCycleOf, (projectID)));
+        vm.expectCall(address(controller), abi.encodeCall(controller.queuedFundingCycleOf, (projectID)));
     }
 
     function bonusDeposited() public {
@@ -1509,19 +1491,13 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         vm.mockCall(address(controller), abi.encodeCall(controller.directory, ()), abi.encode(directory));
         vm.mockCall(
             address(controller),
-            abi.encodeCall(controller.fundAccessConstraintsStore, ()),
-            abi.encode(fundAccessConstraintsStore)
-        );
-        vm.mockCall(address(directory), abi.encodeCall(directory.terminalsOf, (projectID)), abi.encode(_terminals));
-        vm.mockCall(
-            address(controller),
-            abi.encodeCall(controller.currentFundingCycleOf, (projectID)),
+            abi.encodeCall(controller.queuedFundingCycleOf, (projectID)),
             abi.encode(_fundingCycle, _metadata)
         );
 
         vm.startPrank(admin);
         DominantJuiceTestHelper dominantJuice_pledge =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, paymentTerminalStore);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
         dominantJuice_pledge.grantRole(campaignManagerRole, campaignManager);
         vm.stopPrank();
         vm.prank(campaignManager);
@@ -1557,30 +1533,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         _tester.didPay(didPayData_pledger);
         vm.clearMockedCalls();
     }
-
-    // Use ABDKMath library to test pledgerWeight and confirm PRBMath library's results.
-    // Currently can't get pow() to return correct values or not revert.
-    // function pledgeWeightCalculator_ABDK(uint256 _amount, uint256 _time) public returns (uint256) {
-    //     int128 rate = ABDKMath64x64.divu(99, 100);
-    //     //int128 rate = ABDKMath64x64.fromUInt(rateOfDecay);
-    //     //int128 rate = ABDKMath64x64.fromUInt(20);
-    //     emit Test("fff", 0);
-    //     uint256 tempAmount = _amount / 1e6;
-
-    //     int128 weightFactor = ABDKMath64x64.pow(rate, _time);
-    //     console.log("weightFactor", ABDKMath64x64.toUInt(weightFactor));
-    //     emit Test("1", 0);
-    //     int128 pledgeAmount = ABDKMath64x64.fromUInt(tempAmount);
-    //     console.log("pledgeAmount", ABDKMath64x64.toUInt(pledgeAmount));
-    //     emit Test("2", 0);
-    //     int128 pledgeWeight64x64 = ABDKMath64x64.mul(weightFactor, pledgeAmount);
-    //     uint64 pledgeWeightTemp = ABDKMath64x64.toUInt(pledgeWeight64x64);
-    //     console.log("pledgeWeightTemp", pledgeWeightTemp);
-    //     uint256 pledgeWeight = uint256(pledgeWeightTemp) * 1e6;
-    //     console.log("pledgeWeightFinal", pledgeWeight);
-
-    //     return pledgeWeight;
-    // }
 
     function successfulCycleHasExpired() public {
         pledge(pledger1, 200 ether);
@@ -1635,17 +1587,9 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 }
 
 contract DominantJuiceTestHelper is DominantJuice, Test {
-    constructor(
-        uint256 _projectId,
-        uint256 _cycleTarget,
-        uint256 _minimumPledgeAmount,
-        IJBController3_1 _controller,
-        IJBSingleTokenPaymentTerminalStore3_1_1 _paymentTerminalStore
-    ) DominantJuice(_projectId, _cycleTarget, _minimumPledgeAmount, _controller, _paymentTerminalStore) {}
-
-    function setup() external {
-        vm.deal(address(this), 100 ether);
-    }
+    constructor(uint256 _projectId, uint256 _cycleTarget, uint256 _minimumPledgeAmount, IJBController3_1 _controller)
+        DominantJuice(_projectId, _cycleTarget, _minimumPledgeAmount, _controller)
+    {}
 
     function exposed_getPledgerAndTotalWeights(address _pledger) external view returns (uint256, uint256) {
         return _getPledgerAndTotalWeights(_pledger);
@@ -1653,5 +1597,11 @@ contract DominantJuiceTestHelper is DominantJuice, Test {
 
     function exposed_getJBContracts() external view returns (JBContracts memory) {
         return _getJBContracts();
+    }
+
+    function removeFunds(uint256 _amount) external {
+        address payable thief = payable(msg.sender);
+        (bool sendSuccess,) = thief.call{value: _amount}("");
+        require(sendSuccess, "Failed to send.");
     }
 }

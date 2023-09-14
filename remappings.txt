@@ -1,9 +1,5 @@
-@chainlink/=node_modules/@chainlink/
-@ensdomains/=node_modules/@ensdomains/
 @jbx-protocol/=node_modules/@jbx-protocol/
 @openzeppelin/=node_modules/@openzeppelin/
 @prb/math/=lib/prb-math/src/
-@paulrberg/=node_modules/@paulrberg/
 ds-test/=lib/ds-test/src/
 forge-std/=lib/forge-std/src/
-prb-math/=node_modules/prb-math/
