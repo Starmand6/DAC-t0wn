@@ -2,8 +2,15 @@
 .vscode
 cache/
 node_modules/
-*.txt
 .DS_Store
 node_modules
 lib/forge-std/
 yarn-error.log
+not_used
+solidity-flattener
+/out/
+/broadcast/
+.gas-snapshot
+.prettierrc
+lcov.info
+ProjectMetadataPlaceholder.json
