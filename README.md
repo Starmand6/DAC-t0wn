@@ -6,11 +6,11 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
-    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#about-the-project">About the Project</a></li>
     <li><a href="#dominant-assurance-background">Dominant Assurance Background</a></li>
     <li><a href="#campaign-workflow">Campaign Workflow</a></li>
     <li><a href="#contract-functionality">Contract Functionality</a></li>
-    <li><a href="#for-the-devs">For The Devs</a></li>
+    <li><a href="#for-the-devs">For the Devs</a></li>
     <li><a href="#future-considerations">Future Considerations</a></li>
     <li><a href="#lessons-learned">Lessons Learned</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -23,7 +23,7 @@
 
 <!-- ABOUT THE PROJECT -->
 
-## About The Project
+## About the Project
 
 This repo translates Alex Tabarrok’s “dominant assurance” contract idea to the blockchain (explainer in next section) by being an extension of projects on Juicebox (JB) -- an innovative and highly customizable platform for crowdfunding projects on Ethereum. The main juice of this repo is the dominant assurance escrow contract (DAC) that quadruples as a JB Data Source, JB Pay Delegate, and JB Redemption Delegate for a given JB project. This alternative mechanism can be extended to fund any type of crowdfunding campaign or public good.
 
@@ -47,7 +47,7 @@ Overall, the transparency and deterministic characteristics of smart contracts h
 
 ### Campaign Setup
 
--   The project team executes the LaunchProjectAndDeployDAC.s.sol script by running `forge script` with the specific project parameters (owner address, cycle target, cycle start time, duration, minimum pledge amount, and project metadata).
+-   The project team executes the LaunchProjectAndDeployDAC.s.sol script by running `forge script` with the specific project parameters (owner address, cycle target, cycle start time, duration, minimum pledge amount, and project metadata). For details on using scripting with Forge, see the <a href="#for-the-devs">For the Devs</a> section below.
     -   The script first pre-computes the dominant assurance contract (DominantJuice.sol / DAC) address and populates all JB data structs necessary to create a JB project (with dominant-assurance-informed parameters) that will be linked to the DAC.
     -   `launchProjectFor()` is called with all parameters on the JB Controller and a `projectId` is created and returned.
     -   Using the `projectId` along with the team-specified project parameters, the DAC is finally created and deployed to the Goerli testnet or Mainnet.
@@ -126,7 +126,7 @@ Overall, the transparency and deterministic characteristics of smart contracts h
 
 <!-- FOR THE DEVS -->
 
-## For The Devs
+## For the Devs
 
 For quickstart, in a parent directory of your choosing, `git clone` the repo using the link from Github and `cd` into folder. If you don't have Foundry/Forge, run `curl -L https://foundry.paradigm.xyz | bash`, then run `foundryup` to update to latest version. (More detailed instructions can be found in the excellent [Foundry Book](https://book.getfoundry.sh/getting-started/installation)). Run `yarn install` to install included dependencies, which will also run `forge install` for you. (More dependency details can be found here: [Juicebox Contract Template](https://github.com/jbx-protocol/juice-contract-template).)
 
@@ -136,6 +136,16 @@ For quickstart, in a parent directory of your choosing, `git clone` the repo usi
 -   OpenZeppelin inherited contracts: Access Control
 -   The wizardry [PRBMath](https://github.com/PaulRBerg/prb-math) for decimal math and exponentiation functionality
 -   The fresh and finest imports from the land of Juicebox
+
+### Forge Scripting
+
+-   For going deep into Forge scripting, check out the following resources:
+    -   [Forge Scripting Tutorial](https://book.getfoundry.sh/tutorials/solidity-scripting)
+    -   [Forge Script Reference Documentation](https://book.getfoundry.sh/reference/forge/forge-script)
+    -   [Github Issue #2125](https://github.com/foundry-rs/foundry/issues/2125) - passing arguments into `run()` for use in a script
+-   Before running scripts, if using a `.env` file for private keys, run `source .env` at the command line. This "loads" access to environment variables in the CLI. Here are full examples using this project's scripts:
+    -   For launching a JB project and deploying the DAC on Goerli: `forge script script/LaunchProjectAndDeployDAC.s.sol --rpc-url $GOERLI_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY -vvvv --sig "run(address,uint256,uint256,uint256,uint256,string)" <insert deployer address here> 10000000000000 1694647825 1800 1000000000000 "<insert IPFS CID string here>"`
+    -   For assigning the campaign manager role after deployment on Goerli: `forge script script/AssignCampaignManagerRole.s.sol --rpc-url $GOERLI_RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv --sig "run(address,address)" <insert DAC Goerli address here> <insert deployer address here>`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

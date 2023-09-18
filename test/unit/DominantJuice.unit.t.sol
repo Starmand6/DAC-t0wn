@@ -585,7 +585,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         // Pledger 1 pledges 100 ether at the 4th hour of the cycle.
         vm.warp(2 days + (4 * 60 * 60) + 1);
         uint256 hourOfPledge1 = (block.timestamp - cycle.start) / 3600;
-        console.log(hourOfPledge1);
 
         JBDidPayData3_1_1 memory didPayData_p1 = didPayDataStruct(pledger1);
 
@@ -980,7 +979,6 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         vm.prank(rando);
         dominantJuice_removeFunds.removeFunds(TOTAL_REFUND_BONUS / 2);
-        console.log(address(dominantJuice_removeFunds).balance);
 
         vm.mockCall(
             address(directory),
