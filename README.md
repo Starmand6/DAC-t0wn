@@ -146,6 +146,7 @@ For quickstart, in a parent directory of your choosing, `git clone` the repo usi
 -   Before running scripts, if using a `.env` file for private keys, run `source .env` at the command line. This "loads" access to environment variables in the CLI. Here are full examples using this project's scripts:
     -   For launching a JB project and deploying the DAC on Goerli: `forge script script/LaunchProjectAndDeployDAC.s.sol --rpc-url $GOERLI_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY -vvvv --sig "run(address,uint256,uint256,uint256,uint256,string)" <insert deployer address here> 10000000000000 1694647825 1800 1000000000000 "<insert IPFS CID string here>"`
     -   For assigning the campaign manager role after deployment on Goerli: `forge script script/AssignCampaignManagerRole.s.sol --rpc-url $GOERLI_RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv --sig "run(address,address)" <insert DAC Goerli address here> <insert deployer address here>`
+-   `forge script --help` can also be run at any time to access help information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
