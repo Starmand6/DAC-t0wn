@@ -17,11 +17,11 @@ import {JBGlobalFundingCycleMetadata} from
 import {JBGroupedSplits} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBGroupedSplits.sol";
 import {JBProjectMetadata} from "@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol";
 
-// Script to change an existing JB project's cycle parameters. Three configurations have been abstracted down to 1 number/variable.
+// Script to change an existing JB project's cycle parameters. Three configurations have been abstracted down to one number input.
 contract ReconfigureFundingCycle is Script {
     // Campaign contracts
     IJBController3_1 controller;
-    JBETHPaymentTerminal3_1_2 jbETHPaymentTerminal3_1_2;
+    IJBPaymentTerminal jbETHPaymentTerminal3_1_2;
     address delegate; // In storage to avoid stack too deep errors.
     uint256 projectID;
 
@@ -40,7 +40,7 @@ contract ReconfigureFundingCycle is Script {
         HelperConfig helperConfig = new HelperConfig();
         (address _controller,, address _ethPaymentTerminal3_1_2) = helperConfig.activeNetworkConfig();
         controller = IJBController3_1(_controller);
-        jbETHPaymentTerminal3_1_2 = JBETHPaymentTerminal3_1_2(_ethPaymentTerminal3_1_2);
+        jbETHPaymentTerminal3_1_2 = IJBPaymentTerminal(_ethPaymentTerminal3_1_2);
         projectID = _projectID;
         delegate = _delegate;
 
@@ -60,8 +60,7 @@ contract ReconfigureFundingCycle is Script {
     // @param _cycleDuration Duration of the next cycle in seconds.
     // @return configuration The configuration of the successfully reconfigured funding cycle.
     function reconfigureFundingCyclesOf(uint8 _result, uint256 _cycleDuration) public returns (uint256 configuration) {
-        require(_result < 3, "Input must be 0 (fail), 1 (success), or 2 (freeze)");
-
+        require(_result < 4, "Input must be 0 (fail), 1 (success), or 2 (freeze)");
         bool _pauseTransfers;
         uint256 _redemptionRate;
         bool _pauseDistributions;
@@ -80,21 +79,28 @@ contract ReconfigureFundingCycle is Script {
         } else if (_result == 1) {
             // If cycle has met funding goal, this is a project creator payout closing cycle.
             // This struct defines the successful fund payouts from JB to project creator.
-            fundAccessConstraints[0] = JBFundAccessConstraints({
+            fundAccessConstraints.push(JBFundAccessConstraints({
                 terminal: jbETHPaymentTerminal3_1_2,
                 token: 0x000000000000000000000000000000000000EEEe,
                 distributionLimit: 1e18,
                 distributionLimitCurrency: 1,
                 overflowAllowance: 0,
                 overflowAllowanceCurrency: 1
-            });
+            }));
             _pauseTransfers = true;
             _redemptionRate = 0;
             _pauseDistributions = false;
             _pauseRedeem = true;
             _pauseBurn = true;
             _useDataSourceForRedeem = false;
-        } else {
+        } else if (_result == 3) {
+            _pauseTransfers = false;
+            _redemptionRate = 10000;
+            _pauseDistributions = false;
+            _pauseRedeem = false;
+            _pauseBurn = false;
+            _useDataSourceForRedeem = false;
+            } else {
             // Result == 2: Frozen cycle to allow time to reconfigure next payout or redemption cycle. This should
             // be chosen if campaign is too close to call or manager wants to wait to see if there are any last minute
             // target-meeting pledges.

@@ -82,6 +82,8 @@ contract DominantJuice is
     Pledgers private pledgers;
     UD60x18 private immutable rateOfDecay = ud(0.99e18);
     uint256 private constant lockPeriod = 14 * 24 * 60 * 60; // Two weeks of seconds
+    address payable public immutable feeRecipient;
+    bool private feeSent = false;
 
     /// Campaign Events
     event RefundBonusDeposited(address, uint256 indexed);
@@ -105,6 +107,7 @@ contract DominantJuice is
     error NoRefundsForSuccessfulCycle();
     error AlreadyWithdrawnRefund();
     error InsufficientFunds();
+    error NoFeesForFailedCampaign();
 
     modifier terminalCheck() {
         if (msg.value != 0) revert PledgeThroughJuiceboxSiteOnly();
@@ -131,7 +134,7 @@ contract DominantJuice is
     }
 
     /// @param _projectId Obtained via Juicebox after project creation.
-    constructor(uint256 _projectId, uint256 _cycleTarget, uint256 _minimumPledgeAmount, IJBController3_1 _controller) {
+    constructor(uint256 _projectId, uint256 _cycleTarget, uint256 _minimumPledgeAmount, IJBController3_1 _controller, address payable _feeRecipient) {
         // Assign admin role to deployer to grant Campaign Manager Role after deployment.
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
@@ -139,6 +142,7 @@ contract DominantJuice is
         campaign.cycleTarget = _cycleTarget;
         campaign.minimumPledgeAmount = _minimumPledgeAmount;
         campaign.projectId = _projectId;
+        feeRecipient = _feeRecipient;
 
         // Store JB architecture contracts
         jbContracts.controller = _controller;
@@ -150,10 +154,12 @@ contract DominantJuice is
         campaign.cycleExpiryDate = cycleData.start + cycleData.duration;
     }
 
-    /// @notice Indicates if this contract adheres to the specified interface.
-    /// @dev See {IERC165-supportsInterface}.
-    /// @param _interfaceId The ID of the interface to check for adherence to.
-    /// @return A flag indicating if the provided interface ID is supported.
+    /**
+     * @notice Indicates if this contract adheres to the specified interface.
+     * @dev See {IERC165-supportsInterface}.
+     * @param _interfaceId The ID of the interface to check for adherence to.
+     * @return A flag indicating if the provided interface ID is supported.
+     */
     function supportsInterface(bytes4 _interfaceId)
         public
         view
@@ -255,8 +261,8 @@ contract DominantJuice is
      * to receive a `didRedeem()` call. `JBPayoutRedemptionPaymentTerminal3_1_1.redeemTokensOf()` calls
      * `JBSingleTokenPaymentTerminalStore3_1_1.recordRedemptionFor()`, which calls this function.
      * @param _data JB project redemption data. See https://docs.juicebox.money/dev/api/data-structures/jbredeemparamsdata/.
-     * @return reclaimAmount Amount to be reclaimed from the treasury. This is useful for optionally customizing how much
-     * funds from the treasury are disbursed per redemption.
+     * @return reclaimAmount Amount to be reclaimed from the treasury. This is useful for optionally customizing how
+     * much funds from the treasury are disbursed per redemption.
      * @return memo A memo to be forwarded to the event. Useful for describing any new actions are being taken.
      * @return delegateAllocations Amount to be sent to delegates instead of being added to the beneficiary. Useful for
      * auto-routing funds from a treasury as redemptions are sought.
@@ -283,7 +289,8 @@ contract DominantJuice is
         reclaimAmount = _data.reclaimAmount.value;
         // Forward the default memo received from the pledger.
         memo = _data.memo;
-        // Add `this` contract as a Redeem Delegate so that it receives a `didRedeem` call. Don't send any extra funds to the delegate.
+        // Add `this` contract as a Redeem Delegate so that it receives a `didRedeem` call. Don't send any extra funds
+        // to the delegate.
         delegateAllocations = new JBRedemptionDelegateAllocation3_1_1[](1);
         delegateAllocations[0] = JBRedemptionDelegateAllocation3_1_1(this, 0, "");
     }
@@ -323,7 +330,8 @@ contract DominantJuice is
     }
 
     /**
-     * @notice This function is callable after cycleExpiryDate if goal is met. However, for
+     * @notice Upon successful campaign, Campaign manager can withdraw initial refund bonus minus a fee.
+     * @dev This function is callable only after cycleExpiryDate if goal is met. However, for
      * contingency, where a pledger is unable to retrieve funds, after the predetermined time lock
      * expires, the Campaign Manager can withdraw funds for disbursement to affected pledgers. The
      * locked period is hardcoded for two weeks after the cycleExpiryDate to give pledgers a
@@ -338,18 +346,41 @@ contract DominantJuice is
         bool successfulCycleClosed = hasCycleExpired() && isTargetMet();
         uint256 unlockTime = campaign.cycleExpiryDate + lockPeriod;
         bool timeLockHasEnded = block.timestamp > unlockTime;
-
         require(
             successfulCycleClosed || timeLockHasEnded,
             "Cycle must be expired and successful, or it must be past the lock period."
         );
+
         if (amount > address(this).balance) revert InsufficientFunds();
 
-        (bool success,) = receivingAddress.call{value: amount}("");
-        require(success, "Failed to withdraw cycle funds.");
+        if (successfulCycleClosed && !feeSent) {
+            feeSent = true;
+
+            // Fee is 10% of campaign refund bonus
+            uint256 fee = (campaign.totalRefundBonus * 10) / 100;
+            if (amount > (address(this).balance - fee)) revert InsufficientFunds();
+
+            (bool feeSuccess,) = feeRecipient.call{value: fee}("");
+            require(feeSuccess, "Failed to withdraw fee.");
+        }
+
+        (bool withdrawSuccess,) = receivingAddress.call{value: amount}("");
+        require(withdrawSuccess, "Failed to withdraw cycle funds.");
 
         emit CreatorWithdrawal(receivingAddress, amount);
     }
+
+    /// @notice Fee recipient collects a portion of the original, total refund bonus
+    /// @dev The fee can only be collected upon a successful campaign
+    // function collectFee() external onlyRole(FEE_RECIPIENT_ROLE) {
+    //     if (!isTargetMet()) revert NoFeesForFailedCampaign();
+
+    //     // Fee is 10% of campaign refund bonus
+    //     uint256 fee = (campaign.totalRefundBonus * 90) / 100;
+
+    //     (bool success,) = feeRecipient.call{value: fee}("");
+    //     require(success, "Failed to withdraw fee.");
+    // }
 
     /// Getters and Helpers
 

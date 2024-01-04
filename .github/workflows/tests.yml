@@ -49,6 +49,6 @@ jobs:
             - name: install libraries
               run: git submodule update --init
             - name: Run tests
-              run: FOUNDRY_PROFILE=CI forge snapshot
+              run: forge test
             - name: Check contract sizes
               run: forge build --sizes

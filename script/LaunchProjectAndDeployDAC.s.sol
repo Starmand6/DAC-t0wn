@@ -46,7 +46,8 @@ contract LaunchProjectAndDeployDAC is Script {
         uint256 _startTime,
         uint256 _duration,
         uint256 _minPledgeAmount,
-        string memory _ipfsCID // Project's metadata file hash and codec from IPFS
+        string memory _ipfsCID, // Project's metadata file hash and codec from IPFS
+        address payable _feeRecipient
     ) external returns (uint256 projectID) {
         // Store the deployed JB contracts depending on which network (Mainnet or Goerli) is called for
         HelperConfig helperConfig = new HelperConfig();
@@ -61,7 +62,7 @@ contract LaunchProjectAndDeployDAC is Script {
         vm.startBroadcast();
         console.log("Launching Juicebox project and deploying DAC / DominantJuice...");
         // Launch the JB project and deploy the DAC delegate.
-        projectID = launchProjectFor(_owner, _ipfsCID, _cycleTarget, _startTime, _duration, _minPledgeAmount);
+        projectID = launchProjectFor(_owner, _ipfsCID, _cycleTarget, _startTime, _duration, _minPledgeAmount, _feeRecipient);
         console.log("Juicebox project launched with ID: ", projectID);
         vm.stopBroadcast();
     }
@@ -80,7 +81,8 @@ contract LaunchProjectAndDeployDAC is Script {
         uint256 _cycleTarget,
         uint256 _startTime,
         uint256 _duration,
-        uint256 _minimumPledgeAmount
+        uint256 _minimumPledgeAmount,
+        address payable _feeRecipient
     ) public returns (uint256 _projectID) {
         require(_owner != address(0), "Invalid address");
 
@@ -142,7 +144,7 @@ contract LaunchProjectAndDeployDAC is Script {
 
         console.log("Deploying DAC...");
         /// Deploy the dominant assurance escrow delegate w/ the project ID and store the instance.
-        DominantJuice delegate = new DominantJuice(_projectID, _cycleTarget, _minimumPledgeAmount, contracts.controller);
+        DominantJuice delegate = new DominantJuice(_projectID, _cycleTarget, _minimumPledgeAmount, contracts.controller, _feeRecipient);
 
         console.log("Deployed DAC address:", address(delegate));
 

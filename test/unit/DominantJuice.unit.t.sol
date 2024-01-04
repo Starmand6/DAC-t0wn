@@ -59,6 +59,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // Dominant Assurance Contract (DAC) users and addresses
     address payable admin = payable(makeAddr("admin"));
     address payable campaignManager = payable(makeAddr("campaignManager"));
+    address payable feeRecipient = payable(makeAddr("feeRecipient"));
     address payable public pledger1 = payable(makeAddr("pledger1"));
     address payable public pledger2 = payable(makeAddr("pledger2"));
     address payable public pledger3 = payable(makeAddr("pledger3"));
@@ -70,6 +71,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     uint256 public constant CYCLE_TARGET = 1300 ether;
     uint256 public constant MIN_PLEDGE_AMOUNT = 45 ether;
     uint256 public constant CYCLE_DURATION = 20 days;
+    uint256 public constant FEE = 1 ether; // 10% of total refund bonus
     bytes32 constant campaignManagerRole = keccak256("CAMPAIGN_MANAGER_ROLE");
     uint256 rateOfDecay = 0.99e18;
 
@@ -101,7 +103,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         // Deploy the target contract.
         mockExternalCallsForConstructor();
         vm.startPrank(admin);
-        dominantJuice = new DominantJuice(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
+        dominantJuice = new DominantJuice(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, feeRecipient);
 
         // Get cycleExpiryDate for base contract instance for use in tests
         DominantJuice.Campaign memory campaign = dominantJuice.getCampaignInfo();
@@ -140,7 +142,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         mockExternalCallsForConstructor();
 
         DominantJuiceTestHelper dominantJuice_constructorTest =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, feeRecipient);
 
         DominantJuice.Campaign memory campaign = dominantJuice_constructorTest.getCampaignInfo();
         uint256 projectId = campaign.projectId;
@@ -162,6 +164,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         assertEq(0, totalRefundBonus); // Since bonus has not been deposited yet.
         assertEq(address(controller), address(contracts.controller));
         assertEq(address(directory), address(contracts.directory));
+        assertEq(feeRecipient, dominantJuice_constructorTest.feeRecipient());
     }
 
     function test_grantRole_assignsRoles() public {
@@ -998,7 +1001,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         // Deploy tester contract to act as a pledger/redeemer. Pledge to main contract instance.
         DominantJuiceTestHelper dominantJuice_sender =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, feeRecipient);
         pledge(address(dominantJuice_sender), 45 ether);
 
         // Advance time and call didRedeem() on main contract with tester as pledger/holder, which
@@ -1226,7 +1229,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
     // creatorWithdraw() Tests
     //////////////////////////////
 
-    function test_creatorWithdraw_revertsForNonOwner() public {
+    function test_creatorWithdraw_revertsIfNotManager() public {
         bonusDeposited();
         successfulCycleHasExpired();
 
@@ -1247,7 +1250,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         // Campaign Manager tried to withdraw
         vm.prank(campaignManager);
         vm.expectRevert("Cycle must be expired and successful, or it must be past the lock period.");
-        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS);
+        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS - FEE);
     }
 
     function test_creatorWithdraw_revertsIfGoalNotMet() public {
@@ -1256,10 +1259,10 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         vm.prank(campaignManager);
         vm.expectRevert("Cycle must be expired and successful, or it must be past the lock period.");
-        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS);
+        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS - FEE);
     }
 
-    function testFuzz_creatorWithdraw_revertsOnOverdraw(uint256 _amount) public {
+    function testFuzz_creatorWithdraw_revertsForBothOverdrawPaths(uint256 _amount) public {
         bonusDeposited();
         successfulCycleHasExpired();
 
@@ -1269,13 +1272,20 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         vm.prank(campaignManager);
         vm.expectRevert(DominantJuice.InsufficientFunds.selector);
         dominantJuice.creatorWithdraw(campaignManager, _amount);
+
+        uint256 largerAmount = dominantJuice.getBalance() - (FEE / 2);
+
+        // Manager tries to withdraw more than contract balance minus fee
+        vm.prank(campaignManager);
+        vm.expectRevert(DominantJuice.InsufficientFunds.selector);
+        dominantJuice.creatorWithdraw(campaignManager, largerAmount);
     }
 
     function test_creatorWithdraw_revertsIfFailedToSendEther() public {
-        // Deploy contract and grant it campaign manager role. Mock a successful cycle and advance time.
-        // creatorWithdraw() should revert since contract does not have fallback or receive functions.
+        // Deploy a DAC instance and grant it campaign manager role. Mock a successful cycle and advance time.
+        // creatorWithdraw() should revert since the external DAC does not have fallback or receive functions.
         DominantJuiceTestHelper dominantJuice_manager =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, feeRecipient);
 
         vm.prank(admin);
         dominantJuice.grantRole(campaignManagerRole, address(dominantJuice_manager));
@@ -1286,49 +1296,89 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         address payable managerContract = payable(address(dominantJuice_manager));
         vm.prank(managerContract);
         vm.expectRevert("Failed to withdraw cycle funds.");
-        dominantJuice.creatorWithdraw(managerContract, TOTAL_REFUND_BONUS);
+        dominantJuice.creatorWithdraw(managerContract, TOTAL_REFUND_BONUS - FEE);
     }
 
-    function test_creatorWithdraw_withdrawsBonus() public {
+    // withdraws whole and pays fee
+    function test_creatorWithdraw_withdrawsBonusAndSendsFee() public {
         bonusDeposited();
         successfulCycleHasExpired();
 
         assertTrue(dominantJuice.isTargetMet());
 
         vm.expectEmit(true, true, true, true, address(dominantJuice));
-        emit CreatorWithdrawal(campaignManager, TOTAL_REFUND_BONUS);
+        emit CreatorWithdrawal(campaignManager, TOTAL_REFUND_BONUS - FEE);
 
         vm.prank(campaignManager);
-        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS);
+        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS - FEE);
 
         DominantJuice.FundingStatus memory status = dominantJuice.getCycleFundingStatus();
         assertEq(true, status.hasCreatorWithdrawnAllFunds);
         assertEq(0, dominantJuice.getBalance());
-        assertEq(STARTING_BALANCE, campaignManager.balance);
+        assertEq(STARTING_BALANCE - FEE, campaignManager.balance);
+        assertEq(FEE, feeRecipient.balance);
+    }
+
+    function test_creatorWithdraw_partialWithdrawalAndSendsFee() public {
+        bonusDeposited();
+        successfulCycleHasExpired();
+
+        assertTrue(dominantJuice.isTargetMet());
+
+        vm.expectEmit(true, true, true, true, address(dominantJuice));
+        emit CreatorWithdrawal(campaignManager, TOTAL_REFUND_BONUS / 2);
+
+        // Campaign Manager withdraws half of bonus. Fee should be sent to fee recipient.
+        vm.prank(campaignManager);
+        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS / 2);
+
+        DominantJuice.FundingStatus memory status = dominantJuice.getCycleFundingStatus();
+        assertEq(false, status.hasCreatorWithdrawnAllFunds);
+        assertEq((TOTAL_REFUND_BONUS / 2) - FEE, dominantJuice.getBalance());
+        assertEq(STARTING_BALANCE - (TOTAL_REFUND_BONUS / 2), campaignManager.balance);
+        assertEq(FEE, feeRecipient.balance);
+
+        vm.expectEmit(true, true, true, true, address(dominantJuice));
+        emit CreatorWithdrawal(campaignManager, dominantJuice.getBalance());
+
+        // Campaign Manager withdraws rest of contract funds
+        vm.prank(campaignManager);
+        dominantJuice.creatorWithdraw(campaignManager, (TOTAL_REFUND_BONUS / 2) - FEE);
+
+        // Update status variable and assert that all funds are withdrawn to appropriate addresses
+        status = dominantJuice.getCycleFundingStatus();
+        assertEq(true, status.hasCreatorWithdrawnAllFunds);
+        assertEq(0, dominantJuice.getBalance());
+        // Manager should now have the entire bonus returned minus the fee.
+        assertEq(STARTING_BALANCE - FEE, campaignManager.balance);
+        assertEq(FEE, feeRecipient.balance);
     }
 
     function test_creatorWithdraw_sendsFundsToDifferentAddress() public {
         bonusDeposited();
         successfulCycleHasExpired();
 
+        // Manager sends funds to a different address
         vm.prank(campaignManager);
-        dominantJuice.creatorWithdraw(rando, TOTAL_REFUND_BONUS);
+        dominantJuice.creatorWithdraw(rando, TOTAL_REFUND_BONUS - FEE);
 
         assertEq(0, dominantJuice.getBalance());
-        assertEq(STARTING_BALANCE + TOTAL_REFUND_BONUS, rando.balance);
+        assertEq(STARTING_BALANCE + TOTAL_REFUND_BONUS - FEE, rando.balance);
+        assertEq(FEE, feeRecipient.balance); // Fee sent to recipient
     }
 
     function testFuzz_creatorWithdraw_withdrawsInTwoTransactions(uint256 _amount) public {
-        vm.assume(_amount < TOTAL_REFUND_BONUS);
+        vm.assume(_amount < TOTAL_REFUND_BONUS - FEE);
         bonusDeposited();
         successfulCycleHasExpired();
 
         vm.startPrank(campaignManager);
         dominantJuice.creatorWithdraw(pledger1, _amount);
 
-        assertEq(TOTAL_REFUND_BONUS - _amount, dominantJuice.getBalance());
+        uint256 leftoverBalance = TOTAL_REFUND_BONUS - _amount - FEE;
+        assertEq(leftoverBalance, dominantJuice.getBalance());
 
-        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS - _amount);
+        dominantJuice.creatorWithdraw(campaignManager, leftoverBalance);
         vm.stopPrank();
 
         assertEq(0, dominantJuice.getBalance());
@@ -1347,7 +1397,8 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS);
 
         assertEq(0, dominantJuice.getBalance());
-        assertEq(campaignManager.balance, STARTING_BALANCE); // Since receiving bonus back, should have initial balance.
+        assertEq(STARTING_BALANCE, campaignManager.balance); // Since receiving bonus back, should have initial balance.
+        assertEq(0, feeRecipient.balance); // Fee recipient should not get paid after a failed campaign.
     }
 
     ////////////////////
@@ -1405,7 +1456,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
         successfulCycleHasExpired();
 
         vm.prank(campaignManager);
-        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS);
+        dominantJuice.creatorWithdraw(campaignManager, TOTAL_REFUND_BONUS - FEE);
 
         DominantJuice.FundingStatus memory status = dominantJuice.getCycleFundingStatus();
         assertEq(true, status.hasCreatorWithdrawnAllFunds);
@@ -1495,7 +1546,7 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 
         vm.startPrank(admin);
         DominantJuiceTestHelper dominantJuice_pledge =
-            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller);
+            new DominantJuiceTestHelper(projectID, CYCLE_TARGET, MIN_PLEDGE_AMOUNT, controller, feeRecipient);
         dominantJuice_pledge.grantRole(campaignManagerRole, campaignManager);
         vm.stopPrank();
         vm.prank(campaignManager);
@@ -1585,8 +1636,8 @@ contract DominantJuiceTest_Unit is Test, AccessControl {
 }
 
 contract DominantJuiceTestHelper is DominantJuice, Test {
-    constructor(uint256 _projectId, uint256 _cycleTarget, uint256 _minimumPledgeAmount, IJBController3_1 _controller)
-        DominantJuice(_projectId, _cycleTarget, _minimumPledgeAmount, _controller)
+    constructor(uint256 _projectId, uint256 _cycleTarget, uint256 _minimumPledgeAmount, IJBController3_1 _controller, address payable _feeRecipient)
+        DominantJuice(_projectId, _cycleTarget, _minimumPledgeAmount, _controller, _feeRecipient)
     {}
 
     function exposed_getPledgerAndTotalWeights(address _pledger) external view returns (uint256, uint256) {
