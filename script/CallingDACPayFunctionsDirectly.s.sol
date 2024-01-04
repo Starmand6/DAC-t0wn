@@ -27,7 +27,7 @@ contract CallingDACPayFunctionsDirectly is Script {
         vm.startBroadcast();
         DAC.payParams(payParamsData); // This call should not change DAC state
         // This next call should revert. Uncomment the line and comment out the above line to test individually.
-        //DAC.didPay(didPayData);
+        //DAC.didPay{value: _amount}(didPayData);
         vm.stopBroadcast();
     }
 }
